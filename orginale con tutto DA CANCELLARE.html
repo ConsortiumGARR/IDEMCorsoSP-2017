@@ -1,0 +1,833 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Corso SP 2017</title>
+		<meta name="author" value="Marco Ferrante, marco@csita.unige.it">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+	<!--
+Cosa vi serve:
+- Mozilla Firefox (va bene anche Google Chrome, ma gli esempi fanno riferimento a FF)
+- PHP
+	-->
+		<div class="reveal">
+			<div class="slides">
+
+				<!-- parte 1 -->
+			<section><h1>Web Single SignOn (SSO)</h1>
+<p>Il SSO consente ad un utente di effettuare un'unica autenticazione (authN) valida per più risorse</p>
+<p>Non si occupa dell’autorizzazione (authZ), di solito in capo alla risorsa</p>
+<p>Il sistema di SSO fornisce all’utente un <i>token</i> da presentare le risorse</p>
+	<aside class="notes">
+	Benefits of using single sign-on include:
+Mitigate risk for access to 3rd-party sites (user passwords not stored or managed externally)
+Reduce password fatigue from different user name and password combinations
+Reduce time spent re-entering passwords for the same identity
+Reduce IT costs due to lower number of IT help desk calls about passwords
+	</aside>
+			</section>
+			
+			<section>
+				<!-- parte 2 -->
+
+				<section><h2>Singole applicazioni web</h2>
+				<p>il <i>token</i> è un cookie che identifica la sessione nell’applicazione</p>
+					<aside class="notes">
+I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, a cui deve appartenere il server host
+					</aside>
+				</section>
+
+				<section><h2>Domain o intra-organizational SSO</h2>
+				<p>il <i>token</i> è un cookie di dominio che identifica la sessione sull'authN server</p>
+				<p>tipicamente un <i>back-channel</i> trasferisce i dati di sessione tra authN server e risorsa</p>
+				<p>Esempi: CAS, <a href="http://www.pubcookie.org/" title="Il dominio sembra scaduto a luglio">Pubcookie</a></p>
+				</section>
+				
+			</section>
+
+			<section>
+			
+				<section><h2>Autenticazione federata SAML</h2>
+				<p>il <i>token</i> è un pacchetto XML (asserzione) legato alla sessione sull'authN server</p>
+				<p>l'asserzione viene scambiata, di solito via <i>front-channel</i>, con l'applicazione che genera una sessione locale</p> 
+				<p>Esempi: Shibboleth, ADFS</p>
+					<aside class="notes">
+Shibboleth è l'implementazione di riferimento. Il protocollo Shibboleth si riferisce alla versione 1 dell'implementazione e delle specifiche SAML. 
+					</aside>
+				</section>
+
+				<section><h2>SAML 2.0 per SSO</h2>
+				
+				<table>
+					<tr><td>
+				<p>Adottare SAML 2.0 per il SSO intra-organizzativo è un driver per l'autenticazione federata</p>
+				<p>SAML 2.0 permette di integrare servizi di terzi</p>
+					</td><td>
+					IdP UniGe maggio 2017
+					
+<table class="tableview" style="font-size: small;"><tbody><tr><th class="value">Value</th><th class="category">Data range</th></tr><tr class="total odd"><td class="value">391025</td><td class="category">All services</td></tr><tr class="even"><td class="value">252979</td><td class="category">AulaWeb, servizio e-learning</td></tr><tr class="odd"><td class="value">119428</td><td class="category">https://servizionline.unige.it/</td></tr><tr class="even"><td class="value">3132</td><td class="category">Servizio di hosting UniGE</td></tr><tr class="odd"><td class="value">2302</td><td class="category">READY - SAL</td></tr><tr class="even"><td class="value">1917</td><td class="category">SciuMegu <span style="color: yellow">&lsaquo;&lsaquo;&lsaquo;&lsaquo;&lsaquo;&lsaquo;</span></td></tr><tr class="odd"><td class="value">1916</td><td class="category">https://moodle3.aulaweb.unige.it/</td></tr><tr class="even"><td class="value">1550</td><td class="category">Servizi online UniGE</td></tr><tr class="odd"><td class="value">1470</td><td class="category">https://unigepass.unige.it/sp</td></tr><tr class="even"><td class="value">996</td><td class="category">Siti federati UniGE</td></tr><tr class="odd"><td class="value">872</td><td class="category">Siti di servizio UniGE</td></tr><tr class="even"><td class="value">846</td><td class="category" >Elsevier ScienceDirect <span style="color: yellow">&lsaquo;&lsaquo;&lsaquo;&lsaquo;&lsaquo;&lsaquo;</span></td></tr><tr class="odd"><td class="value">801</td><td class="category">https://esami.aulaweb.unige.it/sp</td></tr><tr class="even"><td class="value">765</td><td class="category">https://ssounige.sbgnet.it/shibboleth</td></tr><tr class="odd"><td class="value">497</td><td class="category">eduOpen MOOC Italy</td></tr><tr class="even"><td class="value">238</td><td class="category">Thomson Reuters</td></tr><tr class="odd"><td class="value">173</td><td class="category">Servizio di liste UniGe</td></tr><tr class="even"><td class="value">169</td><td class="category">Sito DICCA</td></tr><tr class="odd"><td class="value">121</td><td class="category">SheerID Verification Services</td></tr><tr class="even"><td class="value">92</td><td class="category">FileSender GARR</td></tr><tr class="odd"><td class="value">85</td><td class="category">DreamSpark, e-academy WebStore erogato da e-academy, Inc</td></tr><tr class="even"><td class="value">78</td><td class="category">IEEE XploreDigital Library provided by IEEE</td></tr><tr class="odd"><td class="value">78</td><td class="category">UNiDAYS</td></tr><tr class="even"><td class="value">67</td><td class="category">Incassi On Line</td></tr><tr class="odd"><td class="value">67</td><td class="category">Nilde Utenti erogato da Biblio Area CNR Bologna</td></tr><tr class="even"><td class="value">45</td><td class="category">Compilatio - Prévention du plagiat</td></tr><tr class="odd"><td class="value">32</td><td class="category">Siti web Dipartimento di Fisica (DIFI)</td></tr><tr class="even"><td class="value">30</td><td class="category">https://intranet.unige.it/sp</td></tr><tr class="odd"><td class="value">28</td><td class="category">WiFi UniTO erogato da Università degli Studi di Torino</td></tr><tr class="even"><td class="value">25</td><td class="category">SpringerLink by Springer-Verlag London, Ltd.</td></tr><tr class="odd"><td class="value">23</td><td class="category">https://vm-fad2.ker.csita.unige.it/</td></tr><tr class="even"><td class="value">22</td><td class="category">Società editrice il Mulino SP</td></tr><tr class="odd"><td class="value">19</td><td class="category">Nature Publishing Group journals</td></tr><tr class="even"><td class="value">19</td><td class="category">Semantico Limited - OUP Shibboleth 2 SP</td></tr><tr class="odd"><td class="value">17</td><td class="category">Atypon SP</td></tr><tr class="even"><td class="value">14</td><td class="category">ProQuest</td></tr><tr class="odd"><td class="value">12</td><td class="category">ORCID</td></tr><tr class="even"><td class="value">12</td><td class="category">https://esami.aulaweb.unige.it/shibboleth</td></tr><tr class="odd"><td class="value">12</td><td class="category">OVID SP</td></tr><tr class="even"><td class="value">10</td><td class="category">Cambridge Journals Online</td></tr><tr class="odd"><td class="value">9</td><td class="category">Elearning U-GOV</td></tr><tr class="even"><td class="value">8</td><td class="category">Student Beans</td></tr><tr class="odd"><td class="value">7</td><td class="category">Sito Web IDEM - https://www.idem.garr.it</td></tr><tr class="even"><td class="value">7</td><td class="category">ACS Publications</td></tr><tr class="odd"><td class="value">6</td><td class="category">http://servizionline.unige.it</td></tr><tr class="even"><td class="value">5</td><td class="category">RSC Publishing</td></tr><tr class="odd"><td class="value">5</td><td class="category">Bestr - Piattaforma Open Badge</td></tr><tr class="even"><td class="value">4</td><td class="category">Annual Reviews</td></tr><tr class="odd"><td class="value">4</td><td class="category">Project MUSE provided by The Johns Hopkins University Press</td></tr><tr class="even"><td class="value">3</td><td class="category">Foodle</td></tr><tr class="odd"><td class="value">2</td><td class="category">ACM Digital Library provided by ACM</td></tr><tr class="even"><td class="value">2</td><td class="category">Università di Genova</td></tr><tr class="odd"><td class="value">1</td><td class="category">Learning GARR</td></tr><tr class="even"><td class="value">1</td><td class="category">GÉANT Trusted Certificate Service (TCS)</td></tr><tr class="odd"><td class="value">1</td><td class="category">https://moodle-esterni.aulaweb.unige.it/</td></tr><tr class="even"><td class="value">1</td><td class="category">https://aulaweb.unige.it/test31</td></tr></tbody></table>
+				
+					</td></tr>
+					</table>
+					<aside class="notes">
+Per così pochi accessi federati, non varrebbe la pena...
+					</aside>
+				</section>
+
+				<section><h2>Protocollo SAML 2.0</h2>
+				Agli inizi degli anni 2000, furono sviluppate diverse proposte di protocolli e implementazioni per autenticazione federata
+				<ul>
+				<li><b>Shibboleth 1.x</b> da parte del progetto Internet 2</li>
+				<li><b>SAML 1.0</b> OASIS Security Services Technical Committee</li>
+				<li><b>Liberty Identity Federation </b> consorzio Liberty Alliance</li>
+				</ul>
+				Nel 2005 confluite nello standard OASIS SAML 2.0
+				</section>
+
+				<section><h2>Schema generale</h2>
+				schema
+				</section>
+
+				<section><h2>Ruoli</h2>
+				<dl>
+				<dt>Service Provider (SP)</dt>
+				<dd>fornisce il servizio di "protezione" di una risorsa<br>
+				<small>gestito dal fornitore del servizio</small></dd>
+				<dt>Identity Provider (IdP)</dt>
+				<dd>autentica l'utente fornendo un <i>token</i> al SP<br>
+				<small>gestito dalla <i>home organization</i> dell'utente</small></dd>
+				<dt>Attribute Autority (AA)</dt>
+				<dd>rilascia attributi sull'utente<br >
+				<small>spesso coincide con l'IdP</small></dd>
+				<dt>WAYF o Discovery</dt>
+				<dd>media tra il SP e l'utente per identificare l'IdP di riferimento<br>
+				<small>integrato nel servizio o gestito dalla federazione</small></dd>
+				</section>
+
+				<section><h2>Profili</h2>
+				Ogni componente fornisce dei <i>servizi</i>
+				<aside class="notes">
+				Esempio: servizio di consumo di asserzioni sull'SP (AssertionConsumerService),
+				servizio di Single Logout su IdP e SP (Single Logout Service), ecc...
+				</aside>
+				I servizi sono caratterizzati da
+				<ul>
+				<li><i>Binding</i> il protocollo (SOAP, POST, ecc...)</li>
+				<li><i>Location</i> endpoint del servizio (tipicamente un URL)
+				</ul>
+				Uno schema di servizi e binding è detto <i>profilo</i>
+				<aside class="notes">
+				Qui tratteremo approfonditamente solo il Web Browser SSO Profile
+				</aside>
+				</section>
+
+				<section><h2>Comunicazioni</h2>
+				<p>Le comunicazioni passano dal <i>front-channel</i></p>
+				<p>Sincronizzare gli orologi :-) tra SP e IdP</p>
+				<p>L'utente vede i messaggi: si possono firmare e cifrare</p>
+				<aside class="notes">
+				Le comunicazioni passano dal browser utente. Eccezioni: ECP profile (server-server)
+				5 minuti di tolleranza tipica
+				</aside>		
+				<p>Per lo sviluppo, si può dirottare il traffico il traffico</p>
+<pre><code data-trim>
+# Esempio simulazione SP locale:
+# file hosts (C:\Windows\System32\drivers\etc\hosts)
+127.0.0.1	mio-vero-sp.miodominio
+</code></pre>
+				<aside class="notes">
+				Simulazione a condizione che si disponga della chiave private (e degli altri metadati) dell'SP
+				Occorre eseguire l'editor (notepad) come amministratore
+				</aside>
+				</section>
+
+				<section id="track"><h2>Tracciamento</h2>
+<aside class="notes">
+Esercizio 1
+SP reindirizza all'IdP (protocollo SAML)
+L'IdP reindirizza su se stesso (specifico dell'implementazione dell'IdP)
+
+Avviare: 
+cd \xampp
+xampp_start.exe
+
+Collegarsi a http://localhost/php-saml/demo1/
+Attivare "Analizza elemento"
+Ingranaggio a destra per disattivare javascript
+</aside>
+				<ol>
+					<li>aprite la pagina ... con Firefox</li>
+					<li>tasto destro e "Analizza elemento"</li>
+					<li>usate la funzione "network" e disattivate JavaScript</li>
+					<li>cliccate su Login</li>
+				</ol>
+				<img src="firefox-debug-1.png">
+				</section>
+
+				<section>
+<aside class="notes">
+http://localhost/simplesaml/saml2/idp/SSOService.php?SAMLRequest=hVNNj9owEL3zK1DuwQkJu8GCVBT6gUQhImkPvVTGnhRLjp3aTpf993U+tktXu9QHR5qZ9+bN82RhSCVqvGrsWR7hVwPGjsbuXCohDe6SS6/REitiuMGSVGCwpThffdnh6STAtVZWUSW8F7DbKGIMaMuV7GHbzdI77D/sDp+2+x/sROJp7A6L5mx2F98HLKKzMknCaRTNTsk8KsuYhnEP/QbaOJ6l52i9Uc9mTANbaSyR1sWD8N4PEj+8K8IExxEO5t976MYNyyWxHfxsbY0REooScVbGIsOrWkA7CmqvKeKsRnl+yEH/5hQm9bnuabLBgfdcMi5/3h781BcZ/LkoMj875EVPsnoyZK2kaSrQQ5uvx90r2lxvv1PGoFIhcpxwaQW9I9R4aUe4aPO4s0Kn/yOowBJGLGk5Fuga+cxV472bZrvJlOD0sYu356PSFbFvDx1Owi7CmV92pbiRpgbKSw7M+0uzEkI9rDUQC0vP6ga8Mfqn+bCcwLpVdS5ZuNjxWlU10dy0LwgXQu0w/bMD1+Vr4fbuCGV6czUppm2dC2fu86A0a18YqOtdaOLEK20Hk14l71WjG7LT0VP6+r9L/wA=&RelayState=http://localhost/php-saml/demo1/
+
+\xampp\php\php -r "echo gzinflate(base64_decode('...'));"
+</aside>
+				<ol>
+					<li>copiate il contenuto della variabile <var>SAMLRequest</var><br />
+					<pre><code data-trim data-noescape>
+					http://localhost/simplesaml/saml2/idp/SSOService.php?
+					  <mark>SAMLRequest=hVNNj9owEL...</mark>
+					  &RelayState=http://loca...
+					</code></pre>
+					</li>
+					<li>decodificatelo con <pre><code data-trim>php -r "echo gzinflate(base64_decode('hVNNj9owEL...'));</code></pre></li>
+				</ol>			
+				</section>
+
+				<section>
+<aside class="notes">
+</aside>
+
+<pre><code class="XML" data-trim>
+<samlp:AuthnRequest
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    ID="ONELOGIN_dba424444d39d56470d3c5f8812335b893ff4c14"
+    Version="2.0"
+
+    IssueInstant="2017-08-16T18:43:09Z"
+    Destination="http://localhost/simplesaml/saml2/idp/SSOService.php"
+    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+    AssertionConsumerServiceURL="http://localhost/php-saml/demo1/index.php?acs">
+    <saml:Issuer>http://localhost/php-saml/demo1/metadata.php</saml:Issuer>
+    <samlp:NameIDPolicy
+        Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+        AllowCreate="true" />
+    <samlp:RequestedAuthnContext Comparison="exact">
+        <saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef>
+    </samlp:RequestedAuthnContext>
+</samlp:AuthnRequest>
+</code>
+</pre>
+				
+				</section>
+
+				<section>
+<aside class="notes">
+admin:Cambiami!
+
+L'IdP gestisce l'autenticazione (specifico dell'implementazione dell'IdP)
+L'IdP rimanda ad una pagina con la risposta (che d norma non si vede perché fa l'autosubmit via JavaScript)
+</aside>
+				<ol>
+					<li>inserite le credenziali ....</li>
+					<li>cliccate "Invia"</li>
+					<li>tasto destro e "Visualizza sorgente" 					<pre><code data-trim>
+... onload="document.getElementsByTagName('input')[0].click();"...
+</code>
+					</pre></li>
+					<li>trovate <pre><code data-trim>
+					
+<input type="hidden" name="SAMLResponse" value="PHNhbWxwOl..." /><input type="hidden" name="RelayState" value="http://localhost/php-saml/demo1/">
+</code>
+					</pre></li>
+					<li>decodificate il valore di <var>SAMLResponse</var> con <pre><code data-trim>php -r "echo base64_decode('PHNhbWxwOl...');</code></pre></li>
+				</ol>
+				</section>
+
+				<section>
+<aside class="notes">
+SAMLResponse=PHNhbWxwOlJlc3BvbnNlIHhtbG5zOnNhbWxwPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6cHJvdG9jb2wiIHhtbG5zOnNhbWw9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjIuMDphc3NlcnRpb24iIElEPSJfYjMzM2NjMWVmYTNmOWI4MDgxZGU3Mjg5ZDQyYzExODQ1NTRkYmJhZWE4IiBWZXJzaW9uPSIyLjAiIElzc3VlSW5zdGFudD0iMjAxNy0wOC0yMFQwOTozNDowNFoiIERlc3RpbmF0aW9uPSJodHRwOi8vbG9jYWxob3N0L3BocC1zYW1sL2RlbW8xL2luZGV4LnBocD9hY3MiIEluUmVzcG9uc2VUbz0iT05FTE9HSU5fMWRhMDNiMjRiY2EyZTNhY2IzOTdjMjM3MDg1NDc3ZDY5YjE2YmVmNSI+PHNhbWw6SXNzdWVyPnVybjptaW90ZXNzb3JvPC9zYW1sOklzc3Vlcj48ZHM6U2lnbmF0dXJlIHhtbG5zOmRzPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwLzA5L3htbGRzaWcjIj4KICA8ZHM6U2lnbmVkSW5mbz48ZHM6Q2Fub25pY2FsaXphdGlvbk1ldGhvZCBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvMTAveG1sLWV4Yy1jMTRuIyIvPgogICAgPGRzOlNpZ25hdHVyZU1ldGhvZCBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvMDkveG1sZHNpZyNyc2Etc2hhMSIvPgogIDxkczpSZWZlcmVuY2UgVVJJPSIjX2IzMzNjYzFlZmEzZjliODA4MWRlNzI4OWQ0MmMxMTg0NTU0ZGJiYWVhOCI+PGRzOlRyYW5zZm9ybXM+PGRzOlRyYW5zZm9ybSBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvMDkveG1sZHNpZyNlbnZlbG9wZWQtc2lnbmF0dXJlIi8+PGRzOlRyYW5zZm9ybSBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvMTAveG1sLWV4Yy1jMTRuIyIvPjwvZHM6VHJhbnNmb3Jtcz48ZHM6RGlnZXN0TWV0aG9kIEFsZ29yaXRobT0iaHR0cDovL3d3dy53My5vcmcvMjAwMC8wOS94bWxkc2lnI3NoYTEiLz48ZHM6RGlnZXN0VmFsdWU+VCtIbU8yTkcrR29UMTJUSTRuSmY2aU1VWXhFPTwvZHM6RGlnZXN0VmFsdWU+PC9kczpSZWZlcmVuY2U+PC9kczpTaWduZWRJbmZvPjxkczpTaWduYXR1cmVWYWx1ZT5ocTNsTndIVmxQZUc0eTVZak0wekpFSjNIYzFHOG43cVBrOXZkQkZqeXlScUkxMnpxSmJyUjVSbTZCMHU5VWY0TlhwNC9RYVhZSlliUmJEOFpEM2U5Mm5hZ2RnV055Sk9XcjNTdGtBdithQStUZ1oySE9qL2N1L0VESFpjeUNoSS9VU05ZSWt5REFRMEZzOEk5ckdwdzVtMXpnZkc2Z0M2UDc2K1VNeDlHNTFPN0FrQVFXTGkvRlVxNXZSd3RRdTRjMVY3QTYrY0d5cWpiQUhGR0dRUnptSWZGTEFaOTRPWFpBSXNuSU10VmVKZjU1VHRyN2h3bFNWZS96RjdsYUU3L1BEQlhHNHpNUjZSY2gvWkt6MjFPdUUrMXlVaGlXLzFubzg1RVRqRE9oMUVZNUQ0NHQyb0JiRDBHMlkvbUpJbjMvV2dyS3VGd09MVnJrTDRoSjdDNlE9PTwvZHM6U2lnbmF0dXJlVmFsdWU+CjxkczpLZXlJbmZvPjxkczpYNTA5RGF0YT48ZHM6WDUwOUNlcnRpZmljYXRlPk1JSURYVENDQWtXZ0F3SUJBZ0lKQVBUb0w5ekZ1emFxTUEwR0NTcUdTSWIzRFFFQkN3VUFNRVV4Q3pBSkJnTlZCQVlUQWtGVk1STXdFUVlEVlFRSURBcFRiMjFsTFZOMFlYUmxNU0V3SHdZRFZRUUtEQmhKYm5SbGNtNWxkQ0JYYVdSbmFYUnpJRkIwZVNCTWRHUXdIaGNOTVRZd056STJNVFEwTURJM1doY05Nall3TnpJMk1UUTBNREkzV2pCRk1Rc3dDUVlEVlFRR0V3SkJWVEVUTUJFR0ExVUVDQXdLVTI5dFpTMVRkR0YwWlRFaE1COEdBMVVFQ2d3WVNXNTBaWEp1WlhRZ1YybGtaMmwwY3lCUWRIa2dUSFJrTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUEyUVpMVUYzYUg5UlYrRUZsVkZRR0VSREc5bnhWUk1CeUZGcXdpdHpkZk1uMTNlUnVPYXR2akNDVUpFTjY2Nzh2enQySXNxMWwrOWFGNWE2Ymt6K2NBc1pGY0ZieUFQbi8yMDBndUZDazhObnhPaVQrRGxDRHdZTFZFb2hYQnJsRUpGaWtvcG50TnZhbTZzZlFkckFVWE9abmZsR0JpK28veGEveFpiMHFmK1NYTnk2SnAxWjcydENWdmtXOVpMVFNqYlJPODlJblZBVE45em8zbzB1SUtFU0tWV0ovNGpJQVFFODRrbDlXQkU4VFpSZ1dCcU1pMnFGSHVaa3NPOEpIRXQrYlFwSW4vMEdvMUltV2c2dkVwaHo3QmhtZEMxNG13cFIyLy9qdzR1NlZqaitQQjNLMFlDKzFBcG1Ea3p1WlJPRXN4K0dqUkZacTVsdFBvb2UrOFFJREFRQUJvMUF3VGpBZEJnTlZIUTRFRmdRVU9YNlFNNytBcURFOHB4REdkVGRaU01QY0tNZ3dId1lEVlIwakJCZ3dGb0FVT1g2UU03K0FxREU4cHhER2RUZFpTTVBjS01nd0RBWURWUjBUQkFVd0F3RUIvekFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBMTJmZitEN1o2UERxT3VJaEg3Q1JMMnIwbjlMcEExM0Q5eVpWYUpPTVFBVmhBWUp6dVQzaTlRMlhFaERPUWJ3d2hSTTRwR1ZJd3ZUQjBnQWdibXZra1ovZTd0Vit3Nmk3WGxDS05OaGtMKzk5T2pWdW4xUU1nMktLMjZkZ1hZMzhtN3MzRU5vcEVkMEFtcksxbFlGWlo2NElwUW1jamYxSkNrRExWcXdWTXNzVmhpSEJiYld6clB4WFJMbXppMWpOUnpHcFVXUlFNUTVERDMrMGcydEhpK1FTaWp5V2RCd1NoWm9odmxBNEVlUzBnbmVuT1UyMUpENXFqL29pNGhxc0dERXdFVU5sa0VPVVE2eW5Ybng0REJiSzBXZDkwcE1DdWpyNXg4M1BlQlczVm93Zjl3TjNKeU55eXgvUUFrTUpQeU1qSGgxL0cvY2h4Q0k3WGFQdTFBPT08L2RzOlg1MDlDZXJ0aWZpY2F0ZT48L2RzOlg1MDlEYXRhPjwvZHM6S2V5SW5mbz48L2RzOlNpZ25hdHVyZT48c2FtbHA6U3RhdHVzPjxzYW1scDpTdGF0dXNDb2RlIFZhbHVlPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6c3RhdHVzOlN1Y2Nlc3MiLz48L3NhbWxwOlN0YXR1cz48c2FtbDpBc3NlcnRpb24geG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgeG1sbnM6eHM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZW1hIiBJRD0iX2NjYTQ5YTdlOTI5ODI1NWNhOTFlOGRmMzlmNmViNDgyN2UwMTQ3NTU3MSIgVmVyc2lvbj0iMi4wIiBJc3N1ZUluc3RhbnQ9IjIwMTctMDgtMjBUMDk6MzQ6MDRaIj48c2FtbDpJc3N1ZXI+dXJuOm1pb3Rlc3Nvcm88L3NhbWw6SXNzdWVyPjxzYW1sOlN1YmplY3Q+PHNhbWw6TmFtZUlEIFNQTmFtZVF1YWxpZmllcj0iaHR0cDovL2xvY2FsaG9zdC9waHAtc2FtbC9kZW1vMS9tZXRhZGF0YS5waHAiIEZvcm1hdD0idXJuOm9hc2lzOm5hbWVzOnRjOlNBTUw6MS4xOm5hbWVpZC1mb3JtYXQ6dW5zcGVjaWZpZWQiPmQyM2JlOGYyYzI1ZDAxY2JlOGY2Nzg4NGFjOTg4NmYwMDIxOTNkOTA8L3NhbWw6TmFtZUlEPjxzYW1sOlN1YmplY3RDb25maXJtYXRpb24gTWV0aG9kPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6Y206YmVhcmVyIj48c2FtbDpTdWJqZWN0Q29uZmlybWF0aW9uRGF0YSBOb3RPbk9yQWZ0ZXI9IjIwMTctMDgtMjBUMDk6Mzk6MDRaIiBSZWNpcGllbnQ9Imh0dHA6Ly9sb2NhbGhvc3QvcGhwLXNhbWwvZGVtbzEvaW5kZXgucGhwP2FjcyIgSW5SZXNwb25zZVRvPSJPTkVMT0dJTl8xZGEwM2IyNGJjYTJlM2FjYjM5N2MyMzcwODU0NzdkNjliMTZiZWY1Ii8+PC9zYW1sOlN1YmplY3RDb25maXJtYXRpb24+PC9zYW1sOlN1YmplY3Q+PHNhbWw6Q29uZGl0aW9ucyBOb3RCZWZvcmU9IjIwMTctMDgtMjBUMDk6MzM6MzRaIiBOb3RPbk9yQWZ0ZXI9IjIwMTctMDgtMjBUMDk6Mzk6MDRaIj48c2FtbDpBdWRpZW5jZVJlc3RyaWN0aW9uPjxzYW1sOkF1ZGllbmNlPmh0dHA6Ly9sb2NhbGhvc3QvcGhwLXNhbWwvZGVtbzEvbWV0YWRhdGEucGhwPC9zYW1sOkF1ZGllbmNlPjwvc2FtbDpBdWRpZW5jZVJlc3RyaWN0aW9uPjwvc2FtbDpDb25kaXRpb25zPjxzYW1sOkF1dGhuU3RhdGVtZW50IEF1dGhuSW5zdGFudD0iMjAxNy0wOC0yMFQwOTozNDowNFoiIFNlc3Npb25Ob3RPbk9yQWZ0ZXI9IjIwMTctMDgtMjBUMTc6MzQ6MDRaIiBTZXNzaW9uSW5kZXg9Il85ODIwNmM1NWIxYTBkM2E1YWJkMjNlOTU2YWU3OGY5NWE4MjY1YTYzMmYiPjxzYW1sOkF1dGhuQ29udGV4dD48c2FtbDpBdXRobkNvbnRleHRDbGFzc1JlZj51cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YWM6Y2xhc3NlczpQYXNzd29yZDwvc2FtbDpBdXRobkNvbnRleHRDbGFzc1JlZj48L3NhbWw6QXV0aG5Db250ZXh0Pjwvc2FtbDpBdXRoblN0YXRlbWVudD48c2FtbDpBdHRyaWJ1dGVTdGF0ZW1lbnQ+PHNhbWw6QXR0cmlidXRlIE5hbWU9InVzZXIiIE5hbWVGb3JtYXQ9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjIuMDphdHRybmFtZS1mb3JtYXQ6YmFzaWMiPjxzYW1sOkF0dHJpYnV0ZVZhbHVlIHhzaTp0eXBlPSJ4czpzdHJpbmciPmFkbWluPC9zYW1sOkF0dHJpYnV0ZVZhbHVlPjwvc2FtbDpBdHRyaWJ1dGU+PC9zYW1sOkF0dHJpYnV0ZVN0YXRlbWVudD48L3NhbWw6QXNzZXJ0aW9uPjwvc2FtbHA6UmVzcG9uc2U+
+</aside>
+
+					<pre><code data-trim>
+<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="_b333cc1efa3f9b8081de7289d42c1184554dbbaea8" Version="2.0" IssueInstant="2017-08-20T09:34:04Z" Destination="http://localhost/php-saml/demo1/index.php?acs" InResponseTo="ONELOGIN_1da03b24bca2e3acb397c237085477d69b16bef5"><saml:Issuer>urn:miotessoro</saml:Issuer><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+  <ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+    <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+  <ds:Reference URI="#_b333cc1efa3f9b8081de7289d42c1184554dbbaea8"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>T+HmO2NG+GoT12TI4nJf6iMUYxE=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>hq3lNwHVlPeG4y5YjM0zJEJ3Hc1G8n7qPk9vdBFjyyRqI12zqJbrR5Rm6B0u9Uf4NXp4/QaXYJYbRbD8ZD3e92nagdgWNyJOWr3StkAv+aA+TgZ2HOj/cu/EDHZcyChI/USNYIkyDAQ0Fs8I9rGpw5m1zgfG6gC6P76+UMx9G51O7AkAQWLi/FUq5vRwtQu4c1V7A6+cGyqjbAHFGGQRzmIfFLAZ94OXZAIsnIMtVeJf55Ttr7hwlSVe/zF7laE7/PDBXG4zMR6Rch/ZKz21OuE+1yUhiW/1no85ETjDOh1EY5D44t2oBbD0G2Y/mJIn3/WgrKuFwOLVrkL4hJ7C6Q==</ds:SignatureValue>
+<ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIDXTCCAkWgAwIBAgIJAPToL9zFuzaqMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMTYwNzI2MTQ0MDI3WhcNMjYwNzI2MTQ0MDI3WjBFMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2QZLUF3aH9RV+EFlVFQGERDG9nxVRMByFFqwitzdfMn13eRuOatvjCCUJEN6678vzt2Isq1l+9aF5a6bkz+cAsZFcFbyAPn/200guFCk8NnxOiT+DlCDwYLVEohXBrlEJFikopntNvam6sfQdrAUXOZnflGBi+o/xa/xZb0qf+SXNy6Jp1Z72tCVvkW9ZLTSjbRO89InVATN9zo3o0uIKESKVWJ/4jIAQE84kl9WBE8TZRgWBqMi2qFHuZksO8JHEt+bQpIn/0Go1ImWg6vEphz7BhmdC14mwpR2//jw4u6Vjj+PB3K0YC+1ApmDkzuZROEsx+GjRFZq5ltPooe+8QIDAQABo1AwTjAdBgNVHQ4EFgQUOX6QM7+AqDE8pxDGdTdZSMPcKMgwHwYDVR0jBBgwFoAUOX6QM7+AqDE8pxDGdTdZSMPcKMgwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEA12ff+D7Z6PDqOuIhH7CRL2r0n9LpA13D9yZVaJOMQAVhAYJzuT3i9Q2XEhDOQbwwhRM4pGVIwvTB0gAgbmvkkZ/e7tV+w6i7XlCKNNhkL+99OjVun1QMg2KK26dgXY38m7s3ENopEd0AmrK1lYFZZ64IpQmcjf1JCkDLVqwVMssVhiHBbbWzrPxXRLmzi1jNRzGpUWRQMQ5DD3+0g2tHi+QSijyWdBwShZohvlA4EeS0gnenOU21JD5qj/oi4hqsGDEwEUNlkEOUQ6ynXnx4DBbK0Wd90pMCujr5x83PeBW3Vowf9wN3JyNyyx/QAkMJPyMjHh1/G/chxCI7XaPu1A==</ds:X509Certificate></ds:X509Data></ds:KeyInfo></ds:Signature><samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status><saml:Assertion xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" ID="_cca49a7e9298255ca91e8df39f6eb4827e01475571" Version="2.0" IssueInstant="2017-08-20T09:34:04Z"><saml:Issuer>urn:miotessoro</saml:Issuer><saml:Subject><saml:NameID SPNameQualifier="http://localhost/php-saml/demo1/metadata.php" Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">d23be8f2c25d01cbe8f67884ac9886f002193d90</saml:NameID><saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"><saml:SubjectConfirmationData NotOnOrAfter="2017-08-20T09:39:04Z" Recipient="http://localhost/php-saml/demo1/index.php?acs" InResponseTo="ONELOGIN_1da03b24bca2e3acb397c237085477d69b16bef5"/></saml:SubjectConfirmation></saml:Subject><saml:Conditions NotBefore="2017-08-20T09:33:34Z" NotOnOrAfter="2017-08-20T09:39:04Z"><saml:AudienceRestriction><saml:Audience>http://localhost/php-saml/demo1/metadata.php</saml:Audience></saml:AudienceRestriction></saml:Conditions><saml:AuthnStatement AuthnInstant="2017-08-20T09:34:04Z" SessionNotOnOrAfter="2017-08-20T17:34:04Z" SessionIndex="_98206c55b1a0d3a5abd23e956ae78f95a8265a632f"><saml:AuthnContext><saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:Password</saml:AuthnContextClassRef></saml:AuthnContext></saml:AuthnStatement><saml:AttributeStatement><saml:Attribute Name="user" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"><saml:AttributeValue xsi:type="xs:string">admin</saml:AttributeValue></saml:Attribute></saml:AttributeStatement></saml:Assertion></samlp:Response>
+</code>
+					</pre>
+				
+				</section>
+
+				<section><h2>Strumenti di debugging</h2>
+				<ul>
+				<li>Mozilla Firefox: <a href="https://addons.mozilla.org/it/firefox/addon/saml-tracer/">SAML tracer</a></li>
+				<li>Mozilla Firefox: <a href="https://addons.mozilla.org/En-us/firefox/addon/sso-tracer/">SSO Tracer</a></li>
+				<li>Google Chrome: <a href="https://chrome.google.com/webstore/detail/saml-chrome-panel/">SAML Chrome Panel</a></li>
+				<li>Google Chrome: <a href="https://chrome.google.com/webstore/detail/saml-devtools-extension/">SAML DevTools extension</a></li>
+				</ul>
+				<aside class="notes">
+				https://www.netiq.com/communities/cool-solutions/useful-firefox-saml-tool-debugging-problems/
+				https://ping.force.com/Support/PingIdentityArticle?id=kA3400000008S68CAE
+				https://www.samltool.com/saml_tools.php
+				</aside>
+				</section>				
+				
+				<section><h2>Profili</h2>
+				<p>Un <i>profilo</i> specifica come un'applicazione usa i protocolli, i messaggi e i binding SAML</p>
+				Web Browser SSO Profile
+				Binding sul back channel: possibili usi
+				ECP profile
+				<aside class="notes">
+				https://www.cse.wustl.edu/~jain/cse571-07/ftp/websso/index.html
+				</aside>
+				</section>
+
+				<section id="SAML2Int"><h2>SAML2Int</h2>
+				<p>Il <a href="http://saml2int.org/profile">Interoperable SAML 2.0 Profile</a> (SAML2Int)
+				è una raccomandazione di comportamenti e opzioni per il deploy di un servizio
+				SAML 2.0 WebSSO Deployment Profile con il massimo dell'interoperabilità</p>
+				
+					<aside class="notes">
+Ci limitiamo a questo... 
+Supportato da Feide (Norvegia), Haka (Filandia), eduGAIN (Geant), RedIRIS (Spagna), e altre RENs
+https://saml2int.org/partners/
+					</aside>
+				</section>
+				
+	<section><h2>Asserzioni</h2>
+	esempio
+	</section>
+	
+	<section id="slo"><h2>Single Logout (SLO)</h2>
+	Passando dal <i>front-channel</i> e adattando la maggior parte delle applicazioni le sessioni locali al SSO, il Single Logout è controintuitivo per gli utenti:
+	<ul>
+		<li>si disconnette da un servizio e, se va tutto bene, si trova disconnesso da tutti</li>
+		<li>oppure ritrova con una sessione <i>zombie</i> locale</li>
+		<li>oppure riceve un errore da un servizio che non ricorda di aver aperto</li>
+		<li>o altro ancora...</li>
+	</ul>
+	L'unico meccanismo di SLO affidabile è la chiusura del browser
+	<aside class="notes">
+Una sessione zombie "risorge" facendo back dal browser o simili...
+La maggior parte dei servizi a cui è abituato (Amazon, Facebook, ecc...) sono sempre connessi, quindi la mancanza di logout non è più insolita
+https://www.switch.ch/aai/support/presentations/sp-training-2014/T6-1-Logout-Support-SP.pdf
+	</aside>	
+	</section>
+	
+	<section><h2>Single Logout (SLO)</h2>
+<script type="https://www.websequencediagrams.com">
+title Single Logout
+
+participant utente (UA) as UA
+participant SP 1 as SP1
+participant IdP as IdP
+participant SP 2 as SP2
+participant SP ... as more
+participant SP n as SPn
+
+UA->SP1: voglio scollegarmi!
+note left of UA: dal bottone di logout
+SP1-->UA: redirect to IdP <LogoutRequest>
+UA->IdP: <LogoutRequest>
+IdP-->UA: redirect to SP 2 <LogoutRequest>
+UA->SP2: <LogoutRequest>
+SP2-->UA: redirect to IdP <LogoutResponse>
+UA->IdP: <LogoutResponse>
+IdP-->UA: redirect to SP n <LogoutRequest>
+UA->SPn: <LogoutRequest>
+SPn-->UA: redirect to IdP <LogoutResponse>
+UA->IdP: <LogoutResponse>
+IdP-->UA: redirect to SP 1 <LogoutRequest>
+note left of SP1: logout dalla\nsessione locale
+SP1->UA: fatto!
+</script>
+<iframe width="900" height="400" srcdoc="<img src='diagramma-slo.png'>"></iframe>
+	
+	</section>
+
+	<section><h2>Errore Partial Logout</h2>
+	</section>
+	
+	<section><h2>NameID</h2>
+	vari formati del 	
+	</section>
+					
+			</section>
+
+			<section>
+				<!-- parte 3 -->
+				
+				<section><h2>Ruolo dell'SP</h2>
+				<p>esempi</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+			</section>
+			
+			<section>
+				<!-- parte 4 -->
+				
+				<section><h2>Metadati</h2>
+				<p>Come fanno IdP e SP a "conoscersi"? Si scambiano i <i>metadati</i></p>
+				<ul>
+					<li>ogni attore è identificato da un <i>EntityID</i> (un URI nel namespace dell'organizzazione) 
+					<li>informazioni di contorno per l'utente (nome del servizio, contatti, loghi, ecc...)</li>
+					<li>chiavi crittografiche (pubbliche :-) e loro uso</li>
+					<li>il formato di nomi supportato (NameIDFormat)
+					<li>per IdP: binding e location dei servizi supportati SSO, SLO, Artifact Resolution, AA, ecc...</li>
+					<li>per SP: binding e location dei servizi supportati ACS, SLO, Artifact Resolution, ecc...</li>
+				</ul>
+				Lo standard di interscambio è XML
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section><h2>Esempi metadati</h2>
+				<!-- per formattare:
+				https://support.mozilla.org/it/questions/1016939
+				-->
+				<a href="idp-univpm.xml" target="_blank">IdP Università Politecnica delle Marche</a>
+				<a href="sp-wiki-idem.xml" target="_blank">SP Wiki IDEM</a>
+				</section>
+				
+				<section><h2>Metadati</h2>
+				<p>Come gestirli</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section><h2>Metadati</h2>
+				<p>Come scambiarli</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+			</section>
+			
+			<section>
+				<!-- parte 5 -->
+				
+				<section><h2>Discovery</h2>
+				La fase di discovery/WAYF
+				<p>Servizio locale/servizio centralizzato</p>
+				</section>
+
+				<section><h2>Metadati</h2>
+				<p>Identificatori utente scoped</p>
+				</section>
+
+			</section>
+			
+			<section>
+				<!-- parte 6 -->
+				
+				<section><h2>Autenticazione gestita dal container/web server</h2>
+				<a href="shibboleth.html">Esempio Shibboleth SP</a>
+installazione
+configurazione
+
+				</section>
+
+				<section><h2>interazione con Tomcat</h2>
+				<p>Identificatori utente scoped</p>
+				<p>dietro reverse proxy</p>
+				</section>
+
+				<section><h2>Shibboleth su reverse proxy</h2>
+				Un <i>reverse proxy</i> può fornire servizi di autenticazione alle applicazioni retrostanti e di <i>off-load SSL</i>
+				<aside class="notes">
+				Non deve esserci modo per raggiungere le applicazioni per altre vie!
+				</aside>
+				<p>Per non interferire con eventuali applicazioni "shibbolettizate" conviene cambiare il nome dell'endpoint:</p>
+				<pre>
+				in /etc/shibboleth2.xml
+				default /Shibboleth.sso
+				&lt;Sessions lifetime="28800" timeout="3600" checkAddress="false"
+					handlerURL="/Shibboleth-LB.sso"
+					relayState="ss:mem" handlerSSL="false">
+				</pre>
+
+				<pre>
+				in /etc/apache/site-enabled/sito....
+				
+				<VirtualHost *:443>
+  ServerName     sito
+
+  ProxyPass /Shibboleth-LB.sso/ !
+
+  RequestHeader set X-UNIGE-EMPLOYEENUMBER "%{employeeNumber}e"
+  RequestHeader set X-UNIGE-STUDENTID "%{studentId}e"
+  RequestHeader set X-UNIGE-CN "%{cn}e"
+  RequestHeader set X-UNIGE-MAIL "%{mail}e"
+  RequestHeader set X-UNIGE-UID "%{uid}e"
+  RequestHeader set X-UNIGE-eduPersonPrincipalName "%{eppn}e"
+  RequestHeader set X-UNIGE-DEPARTMENTNUMBER "%{departmentNumber}e"
+  RequestHeader set X-UNIGE-EMPLOYEETYPE "%{employeeType}e"
+  RequestHeader set X-UNIGE-eduPersonAffiliation "%{unscoped-affiliation}e"
+  RequestHeader set X-Proxy-Shib-Session-ID "%{Shib-Session-ID}e"
+  <Location /prove/>
+    AuthType shibboleth
+    ShibRequestSetting requireSession 1
+    #Require valid-user
+    Require affiliation employee@unige.it
+    ProxyPass http://backend..
+    ProxyPassReverse ...
+  </Location>
+
+				</pre>
+				
+				<aside class="notes">
+				https://wiki.shibboleth.net/confluence/display/SHIB2/SPReverseProxy
+				</aside>
+				
+				<p>criteri di sicurezza e anti spoofing</p>
+				</section>
+
+	<section><h2>Logout da reverse proxy</h2>
+	</section>				
+				
+				<section><h2>Alternativa: mod_auth_mellon</h2>
+				<p>Un modulo Apache con un semplice SAML 2.0 service provider
+https://github.com/UNINETT/mod_auth_mellon
+Sviluppato da REN norvegese</p>
+				</section>
+
+				<section><h2>Alternativa: mod_auth_memcookie</h2>
+				<p>Mooolto diverso, non è neanche una vera alternativa ma spiega il concetto
+				
+				https://zenprojects.github.io/Apache-Authmemcookie-Module/
+Un modulo di SimpleSAMLphp inizializza una sessione per Auth MemCookie				
+</p>
+				</section>
+
+			</section>			
+
+			<section>
+				<!-- parte 7 -->
+				
+				<section><h2>Autenticazione gestita dalle applicazioni/librerie</h2>
+				</section>
+
+				<section id="ssp"><h2>SimpleSAMLphp</h2>
+				<p><a href="https://simplesamlphp.org/">SimpleSAMLphp</a> (SSP) è una libreria PHP sviluppata dalla REN norvegese UNINETT</p>
+				<ul>
+					<li>opensource</li>
+					<li>funzionalità di IdP e SP</li>
+					<li>non richiede interventi a livello di sistema (quasi...)</li>
+					<li>supporta SAML 2.0, Shibboleth 1.3, A-Select, CAS, OpenID, WS-Federation, OAuth, ecc...</li>
+				</ul>
+				<aside class="notes">
+				Ne sappiamo qualcosa:
+				https://github.com/simplesamlphp/simplesamlphp/blob/master/lib/SimpleSAML/Utils/HTTP.php
+				attorno a linea 460
+				https://github.com/simplesamlphp/simplesamlphp/commits?author=biancini
+				</aside>
+				</section>
+
+				<section><h2>SSP: installazione</h2>
+<pre><code data-trim>
+cd /var
+wget https://simplesamlphp.org/download?latest
+tar xzf simplesamlphp-1.14.x.tar.gz
+ln -s simplesamlphp-1.14.x simplesamlphp
+</code></pre>
+In Apache
+<pre><code data-trim>
+        SetEnv SIMPLESAMLPHP_CONFIG_DIR /var/simplesamlphp/config
+        Alias /simplesaml /var/simplesamlphp/www
+        <Directory /var/simplesamlphp/www>
+            # For Apache 2.4:
+            Require all granted
+        </Directory>
+</code></pre>
+
+
+				<aside class="notes">
+La procedura differisce leggermente da quella ufficiale, qualche particolare omesso
+per le librerie si può usare Composer
+
+Requisiti:
+PHP version >= 5.3.0.
+Support for the following PHP extensions:
+Always required: date, dom, hash, libxml, openssl, pcre, SPL, zlib, json
+When automatically checking for latest versions, and used by some modules: cURL
+When using encryption or digital signatures: mcrypt
+When authenticating against LDAP server: ldap
+When authenticating against RADIUS server: radius
+When using native PHP session handler: session
+When saving session information to a memcache server: memcache
+When using databases:
+Always: PDO
+Database driver: (mysql, pgsql, ...)
+
+            <IfModule !mod_authz_core.c>
+            # For Apache 2.2:
+            Order allow,deny
+            Allow from all
+            </IfModule>
+            <IfModule mod_authz_core.c>
+            # For Apache 2.4:
+            Require all granted
+            </IfModule>
+
+				</aside>
+				</section>
+
+				<section><h2>SSP: autodiagnosi</h2>
+				Aprire https://localhost:7080/simplesaml/
+				<img src="ssp-autodiag.png" />
+				</section>
+
+				<section><h2>SSP: configurazione</h2>
+File di configurazione e metadati sono in PHP
+Editare /var/simplesamlphp/config/config.php
+
+<pre><code data-trim>
+'auth.adminpassword' => ...
+'secretsalt' => ...
+'technicalcontact_name' => 'Supporto Tecnico',
+'technicalcontact_email' => 'idem-corso@garr.it',
+'language.default' => 'it',
+'timezone' => 'Europe/Rome',
+'session.store' => ...
+</code></pre>
+
+				</section>
+
+				<section><h2>SSP: metadati IdP</h2>
+I metadati dell'IdP/federazione vanno salvati in metadata/saml20-idp-remote.php
+
+Possibile editarli a mano:
+<pre><code data-trim>
+$metadata['https://idp-corso.irccs.garr.it/idp/shibboleth'] = array(
+    'name' => array(
+          'it' => 'IdP di test per il corso',
+    ),
+    'SingleSignOnService' =>
+'https://idp-corso.irccs.garr.it/idp/profile/SAML2/Redirect/SSO',
+    'certFingerprint' => 'BF:3E:8D:4C:7A:ED:C2:D1:61:20:00:9B:19:B7:C9:FA:44:27:9D:61',
+);
+</code></pre>
+				</section>
+
+				<section><h2>SSP: metadati IDEM</h2>
+Per la federazione, ssp fornisce un tool di conversione XML → PHP
+
+Comprende un modulo (metarefresh) per l'aggiornamento automatico
+</section>
+
+				<section><h2>SSP: chiavi SP</h2>
+Chiave e certificato vanno in cert/
+
+cp /etc/shibboleth/sp-key.pem /var/simplesamlphp/cert/
+cp /etc/shibboleth/sp-cert.pem /var/simplesamlphp/cert/
+chown www-data /var/simplesamlphp/cert/sp-key.pem
+</section>
+
+				<section><h2>SSP: configurazione SP</h2>
+Editare config/authsources.php
+'sp-idem' => array(
+    'saml:SP',
+    'entityID' => 'https://sp2.local/simplesaml',
+    'privatekey' => 'sp-key.pem',
+    'certificate' => 'sp-cert.pem',
+    'idp' => NULL,  // Specificare un IdP
+    'discoURL' => NULL, 
+       // Specificare un Discovery Service
+    ...
+Discovery Service
+    'idp' => 'entityID IdP',
+Redirige direttamente all'IdP (Web SSO senza DS)
+
+    'discoURL' => 'https://wayf.idem-test...',
+Redirige al servizio di CDS
+
+    'idp' => NULL, 'discoURL' => NULL
+Usa un EDS “basic”
+EDS
+Presenta l'elenco degli IdP in
+metadata/saml20-idp-remote.php 
+Metadati SP
+    ...
+    'OrganizationName' => 'IDEM',
+    'OrganizationDisplayName' =>
+        'Federazione IDEM',
+    'OrganizationURL' =>
+        'http://www.idem.it',
+    ...
+
+Metadati UI per IDEM
+    ...
+    'UIInfo' => array(
+        'DisplayName' => array(
+            'en' => 'SP Single Sign-on (ssp)',
+            'it' => 'SP Single Sign-on (ssp)'
+        ),
+        'Description' => array(
+            'it' => 'Service Provider di Esempio per il corso  "Abilitare le applicazioni web al Single Sign-on con strumenti SAML" (versione ssp)'
+        ),
+        'InformationURL' => array(
+            'en' => 'https://sp1.local/',
+        ),
+        'PrivacyStatementURL' => array(
+            'en' => 'https://sp2-test.garr.it/privacy.html',
+        ),
+        'Logo' => array(
+            array(
+                'url'    => 'http://example.com/logo1.png',
+                'height' => 200, 'width'  => 400, 'lang'   => 'en',
+            ),
+         ...
+    ),
+    ...
+
+Requested attributes
+Servono entrambi per includerli nei metadati
+    ...
+    'attributes' =>
+        array('eduPersonEntitlement',
+            'mail'),
+    'name' => array('it' =>
+            'SP Single Sign-on'),
+    ...
+
+Recupero dei metadati
+Tab “Federazione” della pagina di amministrazione
+Inviarli a IDEM o caricarli sull'IdP
+Autenticazione da PHP
+<?php
+require_once('/var/simplesamlphp/lib/_autoload.php');
+$as = new SimpleSAML_Auth_Simple('sp-idem');
+if (!$as->isAuthenticated()) {
+    $as->login();
+}
+$attributes = $as->getAttributes();
+print_r($attributes);
+Troubleshooting
+Usare la pagina di test
+
+Attivare il logging:
+editare config/config.php
+    'debug' => TRUE,
+    'logging.level' => SimpleSAML_Logger::INFO,
+    'logging.handler' => 'file',
+chown www-data log/
+
+Attributi
+Gli attributi sono restituiti come array
+Nessun problema con gli attributi multivalore
+Possono essere manipolati da filtri post-auth
+'authproc' => array(
+   // Da OID a friendlyNames
+   90 => array('class' =>
+      'core:AttributeMap','oid2name'),
+   ),
+
+Configurazione alternativa
+Cambiare directory
+<?php
+require_once('/var/simplesamlphp/lib/_autoload.php');
+SimpleSAML_Configuration::setConfigDir('/tmp');
+$as = new SimpleSAML_Auth_Simple('sp-idem');
+...
+Config override
+$config = array (   
+    'override.host' => array(
+        'sp.andreas.feide.no' => 'config.test.php',
+        'sp1.anderas.feide.no' => 'config.test.php',
+        'sp2.anderas.feide.no' => 'config.test.php',
+    ),
+
+</section>
+
+				
+				
+				<section><h2>Alternative: Onelogin</h2>
+				<p></p>
+				</section>
+
+				<section><h2>Alternative: pysaml2</h2>
+				<p></p>
+				</section>
+
+				<section><h2>Alternative: Java</h2>
+				<p></p>
+				</section>
+
+			</section>
+
+			<section>
+				<!-- parte 8 -->
+				
+				<section><h2>Servizi cloud</h2>
+				</section>
+
+				<section><h2>Auth0</h2>
+				<p></p>
+				</section>
+			</section>
+
+			<section>
+				<!-- parte 9 -->
+				
+				<section><h2>Linee guida siti con autenticazione federata</h2>
+				</section>
+
+				<section><h2></h2>
+				<p>Slide di Lalla...</p>
+				</section>
+			</section>
+				
+			<section>
+				<!-- parte 10 -->
+				
+				<section><h2>Spid</h2>
+				</section>
+
+			</section>
+				
+			</div>
+			
+		</div>
+<!--
+IdP fornito da GARR
+Virtual box
+1 debug lato browser
+1 esercizio su Shibboleth
+	- configurazione
+	- pagina di status
+	- reverse proxy
+	- logout
+1 esercizio su PHP
+	- lazy session
+
+-->
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>

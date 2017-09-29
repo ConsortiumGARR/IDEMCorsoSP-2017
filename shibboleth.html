@@ -1,0 +1,474 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Corso SP 2017: Shibboleth SP</title>
+		<meta name="author" value="Marco Ferrante, marco@csita.unige.it">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+		<style type="text/css">
+		</style>
+	</head>
+	<body>
+
+	<div class="reveal"><div class="slides">
+
+	<section><h1>Shibboleth SP</h1>
+	</section>
+	
+	<section><h2>Ubuntu</h2>
+	<p>Installazione</p>
+	<pre><code data-trim>
+$ apt-get install libapache2-mod-shib2
+$ shib-keygen
+	</code></pre>
+	
+	<dl>
+		<dt>configurazione</dt>
+		<dd><code>/etc/shibboleth</code></dd>
+		<dt>log</dt>
+		<dd><code>/var/log/shibboleth/shibd.log</code></dd>
+	</dl>
+
+	<pre><code data-trim>
+$ service shibd restart
+	</code></pre>
+	
+	<p><small>il riavvio non sempre è necessario ma ci può essere parecchia latenza prima che le modifiche vengano recepite</small></p>
+	
+	<table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a href="http://manpages.ubuntu.com/manpages/xenial/man8/shib-keygen.8.html">http://manpages.ubuntu.com/manpages/xenial/man8/shib-keygen.8.html</a>
+		</td></tr></table>		
+		
+	</section>
+	
+	<section><h2><i>handler</i></h2>
+	<p><code>/Login</code>, <code>/SAML2</code>, <code>/Slo</code>, ecc... si trovano sotto la base <code>/Shibboleth.sso</code></p>
+	<pre>shibboleth.xml<code data-trim data-noescape>
+&lt;ApplicationDefaults ...
+    &lt;Sessions ... <mark>handlerURL="/newSSOhandler"</mark>&gt;
+	</code></pre>
+
+	<p>provate subito con <code>/Shibboleth.sso/Status</code></p>
+	<pre>shibboleth.xml<code data-trim data-noescape>
+&lt;Handler type="Status" Location="/Status"
+	acl="127.0.0.1 10.0.0.1 ::1"/&gt;
+	</code></pre>
+
+	<table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxInstall">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxInstall</a></td></tr>
+		<tr><td></td><td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApplicationOverride">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApplicationOverride</a>
+		</td></tr></table>
+		
+	<aside class="notes">
+	Che ci sia un ApplicationDefault suggerisce che esistano gli ApplicationOverride :-)
+	</aside>
+	</section>
+	
+	<section id="config"><h2>metadati SP</h2>
+	
+	<pre>shibboleth.xml<code data-noescape>
+&lt;ApplicationDefaults entityID="<mark>https://corso-sp/</mark>"
+	REMOTE_USER="eppn persistent-id targeted-id"&gt;
+	</code></pre>
+
+	<p><code>/Shibboleth.sso/Metadata</code> da <strong>mandare</strong> a IdP o federazione</p>
+	<p><a href="metadata-shib.xml" target="_blank">esempio</a></p>
+	<aside class="notes">
+	Solo elementi utili per SAML2int
+	</aside>	
+	</section>
+	
+	<section><h2>metadati IdP</h2>
+	
+	<pre>mio-idp-metadata.xml<code data-trim>
+&lt;?xml version="1.0"?&gt;
+&lt;md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+	xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+	entityID="urn:miotessoro"&gt;
+  &lt;md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"&gt;
+...
+    &lt;/md:KeyDescriptor&gt;
+    &lt;md:SingleLogoutService
+		Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+		Location="http://localhost:8080/simplesaml/saml2/idp/SingleLogoutService.php"/&gt;
+    &lt;md:NameIDFormat&gt;urn:oasis:names:tc:SAML:2.0:nameid-format:transient&lt;/md:NameIDFormat&gt;
+    &lt;md:SingleSignOnService
+		Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+		Location="http://localhost:8080/simplesaml/saml2/idp/SSOService.php"/&gt;
+  &lt;/md:IDPSSODescriptor&gt;
+...
+&lt;/md:EntityDescriptor&gt;
+	</code></pre>
+	</section>
+	
+	<section>	
+	<pre>shibboleth.xml<code data-trim>
+&lt;Sessions ...
+	&lt;SSO entityID="urn:miotessoro"
+		 discoveryProtocol="SAMLDS"
+		 discoveryURL="https://ds.example.org/DS/WAYF"&gt;
+	  SAML2 SAML1
+	&lt;/SSO&gt;
+...
+	&lt;MetadataProvider type="XML"
+		file="mio-idp-metadata.xml"/&gt;
+
+	</code></pre>
+
+	<p><code>https://localhost/Shibboleth.sso/Login?entityID=urn:miotessoro</code></p>
+	</section>
+	
+	<section><h2>Sessioni <i>lazy</i></h2>
+	<p>Nelle sessioni attive l'accesso alla risorsa richiede una sessione SP
+		valida e se non presente l'utente viene rediretto all'handler di autenticazione</p>
+	<p>Nelle sessioni <i>lazy</i> se esiste una sessione valida, i parametri vengono
+		inoltrati al successivo modulo, altrimenti la richiesta viene
+		esaudita senza parametri</p>
+	<pre><code data-trim>
+&lt;?php
+if (empty($_SERVER['Shib-Session-ID'])) {
+	header('Location: https://localhost/Shibboleth.sso/Login?entityID=urn:miotessoro&target=https%3A%2F%2Flocalhost%2Fprivate%2F');
+	exit;
+}
+
+		</code></pre>
+
+	<aside class="notes">
+	Lazy o passive
+
+Initiator Protocol
+This protocol supports a small set of query string parameters that correspond to identically named attributes that can be supplied either directly on a <SessionInitiator> element or as content settings on a per-resource basis.
+When a query string parameter is used, it overrides any other source of the same setting/property.
+Not all SessionInitiator handlers support all the possible parameters. In fact, most are specific to the SAML2 handler. Unsupported parameters are ignored.
+entityID (URI)
+The IdP to request authentication from.
+target (absolute URL)
+The URL to return the user to after authenticating. If unspecified, the homeURL attribute for the application is used.
+acsIndex (string)
+The index value of the <md:AssertionConsumerService> element to instruct the IdP to use in returning an assertion to the SP.
+forceAuthn (boolean) (defaults to false) (SAML2 only)
+Establish a value for the ForceAuthn attribute of the <samlp:AuthnRequest>. This asks for forced reauthentication by the IdP (bypassing SSO).
+isPassive (boolean) (defaults to false) (SAML2 and SAMLDS only)
+Establish a value for the IsPassive attribute of the <samlp:AuthnRequest> or the IsPassive parameter of the DS redirect.
+authnContextClassRef (URI) (SAML2 only)
+Requests that a particular authentication context class be used by the IdP. As of V2.5, this can be a whitespace-delimited list of classes to request.
+authnContextComparison ("exact", "minimum", "maximum", "better") (defaults to "exact") (SAML2 only)
+Indicates the required relationship between a requested context class and the resulting form of authentication. The Shibboleth 2.x IdP currently supports only "exact".
+NameIDFormat (URI) (SAML2 only) (Version 2.3 and Above)
+If set, causes the authentication request to carry a saml:NameIDPolicy with a Format containing the provided value. If the receiving IdP can not fulfill this requirement it should return an error response.
+SPNameQualifier (URI) (SAML2 only) (Version 2.3 and Above)
+If set, causes the authentication request to carry a saml:NameIDPolicy with an SPNameQualifier containing the provided value. If the receiving IdP can not fulfill this requirement it should return an error response.
+discoveryPolicy (string) (SAMLDS only) (Version 2.5 and Above)
+Used as input to some discovery protocols that take parameters modifying discovery behavior. In the case of the type="SAMLDS"SessionInitiator, this is passed as a policy parameter value.
+template (base64-encoded SAML <AuthnRequest> message) (SAML2 only) (Version 2.6 and Above)
+If supplied, the eventual SAML request is constructed based on the message supplied, apart from per-request information or settings supplied directly in the configuration or as parameters. Allows a message to be constructed externally with extensions or dynamic content, and then re-issued by the SP.
+	</aside>
+	</section>	
+	
+	
+	<section><h2><i>Apache</i></h2>
+	<ol>
+		<li>create una directory /var/www/html/private</li>
+		<li><pre>/var/www/html/private/index.php<code data-trim>
+&lt;?php
+print_r($_SERVER);
+
+		</code></pre></li>
+		<li><pre>/var/www/html/private/.htaccess<code data-trim data-noescape>
+AuthType shibboleth
+ShibRequestSetting requireSession <mark>true</mark>
+require <mark>shibbboleth</mark>
+		</code></pre></li>
+	</ol>
+	
+	<p>aprite <code>https://localhost/private/</code></p>
+	
+	<aside class="notes">
+	Se occorre
+	<Directory /var/www/html>
+			AllowOverride AuthConfig
+	</Directory>
+	Se Apache 2.2:
+	ShibCompatWith24 on
+	Qualunque utente valido
+	
+	<a href="https://localhost/Shibboleth.sso/Logout?return=https%3A%2F%2Flocalhost%2Fprivate%2Flanding.php">Logout</a>;
+	
+	</aside>
+	</section>	
+
+		<section><h2><i>Apache lazy session</i></h2>
+
+		<pre>/var/www/html/private/.htaccess<code data-trim data-noescape>
+AuthType shibboleth
+ShibRequestSetting requireSession <mark>false</mark>
+require shibolleth
+		</code></pre>
+		
+		<pre>/var/www/html/private/index.php<code data-noescape>
+&lt;a href="https://localhost/Shibboleth.sso/&#8617;
+  Login?target=https%3A%2F%2Flocalhost%2Fprivate%2F"&gt;&#8617;
+  Login&lt;/a&gt;
+&lt;a href="https://localhost/Shibboleth.sso/&#8617;
+  Logout?return=https%3A%2F%2Flocalhost%2Fprivate%2F"&gt;&#8617;
+  Logout&lt;/a&gt;
+		</code></pre>
+	
+	<aside class="notes">
+	Se il target non è specificato usa la homeUrl dell'applicazione (definita in shibboleth)
+	Meglio fare logout...
+	
+	SecurityPolicyException Security of LogoutResponse not established.
+	
+	</aside>
+	</section>	
+
+	<section><h2>SecurityPolicyException 1</h2>
+	Se ritorna
+	
+<pre><code data-trim>
+SecurityPolicyException ....
+Security of LogoutResponse not established.
+		</code></pre>
+	probabilmente l'IdP non firma le risposte di logout
+	</section>	
+
+	<section><h2><i>NameID e attributi</i></h2>
+<pre>$ tail /var/log/shibboleth/shibd.log<code data-trim>
+2017-08-31 09:30:56 INFO Shibboleth.AttributeExtractor.XML&#8617;
+  [10]: skipping unmapped SAML 2.0 Attribute with Name: uid,&#8617;
+  Format:urn:oasis:names:tc:SAML:2.0:attrname-format:basic
+2017-08-31 09:30:56 INFO Shibboleth.AttributeExtractor.XML&#8617;
+  [10]: skipping unmapped SAML 2.0 Attribute with Name:&#8617;
+  eduPersonAffiliation, Format:urn:oasis:names:tc:SAML:2.0:&#8617;
+  attrname-format:basic
+2017-08-31 09:30:56 INFO Shibboleth.SessionCache [10]:&#8617;
+  new session created: ID (_6a93c...4b4)&#8617;
+  IdP (urn:miotessoro) Protocol(urn:oasis:names:tc:&#8617;
+  SAML:2.0:protocol) Address (10.0.2.2)
+</code></pre>
+	
+	<aside class="notes">
+	Vedete non ci sono attributi, neppure il nome utente (mappato in REMOTE_USER per retrocompatibilità)
+	</aside>
+	</section>	
+
+	<section>
+<p>Shibboleth (e la federazione) preferisce gli attributi con nomi in formato URN</p>
+
+<p>de-commentate gli attributi che vi occorrono</p>
+<pre>/etc/shibboleth/attribute-map.xml<code data-trim>
+decommentate quel che serve
+</code></pre>
+	
+	<aside class="notes">
+	Rivedete la pagina di test ci sono gli attributi, ma manca ancora REMOTE_USER
+	</aside>
+	</section>	
+
+	<section>
+	<p>stiamo usando eduPersonPersonalName (eppn)</p>
+
+	<pre>shibboleth.xml<code data-trim data-noescape>
+&lt;ApplicationDefaults entityID="https://corso-sp/"
+	REMOTE_USER="<mark>eppn</mark> persistent-id targeted-id"&gt;
+	</code></pre>
+	
+<pre>$ tail /var/log/shibboleth/shibd.log<code data-trim>
+2017-08-31 10:22:50 WARN Shibboleth.AttributeFilter [1]:
+  removed value at position (0) of attribute (eppn) from (urn:miotessoro)
+2017-08-31 10:22:50 WARN Shibboleth.AttributeFilter [1]:
+  no values left, removing attribute (eppn) from (urn:miotessoro)
+</code></pre>
+
+<pre>mio-idp-metadata.xml<code data-trim>
+  &lt;md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"&gt;
+    &lt;md:Extensions xmlns:shibmd="urn:mace:shibboleth:metadata:1.0"&gt;
+      &lt;shibmd:Scope regexp="false"&gt;idem.garr.it&lt;/shibmd:Scope&gt;
+    &lt;/md:Extensions&gt;
+</code></pre>
+	
+	<aside class="notes">
+	Riprovate, ora va :-)
+	</aside>
+	</section>	
+
+		<section>
+<pre>https://localhost/private/<code data-trim data-noescape>
+Array
+(
+    [Shib-Application-ID] => default
+    [Shib-Session-ID] => _c8ed11b4add98d25817a298bb47e5b7f
+    [Shib-Identity-Provider] => urn:miotessoro
+    [Shib-Authentication-Instant] => 2017-08-31T08:22:49Z
+    [Shib-Authentication-Method] => urn:oasis:names:tc:SAML:2.0:ac:classes:Password
+    [Shib-AuthnContext-Class] => urn:oasis:names:tc:SAML:2.0:ac:classes:Password
+    [Shib-Session-Index] => _d1c7faad4d6344b47ebedd49a397220d64c9c02b42
+    [eppn] => <mark>marco@idem.garr.it</mark>
+    [mail] => marco@csita.unige.it
+    [unscoped-affiliation] => member;employee
+...
+    [REMOTE_USER] => marco@idem.garr.it
+</code></pre>
+	</section>	
+	
+	<section><h2>AuthZ</i></h2>
+Per affiliazione
+<pre><code data-trim data-noescape>
+Require shib-attr affiliation student@unige.it staff@garr.it
+</code></pre>		
+
+<div>
+<div style="display: inline-block; margin-right: 50px;">
+Per affiliazione
+    </div>
+	<div style="display: inline-block;">Require shib-attr affiliation student@unige.it staff@garr.it
+</div>
+</div>
+
+<div>
+<div style="display: inline-block; margin-right: 50px;">
+Per affiliazione
+    </div>
+	<div style="display: inline-block;"><pre><code data-trim data-noescape>Require shib-attr affiliation student@unige.it staff@garr.it
+</code></pre></div>
+</div>
+
+I confronti vengono fatti per stringhe (string-matching):
+- switch per confronto case-insensitive
+- le sintassi LDAP non vengono applicate (es. sui DN sui gruppi)
+
+	<table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPhtaccess">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPhtaccess</a>
+		</td></tr></table>	
+
+	<aside class="notes">
+	</aside>
+	</section>	
+	
+	
+	<section><h2>Dietro <i>reverse proxy</i></h2>
+	<p>un reverse proxy può servire per tenere il servizio in DMZ,
+		per l'<i>off-load SSL</i>, ecc...</p>
+
+	Shibboleth ricalcola i propri URL, sia nelle richieste, sia nei metadati
+	- usare preserve_host_name
+	- switch per lo schema HTTPS
+	
+	<table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/SPReverseProxy">https://wiki.shibboleth.net/confluence/display/SHIB2/SPReverseProxy</a>
+		</td></tr></table>		
+		
+	<aside class="notes">
+	Ricordarsi che le comunicazioni sono sul front-channel
+
+	</aside>
+	</section>	
+	
+	<section><h2>interazione con Tomcat</h2>
+	Valgono le considerazioni generali del reverse proxy
+	<p>Identificatori utente scoped</p>
+	<p>dietro reverse proxy</p>
+	</section>
+
+	<section><h2>Shibboleth sul <i>reverse proxy</i></h2>
+	Il <i>reverse proxy</i> fornisce servizi di autenticazione
+	alle applicazioni retrostanti. Esempi: Alfresco, Adobe Connect
+	<aside class="notes">
+	Non deve esserci modo per raggiungere le applicazioni per altre vie!
+	</aside>
+	<p>Per non interferire con eventuali applicazioni "shibbolettizate" conviene cambiare il nome dell'endpoint:</p>
+				
+<pre>/etc/shibboleth2.xml<code data-trim data-noescape>
+&lt;Sessions lifetime="28800" timeout="3600" checkAddress="false"
+	<mark>handlerURL="/ShibbolethRPx.sso"</mark>
+	relayState="ss:mem" handlerSSL="false"&gt;
+</code></pre>
+
+<pre>/etc/apache/site-enabled/sito...<code data-trim data-noescape>
+&lt;VirtualHost *:443&gt;
+  ServerName     sito
+
+  ProxyPass /ShibbolethRPx.sso/ !
+
+  RequestHeader set X-UNIGE-EMPLOYEENUMBER "%{employeeNumber}e"
+  RequestHeader set X-UNIGE-STUDENTID "%{studentId}e"
+  RequestHeader set X-UNIGE-CN "%{cn}e"
+  RequestHeader set X-UNIGE-MAIL "%{mail}e"
+  RequestHeader set X-UNIGE-UID "%{uid}e"
+  RequestHeader set X-UNIGE-eduPersonPrincipalName "%{eppn}e"
+  RequestHeader set X-UNIGE-DEPARTMENTNUMBER "%{departmentNumber}e"
+  RequestHeader set X-UNIGE-EMPLOYEETYPE "%{employeeType}e"
+  RequestHeader set X-UNIGE-eduPersonAffiliation "%{unscoped-affiliation}e"
+  RequestHeader set X-Proxy-Shib-Session-ID "%{Shib-Session-ID}e"
+  &lt;Location /prove/&gt;
+    AuthType shibboleth
+    ShibRequestSetting requireSession true
+    #Require valid-user
+    Require affiliation employee@unige.it
+    ProxyPass http://backend..
+    ProxyPassReverse ...
+  &lt;/Location&gt;
+  ...
+</code></pre>
+				
+	<p>criteri di sicurezza e anti spoofing</p>
+	</section>
+
+	<section><h2>Logout</h2>
+	
+https://erasmus.servizionline.unige.it/ShibbolethRPx.sso/Logout?return=https://unige.it/
+
+Anche da Reverse Proxy
+	</section>				
+
+	<section><h2>Logging, audit e statistiche</h2>
+
+	</section>	
+	
+	<section><h2>Theming</h2>
+	Se tutto va bene, non c'è interazione con l'utente.
+	Per personalizzare i messaggi d'errore:
+	
+	</section>	
+	
+	<section><h2>Riferimenti</h2>
+	<ul>
+	<li>Installazione <a href="https://wiki.shibboleth.net/confluence/display/SHIB2/Installation">https://wiki.shibboleth.net/confluence/display/SHIB2/Installation</a></li>
+	</ul>
+	<p><a href="index.html#/shibboleth">torniamo...</a></p>
+	</section>				
+				
+	</div></div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/menu/menu.js' }
+				]
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="urn:miotessoro">
+  <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:KeyDescriptor use="signing">
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>MIIDXTCCAkWgAwIBAgIJAPToL9zFuzaqMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMTYwNzI2MTQ0MDI3WhcNMjYwNzI2MTQ0MDI3WjBFMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2QZLUF3aH9RV+EFlVFQGERDG9nxVRMByFFqwitzdfMn13eRuOatvjCCUJEN6678vzt2Isq1l+9aF5a6bkz+cAsZFcFbyAPn/200guFCk8NnxOiT+DlCDwYLVEohXBrlEJFikopntNvam6sfQdrAUXOZnflGBi+o/xa/xZb0qf+SXNy6Jp1Z72tCVvkW9ZLTSjbRO89InVATN9zo3o0uIKESKVWJ/4jIAQE84kl9WBE8TZRgWBqMi2qFHuZksO8JHEt+bQpIn/0Go1ImWg6vEphz7BhmdC14mwpR2//jw4u6Vjj+PB3K0YC+1ApmDkzuZROEsx+GjRFZq5ltPooe+8QIDAQABo1AwTjAdBgNVHQ4EFgQUOX6QM7+AqDE8pxDGdTdZSMPcKMgwHwYDVR0jBBgwFoAUOX6QM7+AqDE8pxDGdTdZSMPcKMgwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEA12ff+D7Z6PDqOuIhH7CRL2r0n9LpA13D9yZVaJOMQAVhAYJzuT3i9Q2XEhDOQbwwhRM4pGVIwvTB0gAgbmvkkZ/e7tV+w6i7XlCKNNhkL+99OjVun1QMg2KK26dgXY38m7s3ENopEd0AmrK1lYFZZ64IpQmcjf1JCkDLVqwVMssVhiHBbbWzrPxXRLmzi1jNRzGpUWRQMQ5DD3+0g2tHi+QSijyWdBwShZohvlA4EeS0gnenOU21JD5qj/oi4hqsGDEwEUNlkEOUQ6ynXnx4DBbK0Wd90pMCujr5x83PeBW3Vowf9wN3JyNyyx/QAkMJPyMjHh1/G/chxCI7XaPu1A==</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:KeyDescriptor use="encryption">
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>MIIDXTCCAkWgAwIBAgIJAPToL9zFuzaqMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMTYwNzI2MTQ0MDI3WhcNMjYwNzI2MTQ0MDI3WjBFMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2QZLUF3aH9RV+EFlVFQGERDG9nxVRMByFFqwitzdfMn13eRuOatvjCCUJEN6678vzt2Isq1l+9aF5a6bkz+cAsZFcFbyAPn/200guFCk8NnxOiT+DlCDwYLVEohXBrlEJFikopntNvam6sfQdrAUXOZnflGBi+o/xa/xZb0qf+SXNy6Jp1Z72tCVvkW9ZLTSjbRO89InVATN9zo3o0uIKESKVWJ/4jIAQE84kl9WBE8TZRgWBqMi2qFHuZksO8JHEt+bQpIn/0Go1ImWg6vEphz7BhmdC14mwpR2//jw4u6Vjj+PB3K0YC+1ApmDkzuZROEsx+GjRFZq5ltPooe+8QIDAQABo1AwTjAdBgNVHQ4EFgQUOX6QM7+AqDE8pxDGdTdZSMPcKMgwHwYDVR0jBBgwFoAUOX6QM7+AqDE8pxDGdTdZSMPcKMgwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEA12ff+D7Z6PDqOuIhH7CRL2r0n9LpA13D9yZVaJOMQAVhAYJzuT3i9Q2XEhDOQbwwhRM4pGVIwvTB0gAgbmvkkZ/e7tV+w6i7XlCKNNhkL+99OjVun1QMg2KK26dgXY38m7s3ENopEd0AmrK1lYFZZ64IpQmcjf1JCkDLVqwVMssVhiHBbbWzrPxXRLmzi1jNRzGpUWRQMQ5DD3+0g2tHi+QSijyWdBwShZohvlA4EeS0gnenOU21JD5qj/oi4hqsGDEwEUNlkEOUQ6ynXnx4DBbK0Wd90pMCujr5x83PeBW3Vowf9wN3JyNyyx/QAkMJPyMjHh1/G/chxCI7XaPu1A==</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="http://localhost:8080/simplesaml/saml2/idp/SingleLogoutService.php"/>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+    <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="http://localhost:8080/simplesaml/saml2/idp/SSOService.php"/>
+  </md:IDPSSODescriptor>
+  <md:ContactPerson contactType="technical">
+    <md:GivenName>Io</md:GivenName>
+    <md:EmailAddress>marco@csita.unige.it</md:EmailAddress>
+  </md:ContactPerson>
+</md:EntityDescriptor>

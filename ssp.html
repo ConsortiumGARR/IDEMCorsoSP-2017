@@ -1,0 +1,327 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Corso SP 2017: SimpleSAMLphp</title>
+		<meta name="author" value="Marco Ferrante, marco@csita.unige.it">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+
+	<div class="reveal"><div class="slides">
+
+	<section><h2>SSP: installazione</h2>
+<pre><code data-trim>
+cd /var
+wget https://simplesamlphp.org/download?latest
+tar xzf simplesamlphp-1.14.x.tar.gz
+ln -s simplesamlphp-1.14.x simplesamlphp
+</code></pre>
+In Apache
+<pre>/etc/apache/site-enabled/sito...<code data-trim data-noescape>
+SetEnv SIMPLESAMLPHP_CONFIG_DIR /var/simplesamlphp/config
+Alias /simplesaml /var/simplesamlphp/www
+&lt;Directory /var/simplesamlphp/www&gt;
+	# For Apache 2.4:
+	Require all granted
+&lt;/Directory&gt;
+</code></pre>
+
+				<aside class="notes">
+La procedura differisce leggermente da quella ufficiale, qualche particolare omesso
+per le librerie si può usare Composer
+
+Requisiti:
+PHP version >= 5.3.0.
+Support for the following PHP extensions:
+Always required: date, dom, hash, libxml, openssl, pcre, SPL, zlib, json
+When automatically checking for latest versions, and used by some modules: cURL
+When using encryption or digital signatures: mcrypt
+When authenticating against LDAP server: ldap
+When authenticating against RADIUS server: radius
+When using native PHP session handler: session
+When saving session information to a memcache server: memcache
+When using databases:
+Always: PDO
+Database driver: (mysql, pgsql, ...)
+
+            <IfModule !mod_authz_core.c>
+            # For Apache 2.2:
+            Order allow,deny
+            Allow from all
+            </IfModule>
+            <IfModule mod_authz_core.c>
+            # For Apache 2.4:
+            Require all granted
+            </IfModule>
+
+	</aside>
+	</section>
+
+	<section><h2>Autodiagnosi</h2>
+	Aprire https://localhost:7080/simplesaml/
+	<img src="ssp-autodiag.png" />
+	</section>
+
+	<section><h2>Configurazione</h2>
+File di configurazione e metadati sono in PHP: si possono fare operazioni!
+Es. calcolare il virtual host
+<pre>/var/simplesamlphp/config/config.php<code data-trim>
+'auth.adminpassword' => ...
+'secretsalt' => ...
+'technicalcontact_name' => 'Supporto Tecnico',
+'technicalcontact_email' => 'idem-corso@garr.it',
+'language.default' => 'it',
+'timezone' => 'Europe/Rome',
+'session.store' => ...
+</code></pre>
+Il session store phpsession è problematico nell'interazione con altre applicazioni, usarne un altro
+	</section>
+
+	<section><h2>Chiavi</h2>
+Chiave e certificato vanno in cert/
+<pre><code data-trim>
+cp /etc/shibboleth/sp-key.pem /var/simplesamlphp/cert/
+cp /etc/shibboleth/sp-cert.pem /var/simplesamlphp/cert/
+chown www-data /var/simplesamlphp/cert/sp-key.pem
+</code></pre>
+
+	</section>
+	
+	<section><h2>Metadati IdP</h2>
+I metadati dell'IdP/federazione vanno salvati in 
+Possibile editarli a mano:
+
+<pre>metadata/saml20-idp-remote.php<code data-trim>
+$metadata['https://idp-corso.irccs.garr.it/idp/shibboleth'] = array(
+    'name' => array(
+          'it' => 'IdP di test per il corso',
+    ),
+    'SingleSignOnService' =>
+'https://idp-corso.irccs.garr.it/idp/profile/SAML2/Redirect/SSO',
+    'certFingerprint' => 'BF:3E:8D:4C:7A:ED:C2:D1:61:20:00:9B:19:B7:C9:FA:44:27:9D:61',
+);
+</code></pre>
+	</section>
+
+	<section><h2>metadati federazione IDEM</h2>
+Per la federazione, ssp fornisce un tool di conversione XML → PHP
+
+Comprende un modulo (metarefresh) per l'aggiornamento automatico
+	</section>
+
+	<section><h2>configurazione SP</h2>
+<pre>config/authsources.php<code data-trim>
+'sp-idem' => array(
+    'saml:SP',
+    'entityID' => 'https://sp2.local/simplesaml',
+    'privatekey' => 'sp-key.pem',
+    'certificate' => 'sp-cert.pem',
+    'idp' => NULL,      // Specificare un IdP o
+    'discoURL' => NULL, // un Discovery Service
+    ...
+</code></pre>
+	</section>
+
+	<section><h2>Discovery</h2>
+
+	Redirige direttamente all'IdP (Web SSO senza DS)
+<pre>config/authsources.php<code data-trim>
+'sp-idem' => array(
+    ...  
+    'idp' => 'entityID IdP',
+    ...
+</code></pre>
+
+	Redirige al servizio di CDS		
+<pre>config/authsources.php<code data-trim>
+'sp-idem' => array(
+    ...  
+    'discoURL' => 'https://wayf.idem-test...',
+    ...
+</code></pre>
+
+	Usa un DS "basic"
+<pre>config/authsources.php<code data-trim>
+'sp-idem' => array(
+    ...  
+    'idp' => NULL, 'discoURL' => NULL
+    ...
+</code></pre>
+
+	</section>
+
+	<section><h2>Embedded Discovery Service</h2>
+
+Presenta l'elenco degli IdP in
+ 
+<pre>metadata/saml20-idp-remote.php<code data-trim>
+    ...
+    'OrganizationName' =&gt; 'IDEM',
+    'OrganizationDisplayName' =&gt;
+        'Federazione IDEM',
+    'OrganizationURL' =&gt;
+        'http://www.idem.it',
+    ...
+</code></pre>
+	</section>
+
+	<section><h2>Metadati SP</h2>
+
+
+
+Metadati UI per IDEM
+    ...
+    'UIInfo' => array(
+        'DisplayName' => array(
+            'en' => 'SP Single Sign-on (ssp)',
+            'it' => 'SP Single Sign-on (ssp)'
+        ),
+        'Description' => array(
+            'it' => 'Service Provider di Esempio per il corso  "Abilitare le applicazioni web al Single Sign-on con strumenti SAML" (versione ssp)'
+        ),
+        'InformationURL' => array(
+            'en' => 'https://sp1.local/',
+        ),
+        'PrivacyStatementURL' => array(
+            'en' => 'https://sp2-test.garr.it/privacy.html',
+        ),
+        'Logo' => array(
+            array(
+                'url'    => 'http://example.com/logo1.png',
+                'height' => 200, 'width'  => 400, 'lang'   => 'en',
+            ),
+         ...
+    ),
+    ...
+
+Requested attributes
+Servono entrambi per includerli nei metadati
+    ...
+    'attributes' =>
+        array('eduPersonEntitlement',
+            'mail'),
+    'name' => array('it' =>
+            'SP Single Sign-on'),
+    ...
+
+Recupero dei metadati
+Tab “Federazione” della pagina di amministrazione
+Inviarli a IDEM o caricarli sull'IdP
+
+	</section>
+
+	<section><h2>Autenticazione da PHP</h2>
+
+<pre>/var/www/html/app/index.php<code data-trim>
+&lt;?php
+require_once('/var/simplesamlphp/lib/_autoload.php');
+$as = new SimpleSAML_Auth_Simple('sp-idem');
+if (!$as-&gt;isAuthenticated()) {
+    $as-&gt;login();
+}
+$attributes = $as-&gt;getAttributes();
+print_r($attributes);
+</code></pre>
+
+	</section>
+
+	<section><h2>Troubleshooting</h2>
+Usare la pagina di test
+
+Attivare il logging:
+<pre>config/config.php<code data-trim>
+    'debug' => TRUE,
+    'logging.level' => SimpleSAML_Logger::INFO,
+    'logging.handler' => 'file',
+</code></pre>
+
+	<aside class="notes">
+	Se occorre
+	
+	chown www-data log/
+	
+	Oppure usare Syslog	
+	</aside>
+	</section>
+
+	<section><h2>Attributi</h2>
+Gli attributi sono restituiti come array
+Nessun problema con gli attributi multivalore (a differenza di Shibboleth SP)
+Possono essere manipolati da filtri post-auth
+'authproc' => array(
+   // Da OID a friendlyNames
+   90 => array('class' =>
+      'core:AttributeMap','oid2name'),
+   ),
+
+   	</section>
+
+	<section><h2>Configurazione alternativa</h2>
+
+
+Cambiare directory
+&lt;?php
+require_once('/var/simplesamlphp/lib/_autoload.php');
+SimpleSAML_Configuration::setConfigDir('/tmp');
+$as = new SimpleSAML_Auth_Simple('sp-idem');
+...
+Config override
+$config = array (   
+    'override.host' =&gt; array(
+        'sp.andreas.feide.no' =&gt; 'config.test.php',
+        'sp1.anderas.feide.no' =&gt; 'config.test.php',
+        'sp2.anderas.feide.no' =&gt; 'config.test.php',
+    ),
+
+</section>
+
+	<section><h2>Logging, audit e statistiche</h2>
+
+	</section>	
+
+	<section><h2>Theming</h2>
+	Se tutto va bene, non c'è interazione con l'utente.
+	Per personalizzare i messaggi d'errore:
+	
+	</section>	
+	
+			</div>
+			
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/menu/menu.js' }
+				]
+			});
+		</script>
+	</body>
+</html>
