@@ -91,11 +91,11 @@ Es. calcolare il virtual host
 'timezone' => 'Europe/Rome',
 'session.store' => ...
 </code></pre>
-Il session store phpsession è problematico nell'interazione con altre applicazioni, usarne un altro
+Il session store <code>phpsession</code> è problematico nell'interazione con altre applicazioni, usarne un altro
 	</section>
 
 	<section><h2>Chiavi</h2>
-Chiave e certificato vanno in cert/
+Chiave e certificato vanno in <code>cert/</code>
 <pre><code data-trim>
 cp /etc/shibboleth/sp-key.pem /var/simplesamlphp/cert/
 cp /etc/shibboleth/sp-cert.pem /var/simplesamlphp/cert/
@@ -104,27 +104,31 @@ chown www-data /var/simplesamlphp/cert/sp-key.pem
 
 	</section>
 	
-	<section><h2>Metadati IdP</h2>
-I metadati dell'IdP/federazione vanno salvati in 
-Possibile editarli a mano:
+<section><h2>Metadata IdP</h2>
+I metadata dell'IdP/federazione vanno salvati in <code>metadata/saml20-idp-remote.php</code>
 
 <pre>metadata/saml20-idp-remote.php<code data-trim>
-$metadata['https://idp-corso.irccs.garr.it/idp/shibboleth'] = array(
+$metadata['https://idp-corso.garr.it/idp/shibboleth'] = array(
     'name' => array(
-          'it' => 'IdP di test per il corso',
+        it' => 'IdP di test per il corso',
     ),
-    'SingleSignOnService' =>
-'https://idp-corso.irccs.garr.it/idp/profile/SAML2/Redirect/SSO',
-    'certFingerprint' => 'BF:3E:8D:4C:7A:ED:C2:D1:61:20:00:9B:19:B7:C9:FA:44:27:9D:61',
+    'SingleSignOnService' => 'https://idp-corso.garr.it/idp/&#8617;
+            profile/SAML2/Redirect/SSO',
+    'SingleLogoutService'  => 'https://idp-corso.garr.it/idp/&#8617;
+            ...',
+    'certFingerprint' => 'BF:3E:8D:4C:7A:ED:C2:D1:...',
 );
 </code></pre>
-	</section>
 
-	<section><h2>metadati federazione IDEM</h2>
+Possibile gestirli a mano; anche questo è PHP e si può intevenire da
+codice (es. inclusione di file esterni)
+</section>
+
+<section><h2>metadati federazione IDEM</h2>
 Per la federazione, ssp fornisce un tool di conversione XML → PHP
 
-Comprende un modulo (metarefresh) per l'aggiornamento automatico
-	</section>
+Comprende un modulo (<code>metarefresh</code>) per l'aggiornamento automatico
+</section>
 
 	<section><h2>configurazione SP</h2>
 <pre>config/authsources.php<code data-trim>
@@ -314,7 +318,12 @@ $config = array (
 			// - https://github.com/hakimel/reveal.js#configuration
 			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
-				dependencies: [
+					width: "80%",
+					height: "100%",
+					margin: 0,
+					minScale: 1,
+					maxScale: 1,
+                                dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
 					{ src: 'plugin/notes/notes.js', async: true },

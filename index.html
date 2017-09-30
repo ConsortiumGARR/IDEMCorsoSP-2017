@@ -471,7 +471,7 @@ An important type of SAML authority is the SAML identity provider, a system enti
 	</aside>
 	</section>
 
-	<section><h2>Metadati</h2>
+	<section><h2>Metadata</h2>
 	<p>Come fanno IdP e SP a "conoscersi"? Si scambiano i <i>metadati</i></p>
 	<ul>
 		<li>ogni attore è identificato da un <i>EntityID</i> (un URI nel namespace dell'organizzazione) 
@@ -486,7 +486,7 @@ An important type of SAML authority is the SAML identity provider, a system enti
 		</aside>
 	</section>
 
-	<section><h2>Esempi metadati</h2>
+	<section><h2>Esempi metadata</h2>
 	<!-- per formattare:
 	https://support.mozilla.org/it/questions/1016939
 	-->
@@ -494,13 +494,13 @@ An important type of SAML authority is the SAML identity provider, a system enti
 	<a href="sp-wiki-idem.xml" target="_blank">SP Wiki IDEM</a>
 	</section>
 	
-	<section><h2>Metadati</h2>
+	<section><h2>Metadata: gestione</h2>
 	<p>Come gestirli</p>
 		<aside class="notes">
 		</aside>
 	</section>
 
-	<section><h2>Metadati</h2>
+	<section><h2>Metadata: scambio</h2>
 	<p>Come scambiarli</p>
 		<aside class="notes">
 		</aside>
@@ -508,19 +508,53 @@ An important type of SAML authority is the SAML identity provider, a system enti
 
 </section>
 			
-			<section>
-				<!-- parte 5 -->
-				
-				<section><h2>Discovery</h2>
-				La fase di discovery/WAYF
-				<p>Servizio locale/servizio centralizzato</p>
-				</section>
+<section>
+    <!-- parte 5, discovery -->
 
-				<section><h2>Metadati</h2>
-				<p>Identificatori utente scoped</p>
-				</section>
+    <section><h2>Discovery</h2>
+        L'utente si presenta al SP; a quale IdP dev'essere rediretto per l'autenticazione?
+        Se l'SP conosce un solo IdP, no problem... altrimenti occorre chiedere
+        all'utente. La domanda viene gestita dal Discovery Service.
+        
+        <dl>
+            <dt>Where Are You From (WAYF)</dt>
+            <dd>La federazione gestisce un servizio di Discovery centralizzato detto WAYF</dd>
+            <dd>https://wayf.idem.garr.it/WAYF</dd>
+            <dt>Embedded DS</dt>
+            <dd>Il SP fornisce un servizio integrato con look&feel coerente ed
+            eventuali personalizzazioni o suggerimenti specifici del servizio</dd>
+        </dl>
 
-			</section>
+    <aside class="notes">
+Although this solution is deceptively simple it is complicated by several factors:
+* Any user interaction associated with this operation will be the first that the
+user ever sees and hence will define the user's opinion of the SP.
+* Even returning users may not be aware of precisely what is being asked of
+them ("What is a Federation?", "What is an IdP?", "Why do I need to do this?")
+* An independent service is not well positioned to provide simple choices
+because it has to make broad assumptions as to which IdPs might be of interest. 
+This has two potential side effects:
+- It will offer a confusing list of IdPs to the user
+- It can allow a user to select an IdP which cannot provide authentication to the SP.
+* SPs are very often members of more than one Federation
+These issues can be minimized by associating a discovery service with each SP.
+Thus deployed the discovery service can:
+* Have a similar look and feel to the rest of the SP.
+* Provide assistance in selecting the IdP in a way which is targeted at its particular users base.
+* Limit those IdPs which the user is asked to chose from to those
+which the SP is willing to accept authentication from (for commercial, technical or other reasons).
+In addition to per-SP discovery services, most federations deploy a discovery service.
+This serves as the 'back stop' service. It is considered best practice that SPs
+have a specific discovery service, however those SPs which are only in one
+Federation can rely on this Federation-deployed discovery service.
+    </aside>        
+    </section>
+
+    <section><h2>Metadati</h2>
+    <p>Identificatori utente scoped</p>
+    </section>
+
+</section>
 			
 			<section>
 				<!-- parte 6 -->
