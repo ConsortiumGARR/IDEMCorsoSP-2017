@@ -511,18 +511,20 @@ An important type of SAML authority is the SAML identity provider, a system enti
 <section>
     <!-- parte 5, discovery -->
 
-    <section><h2>Discovery</h2>
-        L'utente si presenta al SP; a quale IdP dev'essere rediretto per l'autenticazione?
-        Se l'SP conosce un solo IdP, no problem... altrimenti occorre chiedere
-        all'utente. La domanda viene gestita dal Discovery Service.
+    <section id="discovery"><h2>Discovery</h2>
+        L'utente che si presenta al SP a quale
+        <span title="Se l'SP conosce un solo IdP, no problem...">IdP dev'essere rediretto</span> per l'autenticazione?
+        Solo lui lo sa... (e neppure sempre :-) La domanda viene gestita dal Discovery Service (DS).
         
         <dl>
             <dt>Where Are You From (WAYF)</dt>
-            <dd>La federazione gestisce un servizio di Discovery centralizzato detto WAYF</dd>
-            <dd>https://wayf.idem.garr.it/WAYF</dd>
+            <dd>La federazione gestisce un servizio di Discovery centralizzato detto WAYF.
+                Esempio: <a href="https://filesender.garr.it" target="_blank">Filesender GARR</a></dd>
             <dt>Embedded DS</dt>
-            <dd>Il SP fornisce un servizio integrato con look&feel coerente ed
-            eventuali personalizzazioni o suggerimenti specifici del servizio</dd>
+            <dd>Il SP fornisce un servizio integrato con <i>look&amp;feel</i> coerente ed
+            eventuali personalizzazioni o suggerimenti specifici del servizio.
+            Esempi: <a href="https://registry.idem.garr.it/rr3/" target="_blank">IDEM Entity Registry</a>,
+            <a href="https://bestr.it/?step=1" target="_blank">CINECA Bestr</a></dd>
         </dl>
 
     <aside class="notes">
@@ -550,6 +552,64 @@ Federation can rely on this Federation-deployed discovery service.
     </aside>        
     </section>
 
+    <section><h2>Discovery Protocol</h2>
+<script type="https://www.websequencediagrams.com">
+title Discovery Protocol
+
+participant utente (UA) as UA
+participant Service Provider as SP1
+participant DS as DS
+
+UA->SP1: voglio collegarmi!
+SP1-->UA: redirect to DS
+UA<->DS: in qualche modo si identifica
+DS-->UA: redirect to SP
+UA->SP1: ecco il mio IdP
+</script>
+<iframe width="900" height="400" srcdoc="<img src='diagramma-ds.png'>"></iframe>
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td>OASIS 
+        <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf">Identity
+            Provider Discovery Service Protocol and Profile</a>
+    </td></tr></table>
+        
+    <aside class="notes">
+There are a wide range of "solutions" to this problem, but they all share the trait of functioning well only
+in the presence of certain assumptions about the nature of the deployment and the expectations of
+users. For example, the most straightforward approach is for each service provider to simply ask the user
+(and possibly cache the result locally). This allows for maximum control over the experience by the
+service provider, as well as supplying an unambiguous result. It also leads to increased interference with
+the SSO experience due to per-site prompts, as well as extra work for relying parties and the need for
+users to understand how to make an unambiguous selection.
+At the other extreme, there has been a model promulgated around the idea of discovery as a function of
+large federations of identity providers, as in the older Shibboleth "WAYF" model [ShibProt], in which the
+discovery service acts as a proxy for the service provider and relays a request to the selected identity
+provider. In theory, this seems attractivesince every service provider can share a single point of
+discovery, and the user experience can be seamless across many/all services. In practice, this model
+falls apart quickly because of course there is no single point of discovery that accomodates the entire
+world of federation.
+The cookie-based discovery profile in section 4.3 of [SAML2Prof] falls somewhere between these
+extremes by focusing on deployments in which all the parties can share a presence in a common
+domain. DNS itself does not constrain the size of such deployments but practical limitations on domain
+management tends to inhibit truly large-scale use. It also requires a great deal of static pre-configuration,
+which limits run-time flexibility.  
+    </aside>   
+    </section>
+
+    <section><h2>Discovery Protocol</h2>
+    <p>I meccanismi di redirezione sono proni al phishing.</p>
+    <p>Un estensione dei metadata è stata prevista perché il Discovery Service possa
+    dal entityId del SP, validare l'endpoint di ritorno</p>
+    
+    <pre><code data-trim data-noescape>
+&lt;Extensions&gt;
+  ...
+  &lt;idpdisc:DiscoveryResponse
+      Binding="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol"
+      Location="https://www.serviziweb.unito.it/youblog/Shibboleth.sso/DS"
+      index="1"/&gt;
+    </code></pre>
+    </section>
+                                
     <section><h2>Metadati</h2>
     <p>Identificatori utente scoped</p>
     </section>
