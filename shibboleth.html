@@ -437,7 +437,49 @@ Anche da Reverse Proxy
 	<section><h2>Logging, audit e statistiche</h2>
 
 	</section>	
-	
+                
+<section><h2>Embedded Discovery</h2>
+    <p>Shibboleth SP ha un Embedded Discovery Service (EDS)</p>
+    <p>Si tratta di un set di CSS e Javascript installabile manualmente</p>
+<pre>https://shibboleth.net/downloads/embedded-discovery-service/latest<code data-trim data-noescape>
+$ wget .../shibboleth-embedded-ds-1.2.0.tar.gz
+$ tar -xzf shibboleth-embedded-ds-1.2.0.tar.gz
+$ mv shibboleth-embedded-ds-1.2.0 <mark>/etc/shibboleth-ds</mark>
+</code></pre>
+
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a href="https://www.idem.garr.it/documenti/doc_view/359-guida-all-installazione-dello-shibboleth-embedded-discovery-service-su-debian-linux">Guida all'Installazione dello Shibboleth Embedded...</a>
+            </td></tr></table>
+    
+</section>
+
+    <section><h2>EDS e Apache</h2>    
+<pre>/etc/apache/site-enabled/sito...<code data-trim data-noescape>
+  &lt;Location /shibboleth-ds/*&gt;
+    Require all granted
+    # Allow from all Apache 2.2
+    AuthType shibboleth
+    ShibRequestSetting requireSession false
+    require shibboleth
+  &lt;/Location&gt;
+  Alias /shibboleth-ds/idpselect_config.js /etc/shibboleth-ds/idpselect_config.js
+  Alias /shibboleth-ds/idpselect.js /etc/shibboleth-ds/idpselect.js
+  Alias /shibboleth-ds/idpselect.css /etc/shibboleth-ds/idpselect.css
+  Alias /shibboleth-ds/blank.gif /etc/shibboleth-ds/blank.gif
+</code></pre>
+</section>
+
+    <section><h2>EDS e Shibboleth</h2>
+    <p></p>
+    <p>Per Shibboleth SP >= 2.4</p>
+<pre>/etc/shibboleth/shibboleth.xml<code data-trim data-noescape>
+&lt;SSO discoveryProtocol="SAMLDS"
+  discoveryURL="https://localhost/shibboleth-ds/index.html"
+  isDefault="true"&gt;
+ SAML2
+&lt;/SSO&gt;
+</code></pre>
+</section>
+                
 	<section><h2>Theming</h2>
 	Se tutto va bene, non c'è interazione con l'utente.
 	Per personalizzare i messaggi d'errore:
