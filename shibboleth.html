@@ -56,29 +56,43 @@ $ service shibd restart
 		
 	</section>
 	
-	<section><h2><i>handler</i></h2>
-	<p><code>/Login</code>, <code>/SAML2</code>, <code>/Slo</code>, ecc... si trovano sotto la base <code>/Shibboleth.sso</code></p>
-	<pre>shibboleth.xml<code data-trim data-noescape>
+    <section><h2><i>handler</i></h2>
+    <p>I servizi dell'SP sono gestiti da <i>handler</i> come
+        <code>/Login</code>,
+        <code>/SAML2</code>, <code>/Slo</code>, ecc...</p>
+    <p>Di default, si trovano sotto la base <code>/Shibboleth.sso</code>,
+        per modificarli aggiungere</p>
+    
+<pre>shibboleth.xml<code data-trim data-noescape>
 &lt;ApplicationDefaults ...
-    &lt;Sessions ... <mark>handlerURL="/newSSOhandler"</mark>&gt;
-	</code></pre>
+    &lt;Sessions ... <mark>handlerURL="/MySSOhandler"</mark>&gt;
+</code></pre>
 
-	<p>provate subito con <code>/Shibboleth.sso/Status</code></p>
-	<pre>shibboleth.xml<code data-trim data-noescape>
-&lt;Handler type="Status" Location="/Status"
-	acl="127.0.0.1 10.0.0.1 ::1"/&gt;
-	</code></pre>
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxInstall">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxInstall</a></td></tr>
+            <tr><td></td><td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApplicationOverride">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApplicationOverride</a>
+            </td></tr></table>
 
-	<table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxInstall">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxInstall</a></td></tr>
-		<tr><td></td><td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApplicationOverride">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApplicationOverride</a>
-		</td></tr></table>
-		
-	<aside class="notes">
-	Che ci sia un ApplicationDefault suggerisce che esistano gli ApplicationOverride :-)
-	</aside>
-	</section>
+    <aside class="notes">
+    Che ci sia un ApplicationDefault suggerisce che esistano gli ApplicationOverride :-)
+    </aside>
+    </section>
 	
-	<section id="config"><h2>metadati SP</h2>
+    <section><h2>Status handler</h2>
+
+    <p>Esercizio S1 </p>
+<pre>shibboleth.xml<code data-trim data-noescape>
+&lt;Handler type="Status" Location="/Status"
+	acl="127.0.0.1 <mark>10.0.0.1</mark> ::1"/&gt;
+</code></pre>
+
+	<pre><code data-trim>
+$ shibd -t
+	</code></pre>
+
+    <p>Aprire<br><code><a href="https://localhost/Shibboleth.sso/Status">https://localhost/<mark>Shibboleth.sso/Status</mark></a></code></p>
+    </section>
+	
+	<section id="config"><h2>metadata del SP</h2>
 	
 	<pre>shibboleth.xml<code data-noescape>
 &lt;ApplicationDefaults entityID="<mark>https://corso-sp/</mark>"
@@ -92,45 +106,43 @@ $ service shibd restart
 	</aside>	
 	</section>
 	
-	<section><h2>metadati IdP</h2>
+	<section><h2>IdP metadata</h2>
 	
-	<pre>mio-idp-metadata.xml<code data-trim>
+<pre>mio-idp-metadata.xml<code data-trim data-noescape>
 &lt;?xml version="1.0"?&gt;
-&lt;md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
-	xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-	entityID="urn:miotessoro"&gt;
-  &lt;md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"&gt;
+&lt;md:EntityDescriptor xmlns:md="urn:oasis:..."
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    <mark title="Stringa identificativa, in questo caso RfC 6963">entityID="urn:example:idem:corso2017"</mark>&gt;
+  &lt;md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:..."&gt;
 ...
     &lt;/md:KeyDescriptor&gt;
     &lt;md:SingleLogoutService
-		Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-		Location="http://localhost:8080/simplesaml/saml2/idp/SingleLogoutService.php"/&gt;
+        Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        Location="http://idp-corso/simplesaml/saml2/idp/SingleLogoutService.php"/&gt;
     &lt;md:NameIDFormat&gt;urn:oasis:names:tc:SAML:2.0:nameid-format:transient&lt;/md:NameIDFormat&gt;
     &lt;md:SingleSignOnService
-		Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-		Location="http://localhost:8080/simplesaml/saml2/idp/SSOService.php"/&gt;
+        Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        Location="http://idp-corso/simplesaml/saml2/idp/SSOService.php"/&gt;
   &lt;/md:IDPSSODescriptor&gt;
 ...
 &lt;/md:EntityDescriptor&gt;
 	</code></pre>
-	</section>
+    </section>
 	
-	<section>	
-	<pre>shibboleth.xml<code data-trim>
+    <section><h2>Configurazione metadata</h2>	
+<pre>shibboleth.xml<code data-trim data-noescape>
 &lt;Sessions ...
-	&lt;SSO entityID="urn:miotessoro"
-		 discoveryProtocol="SAMLDS"
-		 discoveryURL="https://ds.example.org/DS/WAYF"&gt;
-	  SAML2 SAML1
-	&lt;/SSO&gt;
+    &lt;SSO entityID="urn:example:idem:corso2017"
+        ...&gt;
+      SAML2 SAML1
+    &lt;/SSO&gt;
 ...
-	&lt;MetadataProvider type="XML"
-		file="mio-idp-metadata.xml"/&gt;
+    &lt;MetadataProvider type="XML"
+        file="mio-idp-metadata.xml"/&gt;
+</code></pre>
 
-	</code></pre>
-
-	<p><code>https://localhost/Shibboleth.sso/Login?entityID=urn:miotessoro</code></p>
-	</section>
+        <p><code><a href="https://localhost/Shibboleth.sso/Login?entityID=urn:example:idem:corso2017">https://localhost/Shibboleth.sso/Login?entityID=urn:example:idem:corso2017</a></code></p>
+    </section>
 	
 	<section><h2>Sessioni <i>lazy</i></h2>
 	<p>Nelle sessioni attive l'accesso alla risorsa richiede una sessione SP
@@ -438,7 +450,7 @@ Anche da Reverse Proxy
 
 	</section>	
                 
-<section><h2>Embedded Discovery</h2>
+<section id="discovery"><h2>Embedded Discovery</h2>
     <p>Shibboleth SP ha un Embedded Discovery Service (EDS)</p>
     <p>Si tratta di un set di CSS e Javascript installabile manualmente</p>
 <pre>https://shibboleth.net/downloads/embedded-discovery-service/latest<code data-trim data-noescape>
@@ -458,7 +470,7 @@ $ mv shibboleth-embedded-ds-1.2.0 <mark>/etc/shibboleth-ds</mark>
     Require all granted
     # Allow from all Apache 2.2
     AuthType shibboleth
-    ShibRequestSetting requireSession false
+    ShibRequestSetting requireSession <mark>false</mark>
     require shibboleth
   &lt;/Location&gt;
   Alias /shibboleth-ds/idpselect_config.js /etc/shibboleth-ds/idpselect_config.js
@@ -479,7 +491,52 @@ $ mv shibboleth-embedded-ds-1.2.0 <mark>/etc/shibboleth-ds</mark>
 &lt;/SSO&gt;
 </code></pre>
 </section>
+
+    <section><h2>EDS nella pagina</h2>
+<pre>/var/www/html/private/index.html<code data-trim data-noescape>
+  &lt;link rel="stylesheet" type="text/css"
+      href="/shibboleth-ds/idpselect.css" /&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+  &lt;div id="idpSelect"&gt;&lt;/div&gt;
+  &lt;script src="/shibboleth-ds/idpselect_config.js" type="...&gt;&lt;/script&gt;
+  &lt;script src="/shibboleth-ds/idpselect.js" type="...&gt;&lt;/script&gt;
+</code></pre>
+        <p>Esempio più completo nella distribuzione</p>
+        <p>Riceverete l'errore <code>FATAL - DISCO UI:No parameters to discovery session and no defaultReturn parameter configured</code></p>
+</section>
+
+    <section><h2>EDS nella pagina</h2>
+<pre>/etc/shibboleth-ds/idpselect_config.js<code data-trim data-noescape>
+  var baseurl = 'qui';
+
+  this.defaultReturn = <mark>baseurl</mark>
+    +'/Shibboleth.sso/Login?SAMLDS=1&target='
+    + <mark>baseurl</mark>
+    +'/auth/shibboleth/%3Ftarget%3D%27%2Bwindow.location';
+</code></pre>
+        
+        <p>Vedrete un solo IdP, quello di test</p>
+    </section>
                 
+    <section><h2>Metadata dalla Federazione</h2>
+        <p>Istruzioni: <a href="https://www.idem.garr.it/en/technical-information/490-istruzioni-per-le-configurazioni-dei-metadati-della-federazione-idem-2">https://www.idem.garr.it/en/technical-information/490-istruzioni-per-le-configurazioni-dei-metadati-della-federazione-idem-2</a></p>
+<pre>shibboleth.xml<code data-trim data-noescape>
+    &lt;MetadataProvider type="XML"
+        file="mio-idp-metadata.xml"/&gt;
+
+    &lt;MetadataProvider type="XML"
+        uri="http://www.garr.it/idem-metadata/idem-metadata-sha256.xml"
+        backingFilePath="idem-metadata-sha256.xml"&gt;
+      &lt;MetadataFilter .../&gt;
+    &lt;/MetadataProvider&gt;
+</code></pre>
+        
+    <aside class="notes">
+    </aside>
+    </section>
+               
 	<section><h2>Theming</h2>
 	Se tutto va bene, non c'è interazione con l'utente.
 	Per personalizzare i messaggi d'errore:
