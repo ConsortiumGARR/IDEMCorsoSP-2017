@@ -26,24 +26,34 @@
 
 	<div class="reveal"><div class="slides">
 
-	<section><h2>SSP: installazione</h2>
-<pre><code data-trim>
-cd /var
-wget https://simplesamlphp.org/download?latest
-tar xzf simplesamlphp-1.14.x.tar.gz
-ln -s simplesamlphp-1.14.x simplesamlphp
+	<section><h1>SimpleSAMLphp</h1>
+	</section>
+	
+	<section><h2>Installazione</h2>
+<pre><code data-trim data-noescape>
+$ cd /var
+$ wget -O ssp.tgz https://simplesamlphp.org/download?latest
+$ tar -xzf ssp.tgz
+$ ln -s simplesamlphp-1.14.x simplesamlphp
+$ rm ssp.tgz
 </code></pre>
-In Apache
+	</section>
+	
+    <section><h2>Apache</h2>
 <pre>/etc/apache/site-enabled/sito...<code data-trim data-noescape>
 SetEnv SIMPLESAMLPHP_CONFIG_DIR /var/simplesamlphp/config
 Alias /simplesaml /var/simplesamlphp/www
 &lt;Directory /var/simplesamlphp/www&gt;
-	# For Apache 2.4:
-	Require all granted
+    # For Apache 2.4:
+    Require all granted
 &lt;/Directory&gt;
 </code></pre>
+<pre><code data-trim data-noescape>
+$ apache2ctl configtest
+$ riavvio...
+</code></pre>
 
-				<aside class="notes">
+    <aside class="notes">
 La procedura differisce leggermente da quella ufficiale, qualche particolare omesso
 per le librerie si può usare Composer
 
@@ -61,45 +71,75 @@ When using databases:
 Always: PDO
 Database driver: (mysql, pgsql, ...)
 
-            <IfModule !mod_authz_core.c>
-            # For Apache 2.2:
-            Order allow,deny
-            Allow from all
-            </IfModule>
-            <IfModule mod_authz_core.c>
-            # For Apache 2.4:
-            Require all granted
-            </IfModule>
+        <IfModule !mod_authz_core.c>
+        # For Apache 2.2:
+        Order allow,deny
+        Allow from all
+        </IfModule>
+        <IfModule mod_authz_core.c>
+        # For Apache 2.4:
+        Require all granted
+        </IfModule>
 
-	</aside>
-	</section>
+    </aside>
+    </section>
 
-	<section><h2>Autodiagnosi</h2>
-	Aprire https://localhost:7080/simplesaml/
-	<img src="ssp-autodiag.png" />
-	</section>
+    <section><h2>Verifica</h2>
+        <p>Aprire <code>https://localhost/simplesaml/</code></p>
+        <p>Scegliere "Configuration"</p>
+    <img src="ssp-autodiag-1.png" />
+    </section>
 
-	<section><h2>Configurazione</h2>
-File di configurazione e metadati sono in PHP: si possono fare operazioni!
-Es. calcolare il virtual host
-<pre>/var/simplesamlphp/config/config.php<code data-trim>
-'auth.adminpassword' => ...
+	<section><h2>Configurazione minima</h2>
+<p>File di configurazione e metadata sono in PHP: si possono fare operazioni!</p>
+<pre>/var/simplesamlphp/config/config.php<code data-trim data-noescape>
+'auth.adminpassword' => '1234',
 'secretsalt' => ...
 'technicalcontact_name' => 'Supporto Tecnico',
 'technicalcontact_email' => 'idem-corso@garr.it',
 'language.default' => 'it',
 'timezone' => 'Europe/Rome',
-'session.store' => ...
 </code></pre>
-Il session store <code>phpsession</code> è problematico nell'interazione con altre applicazioni, usarne un altro
+    <aside class="notes">
+        Ad esempio, si possono calcolare i virtual host, modificare i metadata, ecc..
+    </aside>
+    </section>
+
+    <section><h2>Autodiagnosi</h2>
+        <p>Entrare con admin:1234</p>
+    <img src="ssp-autodiag-2.png" />
+    </section>
+
+	<section><h2>Session store</h2>
+<p>Nella sessione vengono salvati i dati SP</p>
+<pre>/var/simplesamlphp/config/config.php<code data-trim>
+'store.type'                    => ...,
+</code></pre>
+    <p>Lo store <code>phpsession</code> è problematico nell'interazione con altre applicazioni.</p>
+<pre>/var/simplesamlphp/config/config.php<code data-trim>
+'store.type'                    => 'memcache',
+</code></pre>
+    <p>Ridondanza gestita da SSP, adatto per IdP</p>
 	</section>
 
+	<section><h2>SQLite Session store</h2>
+<pre>/var/simplesamlphp/config/config.php<code data-trim>
+'store.type'                    => 'sql',
+// DSN PDO
+'store.sql.dsn'                 => 'sqlite:/tmp/simplesamlphp.sq3',
+</code></pre>
+    <p>Semplice e poco intrusivo. In caso di riavvio le sessioni
+    vanno perse, ma probabilmente
+    neppure l'applicazione sopravvive al riavvio</p>
+	</section>
+
+                
 	<section><h2>Chiavi</h2>
 Chiave e certificato vanno in <code>cert/</code>
 <pre><code data-trim>
-cp /etc/shibboleth/sp-key.pem /var/simplesamlphp/cert/
-cp /etc/shibboleth/sp-cert.pem /var/simplesamlphp/cert/
-chown www-data /var/simplesamlphp/cert/sp-key.pem
+$ cp /etc/shibboleth/sp-key.pem /var/simplesamlphp/cert/
+$ cp /etc/shibboleth/sp-cert.pem /var/simplesamlphp/cert/
+$ chown www-data /var/simplesamlphp/cert/sp-key.pem
 </code></pre>
 
 	</section>
@@ -108,25 +148,22 @@ chown www-data /var/simplesamlphp/cert/sp-key.pem
 I metadata dell'IdP/federazione vanno salvati in <code>metadata/saml20-idp-remote.php</code>
 
 <pre>metadata/saml20-idp-remote.php<code data-trim>
-$metadata['https://idp-corso.garr.it/idp/shibboleth'] = array(
+$metadata['urn:example:idem:corso2017'] = array(
     'name' => array(
         it' => 'IdP di test per il corso',
     ),
-    'SingleSignOnService' => 'https://idp-corso.garr.it/idp/&#8617;
-            profile/SAML2/Redirect/SSO',
-    'SingleLogoutService'  => 'https://idp-corso.garr.it/idp/&#8617;
-            ...',
+    'SingleSignOnService' => 'https://idp-corso/...',
+    'SingleLogoutService'  => 'https://idp-corso/...',
     'certFingerprint' => 'BF:3E:8D:4C:7A:ED:C2:D1:...',
 );
 </code></pre>
 
-Possibile gestirli a mano; anche questo è PHP e si può intevenire da
-codice (es. inclusione di file esterni)
+<p>Possibile gestirli a mano; anche questo è PHP e si può intevenire da
+codice (es. inclusione di file esterni)</p>
+<p>SSP fornisce un tool di conversione XML → PHP</p>
 </section>
 
 <section><h2>metadati federazione IDEM</h2>
-Per la federazione, ssp fornisce un tool di conversione XML → PHP
-
 Comprende un modulo (<code>metarefresh</code>) per l'aggiornamento automatico
 </section>
 
