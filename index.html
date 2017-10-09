@@ -512,21 +512,11 @@ An important type of SAML authority is the SAML identity provider, a system enti
     <!-- parte 5, discovery -->
 
     <section id="discovery"><h2>Discovery</h2>
-        L'utente che si presenta al SP a quale
-        <span title="Se l'SP conosce un solo IdP, no problem...">IdP dev'essere rediretto</span> per l'autenticazione?
-        Solo lui lo sa... (e neppure sempre :-) La domanda viene gestita dal Discovery Service (DS).
+        <p>L'utente che si presenta al SP a quale
+            <span title="Se l'SP conosce un solo IdP, no problem...">IdP dev'essere rediretto</span> per l'autenticazione?</p>
+        <p>Solo lui lo sa... (e neppure sempre :-)</p>
+        <p>La domanda viene gestita dal Discovery Service (DS)</p>
         
-        <dl>
-            <dt>Where Are You From (WAYF)</dt>
-            <dd>La federazione gestisce un servizio di Discovery centralizzato detto WAYF.
-                Esempio: <a href="https://filesender.garr.it" target="_blank">Filesender GARR</a></dd>
-            <dt>Embedded DS</dt>
-            <dd>Il SP fornisce un servizio integrato con <i>look&amp;feel</i> coerente ed
-            eventuali personalizzazioni o suggerimenti specifici del servizio.
-            Esempi: <a href="https://registry.idem.garr.it/rr3/" target="_blank">IDEM Entity Registry</a>,
-            <a href="https://bestr.it/?step=1" target="_blank">CINECA Bestr</a></dd>
-        </dl>
-
     <aside class="notes">
 Although this solution is deceptively simple it is complicated by several factors:
 * Any user interaction associated with this operation will be the first that the
@@ -551,6 +541,23 @@ have a specific discovery service, however those SPs which are only in one
 Federation can rely on this Federation-deployed discovery service.
     </aside>        
     </section>
+
+    <section id="discovery"><h2>Esempi Discovery</h2>
+        <dl>
+            <dt>Where Are You From (WAYF)</dt>
+            <dd>La federazione gestisce un servizio di Discovery centralizzato detto WAYF.
+                Esempio: <a href="https://filesender.garr.it" target="_blank">Filesender GARR</a></dd>
+            <dt>Embedded DS</dt>
+            <dd>Il SP fornisce un servizio integrato con <i>look&amp;feel</i> coerente ed
+            eventuali personalizzazioni o suggerimenti specifici del servizio.
+            Esempi: <a href="https://registry.idem.garr.it/rr3/" target="_blank">IDEM Entity Registry</a>,
+            <a href="https://bestr.it/?step=1" target="_blank">CINECA Bestr</a></dd>
+        </dl>
+
+    <aside class="notes">
+    </aside>        
+    </section>
+
 
     <section><h2>Discovery Protocol</h2>
 <script type="https://www.websequencediagrams.com">
@@ -615,7 +622,7 @@ which limits run-time flexibility.
         <p><a href="ssp.html#/discovery">SimpleSAMLphp DiscoPower</a></p>
     </section>
                                 
-    <section><h2>Metadati</h2>
+    <section><h2>Metadata</h2>
     <p>Identificatori utente scoped</p>
     </section>
 
@@ -691,16 +698,18 @@ Un modulo di SimpleSAMLphp inizializza una sessione per Auth MemCookie
 
 			</section>
 
-			<section>
-				<!-- parte 8 -->
-				
-				<section><h2>Servizi cloud</h2>
-				</section>
+    <section>
+            <!-- parte 8 -->
 
-				<section><h2>Auth0</h2>
-				<p></p>
-				</section>
-			</section>
+            <section><h2>Servizi cloud</h2>
+            </section>
+
+            <section><h2>Auth0</h2>
+            <p>https://auth0.com/</p>
+            <p>Gestisce il protocollo SAML (chiamato SAMLP)</p>
+            https://auth0.com/docs/connections/enterprise/samlp
+            </section>
+    </section>
 
 			<section>
 				<!-- parte 9 -->

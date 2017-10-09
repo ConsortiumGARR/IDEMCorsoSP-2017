@@ -144,30 +144,68 @@ $ chown www-data /var/simplesamlphp/cert/sp-key.pem
 
 	</section>
 	
+    <section id="config"><h2>Metadata del SP</h2>
+
+    <pre>metadata/saml20-sp-remote.php<code data-noescape>
+$metadata['https://corso-sp-ssp/'] = array(
+        'AssertionConsumerService' =&gt; 'https://localhost/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp',
+        'SingleLogoutService' =&gt; 'https://localhost/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp',
+);
+    </code></pre>
+
+    <p>Da <strong>mandare</strong> a IdP o federazione</p>
+    <p><a href="https://localhost/simplesaml/module.php/saml/sp/metadata.php/default-sp?output=xhtml" target="_blank">esempio</a></p>
+    
+    <aside class="notes">
+    Solo elementi utili per SAML2int
+    </aside>	
+    </section>
+                
 <section><h2>Metadata IdP</h2>
 I metadata dell'IdP/federazione vanno salvati in <code>metadata/saml20-idp-remote.php</code>
 
 <pre>metadata/saml20-idp-remote.php<code data-trim>
 $metadata['urn:example:idem:corso2017'] = array(
-    'name' => array(
-        it' => 'IdP di test per il corso',
+    'name' =&gt; array(
+        it' =&gt; 'IdP di test per il corso',
     ),
-    'SingleSignOnService' => 'https://idp-corso/...',
-    'SingleLogoutService'  => 'https://idp-corso/...',
-    'certFingerprint' => 'BF:3E:8D:4C:7A:ED:C2:D1:...',
+    'SingleSignOnService' =&gt; 'https://idp-corso/...',
+    'SingleLogoutService'  =&gt; 'https://idp-corso/...',
+    'certFingerprint' =&gt; 'BF:3E:8D:4C:7A:ED:C2:D1:...',
 );
 </code></pre>
 
-<p>Possibile gestirli a mano; anche questo è PHP e si può intevenire da
-codice (es. inclusione di file esterni)</p>
+<pre><code data-trim>
+$ openssl x509 -fingerprint -noout -in server.crt
+</code></pre>
+
 <p>SSP fornisce un tool di conversione XML → PHP</p>
 </section>
+	
+<section><h2>Gestione metadata</h2>
+<p>Possibile gestirli a mano; anche questo è PHP e si può intevenire da
+codice (es. inclusione di file esterni)</p>
+<p>Possibile usare file multipli usando </p>
 
-<section><h2>metadati federazione IDEM</h2>
+<pre>config/config.php<code data-trim>
+   'metadata.sources' =&gt; array(
+       array('type' =&gt; 'flatfile'),
+       array('type' =&gt; 'flatfile', 'directory' =&gt; 'metadata-generated'),
+       array('type' =&gt; 'xml', 'file' =&gt; 'idp.example.org-idpMeta.xml'),
+       array('type' =&gt; 'mdx', server =&gt; 'http://mdx.server.com:8080',
+           'cachedir' =&gt; '/var/simplesamlphp/mdx-cache',
+           'cachelength' =&gt; 86400),
+       array('type' =&gt; 'pdo'),
+    ),
+</code></pre>
+
+</section>
+                
+<section><h2>Metadata federazione IDEM</h2>
 Comprende un modulo (<code>metarefresh</code>) per l'aggiornamento automatico
 </section>
 
-	<section><h2>configurazione SP</h2>
+	<section><h2>Configurazione SP</h2>
 <pre>config/authsources.php<code data-trim>
 'sp-idem' => array(
     'saml:SP',
@@ -283,24 +321,26 @@ print_r($attributes);
 
 	</section>
 
-	<section><h2>Troubleshooting</h2>
-Usare la pagina di test
-
-Attivare il logging:
+    <section><h2>Logging</h2>
+    <p>Attivare il logging:</p>
 <pre>config/config.php<code data-trim>
-    'debug' => TRUE,
-    'logging.level' => SimpleSAML_Logger::INFO,
-    'logging.handler' => 'file',
+    'debug' =&gt; TRUE,
+    'logging.level' =&gt; SimpleSAML_Logger::INFO,
+    'logging.handler' =&gt; 'file',
 </code></pre>
 
-	<aside class="notes">
-	Se occorre
-	
-	chown www-data log/
-	
-	Oppure usare Syslog	
-	</aside>
-	</section>
+    <aside class="notes">
+    Se occorre
+
+    chown www-data log/
+
+    Oppure usare Syslog	
+    </aside>
+    </section>
+                
+    <section><h2>Troubleshooting</h2>
+Usare la pagina di test
+    </section>
 
 	<section><h2>Attributi</h2>
 Gli attributi sono restituiti come array

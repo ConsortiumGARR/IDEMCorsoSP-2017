@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" ID="_69c6a80a326cf2b61653f8fef8a4bd231f9462c9" entityID="https://corso-sp/">
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                     ID="_69c6a80a326cf2b61653f8fef8a4bd231f9462c9" 
+                     entityID="https://corso-sp/">
 
   <md:Extensions xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport">
     <alg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/>
