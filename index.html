@@ -458,33 +458,48 @@ SP1->UA: fatto!
 </section>
 
 <section>
-	<!-- parte 3, il Service Provider -->
-	
-	<section><h2>Il Service Provider</h2>
-	<p>Controlla gli accessi ad una risorsa consumando asserzioni fornite da un IdP</p>
-	
-	A SAML service provider is a system entity that receives and accepts authentication assertions in conjunction with a single sign-on (SSO) profile of the Security Assertion Markup Language (SAML).
-In the SAML domain model, a SAML relying party is any system entity that receives and accepts information from another system entity.[OS 1] Of particular interest is a SAML relying party that receives and accepts a SAML assertion issued by a SAML authority.
-An important type of SAML authority is the SAML identity provider, a system entity that issues authentication assertions in conjunction with an SSO profile of SAML.[OS 2] A relying party that consumes such assertions is called a SAML service provider (or simply service provider if the domain is understood). Thus a SAML service provider is a system entity that receives and accepts an authentication assertion issued by a SAML identity provider.</p>
+    <!-- parte 3, il Service Provider -->
 
-	<aside class="notes">
-	</aside>
-	</section>
+    <section id="SP"><h2>Il Service Provider</h2>
+    <p>Un <i>Service Provider</i> SAML (SP) è un relying party che consuma
+        asserzioni SAML</p>
+    
+    <p>In pratica, controlla gli accessi ad una risorsa in base alle asserzioni
+        fornite da un IdP</p>
+	
+    <p>Spesso è indicato come SP il componente software (libreria o
+    o modulo) che gestisce il protocollo SAML e per fornire informazioni
+    ad una retrostante applicazione</p>
+    
+    <aside class="notes">
+A SAML service provider is a system entity that receives and accepts authentication
+assertions in conjunction with a single sign-on (SSO) profile of the Security
+Assertion Markup Language (SAML).
 
-	<section><h2>Metadata</h2>
-	<p>Come fanno IdP e SP a "conoscersi"? Si scambiano i <i>metadati</i></p>
-	<ul>
-		<li>ogni attore è identificato da un <i>EntityID</i> (un URI nel namespace dell'organizzazione) 
-		<li>informazioni di contorno per l'utente (nome del servizio, contatti, loghi, ecc...)</li>
-		<li>chiavi crittografiche (pubbliche :-) e loro uso</li>
-		<li>il formato di nomi supportato (NameIDFormat)
-		<li>per IdP: binding e location dei servizi supportati SSO, SLO, Artifact Resolution, AA, ecc...</li>
-		<li>per SP: binding e location dei servizi supportati ACS, SLO, Artifact Resolution, ecc...</li>
-	</ul>
-	Lo standard di interscambio è XML
-		<aside class="notes">
-		</aside>
-	</section>
+An important type of SAML authority is the SAML identity provider, a system
+entity that issues authentication assertions in conjunction with an SSO profile
+of SAML.[OS 2]
+A relying party that consumes such assertions is called a
+SAML service provider (or simply service provider if the domain is understood).
+Thus a SAML service provider is a system entity that receives and accepts an
+authentication assertion issued by a SAML identity provider.
+    </aside>
+    </section>
+
+    <section><h2>Metadata</h2>
+    <p>Come fanno IdP e SP a "conoscersi"? Si scambiano i <i>metadati</i></p>
+    <ul>
+        <li>ogni attore è identificato da un <i>EntityID</i> (un URI nel namespace dell'organizzazione) 
+        <li>informazioni di contorno per l'utente (nome del servizio, contatti, loghi, ecc...)</li>
+        <li>chiavi crittografiche (pubbliche :-) e loro uso</li>
+        <li>il formato di nomi supportato (NameIDFormat)
+        <li>per IdP: binding e location dei servizi supportati SSO, SLO, Artifact Resolution, AA, ecc...</li>
+        <li>per SP: binding e location dei servizi supportati ACS, SLO, Artifact Resolution, ecc...</li>
+    </ul>
+    Lo standard di interscambio è XML
+            <aside class="notes">
+            </aside>
+    </section>
 
 	<section><h2>Esempi metadata</h2>
 	<!-- per formattare:
@@ -661,28 +676,29 @@ Un modulo di SimpleSAMLphp inizializza una sessione per Auth MemCookie
 
 			</section>			
 
-			<section>
-				<!-- parte 7 -->
-				
-				<section><h2>Autenticazione gestita dalle applicazioni/librerie</h2>
-				</section>
+    <section>
+        <!-- parte 7 -->
 
-				<section id="ssp"><h2>SimpleSAMLphp</h2>
-				<p><a href="https://simplesamlphp.org/">SimpleSAMLphp</a> (SSP) è una libreria PHP sviluppata dalla REN norvegese UNINETT</p>
-				<ul>
-					<li>opensource</li>
-					<li>funzionalità di IdP e SP</li>
-					<li>non richiede interventi a livello di sistema (quasi...)</li>
-					<li>supporta SAML 2.0, Shibboleth 1.3, A-Select, CAS, OpenID, WS-Federation, OAuth, ecc...</li>
-				</ul>
-				<a href="ssp.html">Esempio SSP</a>
-				<aside class="notes">
-				Ne sappiamo qualcosa:
-				https://github.com/simplesamlphp/simplesamlphp/blob/master/lib/SimpleSAML/Utils/HTTP.php
-				attorno a linea 460
-				https://github.com/simplesamlphp/simplesamlphp/commits?author=biancini
-				</aside>
-				</section>
+        <section><h2>Autenticazione gestita dalle applicazioni/librerie</h2>
+        </section>
+
+        <section id="ssp"><h2>SimpleSAMLphp</h2>
+        <p><a href="https://simplesamlphp.org/">SimpleSAMLphp</a> (SSP) è una
+            libreria PHP sviluppata dalla REN norvegese UNINETT</p>
+        <ul>
+            <li>opensource</li>
+            <li>funzionalità di IdP e SP</li>
+            <li>non richiede (quasi...) interventi a livello di sistema</li>
+            <li>supporta SAML 2.0, Shibboleth 1.3, A-Select, CAS, OpenID, WS-Federation, OAuth, ecc...</li>
+        </ul>
+        <a href="ssp.html">Esempio SSP</a>
+        <aside class="notes">
+        Ne sappiamo qualcosa:
+        https://github.com/simplesamlphp/simplesamlphp/blob/master/lib/SimpleSAML/Utils/HTTP.php
+        attorno a linea 460
+        https://github.com/simplesamlphp/simplesamlphp/commits?author=biancini
+        </aside>
+        </section>
 				
 				<section><h2>Alternative: Onelogin</h2>
 				<p></p>

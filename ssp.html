@@ -85,21 +85,26 @@ Database driver: (mysql, pgsql, ...)
     </section>
 
     <section><h2>Verifica</h2>
-        <p>Aprire <code>https://localhost/simplesaml/</code></p>
-        <p>Scegliere "Configuration"</p>
+        <p>Scegliere "Configuration" in <code>https://localhost/simplesaml/</code></p>
     <img src="ssp-autodiag-1.png" />
     </section>
 
 	<section><h2>Configurazione minima</h2>
-<p>File di configurazione e metadata sono in PHP: si possono fare operazioni!</p>
+    <p>File di configurazione e metadata sono in PHP</p>
 <pre>/var/simplesamlphp/config/config.php<code data-trim data-noescape>
-'auth.adminpassword' => '1234',
+'baseurlpath' => 'simplesaml/',
+'auth.adminpassword' => '<mark>1234</mark>',
 'secretsalt' => ...
 'technicalcontact_name' => 'Supporto Tecnico',
 'technicalcontact_email' => 'idem-corso@garr.it',
 'language.default' => 'it',
 'timezone' => 'Europe/Rome',
 </code></pre>
+    <p>Si possono fare operazioni!</p>
+<pre><code data-trim data-noescape>
+'baseurlpath' => 'https://' . $_SERVER['HTTP_HOST'] . '/simplesaml/',
+</code></pre>
+    
     <aside class="notes">
         Ad esempio, si possono calcolare i virtual host, modificare i metadata, ecc..
     </aside>
@@ -110,7 +115,7 @@ Database driver: (mysql, pgsql, ...)
     <img src="ssp-autodiag-2.png" />
     </section>
 
-	<section><h2>Session store</h2>
+    <section><h2>Session store</h2>
 <p>Nella sessione vengono salvati i dati SP</p>
 <pre>/var/simplesamlphp/config/config.php<code data-trim>
 'store.type'                    => ...,
@@ -120,9 +125,9 @@ Database driver: (mysql, pgsql, ...)
 'store.type'                    => 'memcache',
 </code></pre>
     <p>Ridondanza gestita da SSP, adatto per IdP</p>
-	</section>
+    </section>
 
-	<section><h2>SQLite Session store</h2>
+    <section><h2>SQLite Session store</h2>
 <pre>/var/simplesamlphp/config/config.php<code data-trim>
 'store.type'                    => 'sql',
 // DSN PDO
@@ -131,22 +136,21 @@ Database driver: (mysql, pgsql, ...)
     <p>Semplice e poco intrusivo. In caso di riavvio le sessioni
     vanno perse, ma probabilmente
     neppure l'applicazione sopravvive al riavvio</p>
-	</section>
+    </section>
 
                 
-	<section><h2>Chiavi</h2>
+    <section><h2>Chiavi</h2>
 Chiave e certificato vanno in <code>cert/</code>
-<pre><code data-trim>
+<pre>Per esercizio, copiamo quelli di Shibboleth<code data-trim>
 $ cp /etc/shibboleth/sp-key.pem /var/simplesamlphp/cert/
 $ cp /etc/shibboleth/sp-cert.pem /var/simplesamlphp/cert/
 $ chown www-data /var/simplesamlphp/cert/sp-key.pem
 </code></pre>
-
-	</section>
+    </section>
 	
     <section id="config"><h2>Metadata del SP</h2>
 
-    <pre>metadata/saml20-sp-remote.php<code data-noescape>
+<pre>metadata/saml20-sp-remote.php<code data-noescape>
 $metadata['https://corso-sp-ssp/'] = array(
         'AssertionConsumerService' =&gt; 'https://localhost/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp',
         'SingleLogoutService' =&gt; 'https://localhost/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp',
