@@ -116,7 +116,7 @@ Database driver: (mysql, pgsql, ...)
     </section>
 
     <section><h2>Session store</h2>
-<p>Nella sessione vengono salvati i dati SP</p>
+<p>Nella sessione PHP vengono salvati i dati SP</p>
 <pre>/var/simplesamlphp/config/config.php<code data-trim>
 'store.type'                    => ...,
 </code></pre>
@@ -127,39 +127,96 @@ Database driver: (mysql, pgsql, ...)
     <p>Ridondanza gestita da SSP, adatto per IdP</p>
     </section>
 
-    <section><h2>SQLite Session store</h2>
+    <section><h2>SQL Session store</h2>
+<p>I dati SP salvati in un DB via PDO</p>
 <pre>/var/simplesamlphp/config/config.php<code data-trim>
-'store.type'                    => 'sql',
+'store.type'        => 'sql',
 // DSN PDO
-'store.sql.dsn'                 => 'sqlite:/tmp/simplesamlphp.sq3',
+'store.sql.dsn'     => 'mysql:host=localhost;port=3307;dbname=testdb',
+</code></pre>
+    <h2>Esempio SQLite</h2>
+<pre>/var/simplesamlphp/config/config.php<code data-trim>
+'store.sql.dsn'     => 'sqlite:/tmp/simplesamlphp.sq3',
 </code></pre>
     <p>Semplice e poco intrusivo. In caso di riavvio le sessioni
-    vanno perse, ma probabilmente
-    neppure l'applicazione sopravvive al riavvio</p>
+        vanno perse<br />(ma è probabile che
+    neppure l'applicazione sopravviva al riavvio)</p>
     </section>
 
                 
-    <section><h2>Chiavi</h2>
-Chiave e certificato vanno in <code>cert/</code>
-<pre>Per esercizio, copiamo quelli di Shibboleth<code data-trim>
+    <section><h2>Chiave e certificato</h2>
+<pre><code data-trim>
+$ cd /var/simplesamlphp/cert
+$ openssl req -new -x509 -days 3652 -nodes -out sp-cert.pem -keyout sp-key.pem
+</code></pre>
+
+<pre>Per l'esercizio, copiamo quelli di Shibboleth<code data-trim>
 $ cp /etc/shibboleth/sp-key.pem /var/simplesamlphp/cert/
 $ cp /etc/shibboleth/sp-cert.pem /var/simplesamlphp/cert/
 $ chown www-data /var/simplesamlphp/cert/sp-key.pem
 </code></pre>
     </section>
-	
-    <section id="config"><h2>Metadata del SP</h2>
 
-<pre>metadata/saml20-sp-remote.php<code data-noescape>
-$metadata['https://corso-sp-ssp/'] = array(
-        'AssertionConsumerService' =&gt; 'https://localhost/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp',
-        'SingleLogoutService' =&gt; 'https://localhost/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp',
+<section><h2>Configurazione SP</h2>
+<pre>config/authsources.php<code data-trim>
+$config = array(
+
+    'sp-idem' => array(
+        'saml:SP',
+        'entityID' => 'https://corso-sp.example/simplesaml',
+        'privatekey' => 'sp-key.pem',
+        'certificate' => 'sp-cert.pem',
+        'idp' => NULL,      // Specificare un IdP o
+        'discoURL' => NULL, // un Discovery Service
+        ...
+</code></pre>
+    <aside class="notes">
+    C'è un meccanismo di key-rollover
+    </aside>	
+    </section>
+                
+    <section id="config"><h2>Metadata del SP</h2>
+        <p>Scegliere "Federazione" in <code>https://localhost/simplesaml/</code></p>
+    <img src="ssp-federazione.png" />
+    </section>
+                
+    <section id="config"><h2>Metadata del SP</h2>
+        <p>Il formato nativo è PHP</p>
+<pre><code data-trim data-noescape>
+$metadata['https://corso-sp.example/simplesaml'] = array (
+  'SingleLogoutService' =&gt; 
+  array (
+    0 =&gt; 
+    array (
+      'Binding' =&gt; 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+      'Location' =&gt; 'https://localhost/simplesaml/.../sp-idem',
+    ),
+  ),
+  'AssertionConsumerService' =&gt; 
+  array (
+    0 =&gt; 
+    array (
+      'index' =&gt; 0,
+      'Binding' =&gt; 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+      'Location' =&gt; 'https://localhost/simplesaml/.../sp-idem',
+    ),
+    1 =&gt; 
+    array (
+      'index' =&gt; 1,
+      'Binding' =&gt; 'urn:oasis:names:tc:SAML:1.0:profiles:browser-post',
+       ...
+  ),
+  'certData' =&gt; 'MIIC3DCCAcSgAwIBAgIJAJihXTdsMG...',
 );
     </code></pre>
-
+</section>
+                
+    <section id="config"><h2>Pubblicazione metadata</h2>
     <p>Da <strong>mandare</strong> a IdP o federazione</p>
-    <p><a href="https://localhost/simplesaml/module.php/saml/sp/metadata.php/default-sp?output=xhtml" target="_blank">esempio</a></p>
+    <p><a href="https://localhost/simplesaml/module.php/saml/sp/metadata.php/sp-idem">https://localhost/simplesaml/module.php/saml/sp/metadata.php/sp-idem</a></p>
     
+    <p>SSP fornisce un tool di conversione XML → PHP, sempre nel tab "Federazione"</p>
+
     <aside class="notes">
     Solo elementi utili per SAML2int
     </aside>	
@@ -182,8 +239,6 @@ $metadata['urn:example:idem:corso2017'] = array(
 <pre><code data-trim>
 $ openssl x509 -fingerprint -noout -in server.crt
 </code></pre>
-
-<p>SSP fornisce un tool di conversione XML → PHP</p>
 </section>
 	
 <section><h2>Gestione metadata</h2>
@@ -209,18 +264,6 @@ codice (es. inclusione di file esterni)</p>
 Comprende un modulo (<code>metarefresh</code>) per l'aggiornamento automatico
 </section>
 
-	<section><h2>Configurazione SP</h2>
-<pre>config/authsources.php<code data-trim>
-'sp-idem' => array(
-    'saml:SP',
-    'entityID' => 'https://sp2.local/simplesaml',
-    'privatekey' => 'sp-key.pem',
-    'certificate' => 'sp-cert.pem',
-    'idp' => NULL,      // Specificare un IdP o
-    'discoURL' => NULL, // un Discovery Service
-    ...
-</code></pre>
-	</section>
 
 	<section><h2>Discovery</h2>
 

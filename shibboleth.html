@@ -95,7 +95,7 @@ $ shibd -t
 	<section id="config"><h2>Metadata del SP</h2>
 	
 	<pre>shibboleth.xml<code data-noescape>
-&lt;ApplicationDefaults entityID="<mark>https://corso-sp/</mark>"
+&lt;ApplicationDefaults entityID="<mark>https://corso-sp.example/shibboleth</mark>"
 	REMOTE_USER="eppn persistent-id targeted-id"&gt;
 	</code></pre>
 
@@ -270,7 +270,7 @@ Security of LogoutResponse not established.
   attrname-format:basic
 2017-08-31 09:30:56 INFO Shibboleth.SessionCache [10]:&#8617;
   new session created: ID (_6a93c...4b4)&#8617;
-  IdP (urn:miotessoro) Protocol(urn:oasis:names:tc:&#8617;
+  IdP (urn:example:idem:corso2017) Protocol(urn:oasis:names:tc:&#8617;
   SAML:2.0:protocol) Address (10.0.2.2)
 </code></pre>
 	
@@ -296,15 +296,15 @@ decommentate quel che serve
 	<p>stiamo usando eduPersonPersonalName (eppn)</p>
 
 	<pre>shibboleth.xml<code data-trim data-noescape>
-&lt;ApplicationDefaults entityID="https://corso-sp/"
+&lt;ApplicationDefaults entityID="https://corso-sp.example/"
 	REMOTE_USER="<mark>eppn</mark> persistent-id targeted-id"&gt;
 	</code></pre>
 	
 <pre>$ tail /var/log/shibboleth/shibd.log<code data-trim>
 2017-08-31 10:22:50 WARN Shibboleth.AttributeFilter [1]:
-  removed value at position (0) of attribute (eppn) from (urn:miotessoro)
+  removed value at position (0) of attribute (eppn) from (urn:example:idem:corso2017)
 2017-08-31 10:22:50 WARN Shibboleth.AttributeFilter [1]:
-  no values left, removing attribute (eppn) from (urn:miotessoro)
+  no values left, removing attribute (eppn) from (urn:example:idem:corso2017)
 </code></pre>
 
 <pre>mio-idp-metadata.xml<code data-trim>
@@ -314,12 +314,24 @@ decommentate quel che serve
     &lt;/md:Extensions&gt;
 </code></pre>
 	
-	<aside class="notes">
-	Riprovate, ora va :-)
-	</aside>
-	</section>	
+    <aside class="notes">
+    Riprovate, ora va :-)
+    </aside>
+    </section>	
 
-		<section>
+    <section><h2>Virtual host</h2>
+        <p>Se virutal host diversi devono avere configurazioni differenti (es. entityId)</p>
+<pre>shibboleth.xml<code data-trim data-noescape>
+&lt;ApplicationDefaults entityID="https://corso-sp.example/shibboleth"
+    ...
+    &lt;ApplicationOverride id="secondaApp"
+            entityID="<mark>https://altrove.invalid/shibboleth</mark>"/&gt;
+
+&lt;/ApplicationDefaults&gt;
+</code></pre>
+    </section>
+
+    <section>
 <pre>https://localhost/private/<code data-trim data-noescape>
 Array
 (
