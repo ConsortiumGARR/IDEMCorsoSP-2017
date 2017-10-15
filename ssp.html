@@ -175,6 +175,11 @@ $config = array(
     </aside>	
     </section>
                 
+    <section id="config"><h2>Test autenticazione</h2>
+        <p>Dalla console, "Autenticazione"
+            <a href="https://localhost/simplesaml/module.php/core/authenticate.php" target="_blank">https://localhost/simplesaml/module.php/core/authenticate.php</a></p>
+    </section>
+                
     <section id="config"><h2>Metadata del SP</h2>
         <p>Scegliere "Federazione" in <code>https://localhost/simplesaml/</code></p>
     <img src="ssp-federazione.png" />
@@ -242,14 +247,11 @@ $ openssl x509 -fingerprint -noout -in server.crt
 </section>
 	
 <section><h2>Gestione metadata</h2>
-<p>Possibile gestirli a mano; anche questo è PHP e si può intevenire da
-codice (es. inclusione di file esterni)</p>
-<p>Possibile usare file multipli usando </p>
-
-<pre>config/config.php<code data-trim>
+<p>Possibile usare sorgenti multiple</p>
+<pre>config/config.php<code data-trim data-noescape>
    'metadata.sources' =&gt; array(
        array('type' =&gt; 'flatfile'),
-       array('type' =&gt; 'flatfile', 'directory' =&gt; 'metadata-generated'),
+       array('type' =&gt; 'flatfile', <mark title="aggiungere, serve per l'esercitazione">'directory' =&gt; 'metadata-generated'</mark>),
        array('type' =&gt; 'xml', 'file' =&gt; 'idp.example.org-idpMeta.xml'),
        array('type' =&gt; 'mdx', server =&gt; 'http://mdx.server.com:8080',
            'cachedir' =&gt; '/var/simplesamlphp/mdx-cache',
@@ -257,23 +259,48 @@ codice (es. inclusione di file esterni)</p>
        array('type' =&gt; 'pdo'),
     ),
 </code></pre>
-
+<p>&Egrave; sempre possibile gestirli a mano; anche questo è
+PHP e si può intevenire da
+codice (es. inclusione di file esterni)</p>
 </section>
                 
 <section><h2>Metadata federazione IDEM</h2>
-Comprende un modulo (<code>metarefresh</code>) per l'aggiornamento automatico
+<p>SSP comprende un modulo (<code>metarefresh</code>)
+    per l'aggiornamento automatico dei metadata di federazione</p>
+
+<pre><code data-trim data-noescape>
+$ cd /var/simplesamlphp
+$ touch modules/metarefresh/enable
+$ modules/metarefresh/bin/metarefresh.php http://www.garr.it/idem-metadata/idem-metadata-sha256.xml
+</code></pre>
+
+<p>I metadata si troveranno in <code title="modificabile con l'opzione -o">/var/simplesamlphp/metadata-generated</code></p>
+
+<table class="biblio" style="font-size: small"><tr><td>Riferimenti</td>
+<td><a href="https://simplesamlphp.org/docs/1.14/simplesamlphp-automated_metadata">https://simplesamlphp.org/docs/1.14/simplesamlphp-automated_metadata</a>
+</td></tr></table>	
+
 </section>
 
-
-	<section><h2>Discovery</h2>
-
-	Redirige direttamente all'IdP (Web SSO senza DS)
+    <section><h2>IdP singolo</h2>
+        <p>Redirige direttamente ad un IdP (ha la precedenza)</p>
 <pre>config/authsources.php<code data-trim>
 'sp-idem' => array(
     ...  
-    'idp' => 'entityID IdP',
+    'idp' => 'urn:example:idem:corso2017',
     ...
 </code></pre>
+
+    <p>Usa un DS "basic"</p>
+<pre>config/authsources.php<code data-trim>
+'sp-idem' => array(
+    ...  
+    'idp' => NULL, 'discoURL' => NULL
+    ...
+</code></pre>
+    </section>
+
+    <section><h2>Discovery</h2>
 
 	Redirige al servizio di CDS		
 <pre>config/authsources.php<code data-trim>
@@ -283,16 +310,11 @@ Comprende un modulo (<code>metarefresh</code>) per l'aggiornamento automatico
     ...
 </code></pre>
 
-	Usa un DS "basic"
-<pre>config/authsources.php<code data-trim>
-'sp-idem' => array(
-    ...  
-    'idp' => NULL, 'discoURL' => NULL
-    ...
-</code></pre>
 
 	</section>
 
+                
+                
 	<section><h2>Embedded Discovery Service</h2>
 
 Presenta l'elenco degli IdP in
@@ -420,23 +442,8 @@ $config = array (
 
 </section>
                 
-<section id="discovery"><h2>Discovery Service</h2>
-    <p>SSP ha un Embedded Discovery Service (EDS)</p>
-    <p>
-    </p>
-<pre>https://shibboleth.net/downloads/embedded-discovery-service/latest<code data-trim data-noescape>
-$ wget .../shibboleth-embedded-ds-1.2.0.tar.gz
-$ tar -xzf shibboleth-embedded-ds-1.2.0.tar.gz
-$ mv shibboleth-embedded-ds-1.2.0 <mark>/etc/shibboleth-ds</mark>
-</code></pre>
 
-    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a href="https://www.idem.garr.it/documenti/doc_view/359-guida-all-installazione-dello-shibboleth-embedded-discovery-service-su-debian-linux">Guida all'Installazione dello Shibboleth Embedded...</a>
-            </td></tr></table>
-    
-</section>
-                
-
-	<section><h2>Logging, audit e statistiche</h2>
+                <section><h2>Logging, audit e statistiche</h2>
 
 	</section>	
 
