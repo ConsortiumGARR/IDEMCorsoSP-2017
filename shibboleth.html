@@ -89,7 +89,7 @@ $ service shibd restart
 $ shibd -t
 	</code></pre>
 
-    <p>Aprire<br><code><a href="https://localhost/Shibboleth.sso/Status">https://localhost/<mark>Shibboleth.sso/Status</mark></a></code></p>
+    <p>Aprire<br><code><a href="https://server.example/Shibboleth.sso/Status">https://server.example/<mark>Shibboleth.sso/Status</mark></a></code></p>
     </section>
 	
 	<section id="config"><h2>Metadata del SP</h2>
@@ -572,7 +572,12 @@ $ mv shibboleth-embedded-ds-1.2.0 <mark>/etc/shibboleth-ds</mark>
 			// - https://github.com/hakimel/reveal.js#configuration
 			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
-				dependencies: [
+					width: "80%",
+					height: "100%",
+					margin: 0,
+					minScale: 1,
+					maxScale: 1,
+                                        dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
 					{ src: 'plugin/notes/notes.js', async: true },
