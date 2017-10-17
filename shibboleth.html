@@ -56,12 +56,14 @@ $ service shibd restart
 		
 	</section>
 	
-    <section><h2><i>handler</i></h2>
+    <section><h2><i>Handler</i></h2>
     <p>I servizi dell'SP sono gestiti da <i>handler</i> come
-        <code>/Login</code>,
-        <code>/SAML2</code>, <code>/Slo</code>, ecc...</p>
-    <p>Di default, si trovano sotto la base <code>/Shibboleth.sso</code>,
-        per modificarli aggiungere</p>
+    <ul>
+        <li><code>/Login</code></li>
+        <li><code>/SAML2</code></li>
+        <li><code>/Slo</code></li>
+    </ul>
+    <p>Sotto la base <code>/Shibboleth.sso</code> di default</p>
     
 <pre>shibboleth.xml<code data-trim data-noescape>
 &lt;ApplicationDefaults ...
@@ -79,17 +81,27 @@ $ service shibd restart
 	
     <section><h2>Status handler</h2>
 
-    <p>Esercizio S1 </p>
+    <p>Esercizio: leggiamo lo stato di mod_shib2</p>
+
+    <ol>
+        <li>modificare l'ACL
 <pre>shibboleth.xml<code data-trim data-noescape>
 &lt;Handler type="Status" Location="/Status"
-	acl="127.0.0.1 <mark>10.0.0.1</mark> ::1"/&gt;
+	acl="127.0.0.1 <mark>10.0.0.0/16</mark> ::1"/&gt;
 </code></pre>
+        </li>
 
-	<pre><code data-trim>
+        <li>verificare la configurazione
+<pre><code data-trim>
 $ shibd -t
-	</code></pre>
+</code></pre>
+        </li>
 
-    <p>Aprire<br><code><a href="https://server.example/Shibboleth.sso/Status">https://server.example/<mark>Shibboleth.sso/Status</mark></a></code></p>
+        <li>aprire<br><code>
+        <a href="https://server.example/Shibboleth.sso/Status"
+           target="_blank">https://server.example/<mark>Shibboleth.sso/Status</mark></a></code>
+        </li>
+    </ol>
     </section>
 	
 	<section id="config"><h2>Metadata del SP</h2>
@@ -99,8 +111,12 @@ $ shibd -t
 	REMOTE_USER="eppn persistent-id targeted-id"&gt;
 	</code></pre>
 
-	<p><code>/Shibboleth.sso/Metadata</code> da <strong>mandare</strong> a IdP o federazione</p>
-	<p><a href="metadata-shib.xml" target="_blank">esempio</a></p>
+        <p>Il file si scarica da
+        <code><a href="https://server.example/Shibboleth.sso/Metadata"
+                 target="_blank">/Shibboleth.sso/Metadata</a></code> 
+        per mandarlo al gestore dell'IdP o alla federazione</p>
+
+        <p><a href="metadata-shib.xml" target="_blank">Esempio</a></p>
 	<aside class="notes">
 	Solo elementi utili per SAML2int
 	</aside>	
@@ -118,11 +134,11 @@ $ shibd -t
     &lt;/md:KeyDescriptor&gt;
     &lt;md:SingleLogoutService
         Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-        Location="http://idp-corso/simplesaml/saml2/idp/SingleLogoutService.php"/&gt;
-    &lt;md:NameIDFormat&gt;urn:oasis:names:tc:SAML:2.0:nameid-format:transient&lt;/md:NameIDFormat&gt;
+        Location="http://idp.../SingleLogoutService.php"/&gt;
+    &lt;md:NameIDFormat&gt;urn:oasis:names:...&lt;/md:NameIDFormat&gt;
     &lt;md:SingleSignOnService
         Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-        Location="http://idp-corso/simplesaml/saml2/idp/SSOService.php"/&gt;
+        Location="http://idp.../SSOService.php"/&gt;
   &lt;/md:IDPSSODescriptor&gt;
 ...
 &lt;/md:EntityDescriptor&gt;
@@ -141,26 +157,26 @@ $ shibd -t
         file="mio-idp-metadata.xml"/&gt;
 </code></pre>
 
-        <p><code><a href="https://localhost/Shibboleth.sso/Login?entityID=urn:example:idem:corso2017">https://localhost/Shibboleth.sso/Login?entityID=urn:example:idem:corso2017</a></code></p>
+        <p><code><a href="https://server.example/Shibboleth.sso/Login?entityID=urn:example:idem:corso2017"
+                    target="_blank">https://server.example/Shibboleth.sso/Login?entityID=urn:example:idem:corso2017</a></code></p>
     </section>
 	
-	<section><h2>Sessioni <i>lazy</i></h2>
-	<p>Nelle sessioni attive l'accesso alla risorsa richiede una sessione SP
-		valida e se non presente l'utente viene rediretto all'handler di autenticazione</p>
-	<p>Nelle sessioni <i>lazy</i> se esiste una sessione valida, i parametri vengono
-		inoltrati al successivo modulo, altrimenti la richiesta viene
-		esaudita senza parametri</p>
-	<pre><code data-trim>
+    <section><h2>Sessioni <i>lazy</i></h2>
+    <p>Nelle sessioni attive l'accesso alla risorsa richiede una sessione SP
+            valida e se non presente l'utente viene rediretto all'handler di autenticazione</p>
+    <p>Nelle sessioni <i>lazy</i> se esiste una sessione valida, i parametri vengono
+            inoltrati al successivo modulo, altrimenti la richiesta viene
+            esaudita senza parametri</p>
+<pre><code data-trim>
 &lt;?php
 if (empty($_SERVER['Shib-Session-ID'])) {
-	header('Location: https://localhost/Shibboleth.sso/Login?entityID=urn:miotessoro&target=https%3A%2F%2Flocalhost%2Fprivate%2F');
-	exit;
+    header('Location: https://server.example/Shibboleth.sso/Login?entityID=urn:example:idem:corso2017&target=https%3A%2F%2Fserver.example%2Fprivate%2F');
+    exit;
 }
+</code></pre>
 
-		</code></pre>
-
-	<aside class="notes">
-	Lazy o passive
+    <aside class="notes">
+    Lazy o passive
 
 Initiator Protocol
 This protocol supports a small set of query string parameters that correspond to identically named attributes that can be supplied either directly on a <SessionInitiator> element or as content settings on a per-resource basis.
@@ -188,40 +204,39 @@ discoveryPolicy (string) (SAMLDS only) (Version 2.5 and Above)
 Used as input to some discovery protocols that take parameters modifying discovery behavior. In the case of the type="SAMLDS"SessionInitiator, this is passed as a policy parameter value.
 template (base64-encoded SAML <AuthnRequest> message) (SAML2 only) (Version 2.6 and Above)
 If supplied, the eventual SAML request is constructed based on the message supplied, apart from per-request information or settings supplied directly in the configuration or as parameters. Allows a message to be constructed externally with extensions or dynamic content, and then re-issued by the SP.
-	</aside>
-	</section>	
-	
-	
-	<section><h2><i>Apache</i></h2>
-	<ol>
-		<li>create una directory /var/www/html/private</li>
-		<li><pre>/var/www/html/private/index.php<code data-trim>
+    </aside>
+    </section>	
+
+
+    <section><h2><i>Apache</i></h2>
+    <ol>
+        <li>create una directory /var/www/html/private</li>
+        <li><pre>/var/www/html/private/index.php<code data-trim>
 &lt;?php
 print_r($_SERVER);
 
-		</code></pre></li>
-		<li><pre>/var/www/html/private/.htaccess<code data-trim data-noescape>
+</code></pre></li>
+        <li><pre>/var/www/html/private/.htaccess<code data-trim data-noescape>
 AuthType shibboleth
 ShibRequestSetting requireSession <mark>true</mark>
 require <mark>shibbboleth</mark>
-		</code></pre></li>
-	</ol>
-	
-	<p>aprite <code>https://localhost/private/</code></p>
-	
-	<aside class="notes">
-	Se occorre
-	<Directory /var/www/html>
-			AllowOverride AuthConfig
-	</Directory>
-	Se Apache 2.2:
-	ShibCompatWith24 on
-	Qualunque utente valido
-	
-	<a href="https://localhost/Shibboleth.sso/Logout?return=https%3A%2F%2Flocalhost%2Fprivate%2Flanding.php">Logout</a>;
-	
-	</aside>
-	</section>	
+</code></pre></li>
+    </ol>
+
+    <p>aprite <code>https://localhost/private/</code></p>
+
+    <aside class="notes">
+    Se occorre
+    <Directory /var/www/html>
+                    AllowOverride AuthConfig
+    </Directory>
+    Se Apache 2.2:
+    ShibCompatWith24 on
+    Qualunque utente valido
+
+    <a href="https://localhost/Shibboleth.sso/Logout?return=https%3A%2F%2Flocalhost%2Fprivate%2Flanding.php">Logout</a>;
+    </aside>
+    </section>	
 
 		<section><h2><i>Apache lazy session</i></h2>
 
