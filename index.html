@@ -36,17 +36,15 @@ dev'essere attivo e disponibile SSL/https
 	-->
 <div class="reveal"><div class="slides">
 
-<section><h1>Sviluppo di servizi SSO SAML 2.0</h1>
-    <p>Marco Ferrante marco.ferrante@unige.it<br /><small>Università degli Studi di Genova</small></p>
-<p>Giuliano Latini giuliano.latini@univpm.it<br /><small>Università Politecnica delle Marche</small></p>
-<p>membri CTS GARR IDEM</p>
-	<aside class="notes">
-Ringraziamenti: Davide Vaghetti (UniPi)
-	</aside>
-			</section>
+    <section><h1>Sviluppo di servizi SSO SAML 2.0</h1>
+        <p>Davide Vaghetti <davide.vaghetti@unipi.it<br /><small>Università di Pisa</small></p>
+        <p>Marco Ferrante marco.ferrante@unige.it<br /><small>Università degli Studi di Genova</small></p>
+        <p>Giuliano Latini giuliano.latini@univpm.it<br /><small>Università Politecnica delle Marche</small></p>
+        <p>membri CTS GARR IDEM</p>
+    </section>
 			
 				<!-- parte 1 -->
-			<section><h1>Web Single SignOn</h1>
+    <section><h1>Web Single SignOn</h1>
 <p>Il Single SignOn (SSO) consente ad un utente di effettuare un'unica autenticazione (authN) valida per più risorse</p>
 <p>Non si occupa dell’autorizzazione (authZ), di solito in capo alla risorsa</p>
 	<aside class="notes">
@@ -56,14 +54,18 @@ Reduce password fatigue from different user name and password combinations
 Reduce time spent re-entering passwords for the same identity
 Reduce IT costs due to lower number of IT help desk calls about passwords
 	</aside>
-			</section>
-			
-			<section>
-<p>L'utente si autentica presso un <i>autorità</i> (IdP, <i title="terminologia OpenID Connect, derivato da OAuth">Authorization Server</i>, ....) e ottiene un <i>token</i> (o <i>ticket</i>)<p>
-<p>L'utente poi presenta il <i>token</i> alle risorse (SP, <i title="terminologia OpenID Connect, derivato da OAuth">client</i>, ...) che lo valideranno e lo valuteranno per l'autorizzazione</p>
-			</section>
-			
-			<section>
+    </section>
+
+    <section>
+<p>L'utente si autentica presso un <i>autorità</i> (IdP, 
+    <i title="terminologia OpenID Connect, derivato da OAuth">Authorization Server</i>, ....)
+    e ottiene un <i>token</i> (o <i>ticket</i>)<p>
+<p>L'utente poi presenta il <i>token</i> alle risorse (SP,
+    <i title="terminologia OpenID Connect, derivato da OAuth">client</i>, ...)
+    che lo valideranno e lo valuteranno per l'autorizzazione</p>
+    </section>
+
+    <section>
 				<!-- parte 2 -->
 
 		<section><h2>Singole applicazioni web</h2>
@@ -586,6 +588,7 @@ Federation can rely on this Federation-deployed discovery service.
             <dd>Il SP fornisce un servizio integrato con <i>look&amp;feel</i> coerente ed
             eventuali personalizzazioni o suggerimenti specifici del servizio.
             Esempi: <a href="https://registry.idem.garr.it/rr3/" target="_blank">IDEM Entity Registry</a>,
+            cloud.garr.it
             <a href="https://bestr.it/?step=1" target="_blank">CINECA Bestr</a></dd>
         </dl>
 
@@ -719,56 +722,48 @@ Un modulo di SimpleSAMLphp inizializza una sessione per Auth MemCookie
         https://github.com/simplesamlphp/simplesamlphp/commits?author=biancini
         </aside>
         </section>
-				
-				<section><h2>Alternative: Onelogin</h2>
-				<p></p>
-				</section>
 
-				<section><h2>Alternative: pysaml2</h2>
-				<p></p>
-				</section>
+        <section><h2>Alternative: Onelogin</h2>
+        <p></p>
+        </section>
 
-				<section><h2>Alternative: Java</h2>
-				<p></p>
-				</section>
+        <section><h2>Alternative: pysaml2</h2>
+        <p></p>
+        </section>
 
-			</section>
+        <section><h2>Alternative: Java</h2>
+        <p></p>
+        </section>
 
-    <section>
-            <!-- parte 8 -->
-
-            <section><h2>Servizi cloud</h2>
-            </section>
-
-            <section><h2>Auth0</h2>
-            <p>https://auth0.com/</p>
-            <p>Gestisce il protocollo SAML (chiamato SAMLP)</p>
-            https://auth0.com/docs/connections/enterprise/samlp
-            </section>
     </section>
 
-			<section>
-				<!-- parte 9 -->
-				
-				<section><h2>Linee guida siti con autenticazione federata</h2>
-				</section>
+    <section>
+        <!-- parte 8 -->
 
-				<section><h2></h2>
-				<p>Slide di Lalla...</p>
-				</section>
-			</section>
-				
-			<section>
-				<!-- parte 10 -->
-				
-				<section><h2>Spid</h2>
-				</section>
+        <section><h2>Servizi cloud</h2>
+        </section>
 
-			</section>
-				
-			</div>
-			
-		</div>
+        <section><h2>Auth0</h2>
+        <p>https://auth0.com/</p>
+        <p>Gestisce il protocollo SAML (chiamato SAMLP)</p>
+        https://auth0.com/docs/connections/enterprise/samlp
+        </section>
+    </section>
+
+    <section>
+        <!-- parte 9 -->
+
+        <section><h2>Linee guida siti con autenticazione federata</h2>
+        </section>
+
+        <section><h2></h2>
+        <p>Slide di Lalla...</p>
+        </section>
+    </section>
+
+    </div>
+
+</div>
 <!--
 IdP fornito da GARR
 Virtual box

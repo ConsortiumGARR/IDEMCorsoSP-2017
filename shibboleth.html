@@ -107,7 +107,7 @@ $ shibd -t
 	<section id="config"><h2>Metadata del SP</h2>
 	
 	<pre>shibboleth.xml<code data-noescape>
-&lt;ApplicationDefaults entityID="<mark>https://corso-sp.example/shibboleth</mark>"
+&lt;ApplicationDefaults entityID="<mark>https://sp.example/shibboleth</mark>"
 	REMOTE_USER="eppn persistent-id targeted-id"&gt;
 	</code></pre>
 
@@ -359,6 +359,7 @@ Array
     [Shib-Session-Index] => _d1c7faad4d6344b47ebedd49a397220d64c9c02b42
     [eppn] => <mark>marco@idem.garr.it</mark>
     [mail] => marco@csita.unige.it
+    [scoped-affiliation] => member@unige.it;employee@unige.it
     [unscoped-affiliation] => member;employee
 ...
     [REMOTE_USER] => marco@idem.garr.it

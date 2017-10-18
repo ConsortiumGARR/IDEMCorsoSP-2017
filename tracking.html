@@ -52,10 +52,6 @@
 Esercizio 1
 SP reindirizza all'IdP (protocollo SAML)
 L'IdP reindirizza su se stesso (specifico dell'implementazione dell'IdP)
-
-Avviare: 
-cd \xampp
-xampp_start.exe
 </aside>
     <ol>
         <li>con Firefox aprite 
@@ -77,15 +73,16 @@ Ingranaggio a destra per disattivare javascript
     <section><h2>Request</h2>
 <aside class="notes">
 http://localhost/simplesaml/saml2/idp/SSOService.php?SAMLRequest=hVNNj9owEL3zK1DuwQkJu8GCVBT6gUQhImkPvVTGnhRLjp3aTpf993U+tktXu9QHR5qZ9+bN82RhSCVqvGrsWR7hVwPGjsbuXCohDe6SS6/REitiuMGSVGCwpThffdnh6STAtVZWUSW8F7DbKGIMaMuV7GHbzdI77D/sDp+2+x/sROJp7A6L5mx2F98HLKKzMknCaRTNTsk8KsuYhnEP/QbaOJ6l52i9Uc9mTANbaSyR1sWD8N4PEj+8K8IExxEO5t976MYNyyWxHfxsbY0REooScVbGIsOrWkA7CmqvKeKsRnl+yEH/5hQm9bnuabLBgfdcMi5/3h781BcZ/LkoMj875EVPsnoyZK2kaSrQQ5uvx90r2lxvv1PGoFIhcpxwaQW9I9R4aUe4aPO4s0Kn/yOowBJGLGk5Fuga+cxV472bZrvJlOD0sYu356PSFbFvDx1Owi7CmV92pbiRpgbKSw7M+0uzEkI9rDUQC0vP6ga8Mfqn+bCcwLpVdS5ZuNjxWlU10dy0LwgXQu0w/bMD1+Vr4fbuCGV6czUppm2dC2fu86A0a18YqOtdaOLEK20Hk14l71WjG7LT0VP6+r9L/wA=&RelayState=http://localhost/php-saml/demo1/
+https://idp-corso-sp.aai.garr.it/idp/profile/SAML2/Redirect/SSO?SAMLRequest=fVNNj9owFLzzK1DuiZNANq0FqSj0A4lCRNIeeqmM/bJYSmzXdnbZf1/nYwutWnyJ9N6b8cz4ZWFIUyu8au1ZHOFnC8ZOpu5cmloY3DeXXqsFlsRwgwVpwGBLcbH6ssNxEGKlpZVU1t5fsPsoYgxoy6UYYNvN0jvsP+wOn7b7HxVj84eUsuSUvA0TklJKTw9JzGbJvKrmc3iT0HiWhjBAv4E2jmfpOVpvMrAZ08JWGEuEdfUwSv0o9KO0jGY4jHESfx+gG2eWC2J7+NlaZTBCnCmfSm2kb1RACA8eidYBt10DObMVrwF1PmJ0BMY1UIuK4jAw5mMY77lgXDzez+A0DBn8uSxzPz8U5UCyes1mLYVpG9AF6CdO4etxd5XpRp5AB3AhjXKC1Fn5XeqIQSMj5JjhErjiO0KNl/W0i66P+2x01ukasZg7DO4td1HhnmGBbqeveIX3zsd2k8ua05e+3p2PUjfE/t9uFER9hTO/6kdxK4wCyisOzPtNs6pr+bzWQCwsPatb8Kboj8vHDQXW76vLx8LFTteyUURz0z2jM0Xt6Pjq+nZ8XbvlO0KV3d1Pimk358q5+zxLzbq3dY8NrNTEiZfajiH9k3xQje7Iziav7dufL/sF&RelayState=https://server.example/php-saml/demo1/
 
 \xampp\php\php -r "echo gzinflate(base64_decode('...'));"
 </aside>
     <ol>
         <li>copiate il contenuto della variabile <var>SAMLRequest</var><br />
 <pre><code data-trim data-noescape>
-http://localhost/simplesaml/saml2/idp/SSOService.php?&#8617;
+https://idp-corso-sp.aai.garr.it/...?&#8617;
   <mark>SAMLRequest=hVNNj9owEL...</mark>&#8617;
-  &RelayState=http://loca...
+  &RelayState=https://server.example/...
 </code></pre>
         </li>
         <li>decodificatelo con <pre><code data-trim>php -r "echo gzinflate(base64_decode('hVNNj9owEL...'));</code></pre></li>
@@ -101,7 +98,7 @@ http://localhost/simplesaml/saml2/idp/SSOService.php?&#8617;
     xmlns:samlp="urn:..." xmlns:saml="urn:..."&#8617;
     ID="ONELOGIN_1..." Version="2.0"&#8617;
     IssueInstant="2017-08-16T18:43:09Z"&#8617;
-    Destination="http://localhost/simplesaml/saml2/idp/SSOService.php"&#8617;
+    Destination="https://idp-corso-sp.aai.garr.it/..."&#8617;
     ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"&#8617;
     AssertionConsumerServiceURL="https://server.example/.../index.php?acs"&gt;
   &lt;saml:Issuer&gt;https://server.example/.../metadata.php&lt;/saml:Issuer&gt;
@@ -124,14 +121,15 @@ L'IdP gestisce l'autenticazione (specifico dell'implementazione dell'IdP)
 L'IdP rimanda ad una pagina con la risposta (che d norma non si vede perché fa l'autosubmit via JavaScript)
 </aside>
     <ol>
-            <li>inserite le credenziali ....</li>
-            <li>cliccate "Invia"</li>
-            <li>tasto destro e "Visualizza sorgente"</li>
-            <li>notate:</li>
-    </ol>
-<pre><code data-trim data-noescape>
-... onload="document.getElementsByTagName('input')[0].click();"...
+        <li>inserite le credenziali ....</li>
+        <li>cliccate "Invia"</li>
+        <li>tasto destro e "Visualizza sorgente"</li>
+        <li>notate:<pre><code data-trim data-noescape>
+onload="document.#8617;
+  getElementsByTagName('input')[0].click();"
 </code></pre>
+</li>
+    </ol>
     </section>
 
     <section><h2>Pagina Response</h2>
@@ -141,7 +139,7 @@ L'IdP rimanda ad una pagina con la risposta (che d norma non si vede perché fa 
 &lt;input type="hidden" name="SAMLResponse"
     value="<mark>PHNhbWxwOl...</mark>" /&gt;
 &lt;input type="hidden" name="RelayState"
-    value="https://server.example/php-saml/demo1/"&gt;
+    value="https://server.example/..."&gt;
 </code></pre>
         </li>
        <li>decodificate il valore di <var>SAMLResponse</var> con
