@@ -147,7 +147,7 @@ I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, 
                 </aside>
         </section>
 
-	<section><h2>Ruoli</h2>
+	<section><h2>Attori</h2>
 
 	<dl style="columns: 2;">
 	<dt>Subject</dt>
@@ -205,6 +205,7 @@ I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, 
 	<li>Identity Provider Discovery Profile</li>
 	<li>Single Logout Profile</li>
 	<li>Name Identifier Management Profile</li>
+        <li>Holder-of-Key (HoK) Web Browser SSO Profile</li>
 	<li>...</li>
 	</ul>
     <aside class="notes">
@@ -666,89 +667,91 @@ which limits run-time flexibility.
 
 </section>
 			
-			<section>
-				<!-- parte 6 -->
-				
-				<section id="container"><h2>Autenticazione gestita dal container/web server</h2>
-				<p></p>
+    <!-- parte 6 -->
+    <section id="sviluppo"><h2>Sviluppo di applicazioni SAML</h2>
+        <p>Integrare un servizio/applicazione per sfruttare l'autenticazione
+        SAML 2.0 </p>
+        <dl>
+            <dt>applicazione esistente/nuova</dt>
+            <dd>nuova può usare una libreria generica di autenticazione che
+                comprenda SAML, esistente deve far inizializzare la sessione
+                dell'applicazione da un'asserzione dell'IdP</dd>
+            <dt>configurazione integrata/di sistema</dt>
+            <dt>SSO intra-organizzazione/federato</dt>
+        </dl>
+    </section>
+    
+    <section id="container"><h2>Gestione autenticazione</h2>
+        <dl>
+            <dt>dal web server/container</dt>
+            <dd>un modulo del server (o un valve del container, o simile) è
+                incaricato di gestire tutta la negoziazione SAML e passa
+                all'applicazione retrostante le asserzioni variamente preelaborate
+                come variabili CGI.
+            </dd>
+            <dt>da applicazioni/librerie</dt>
+            <dd>l'applicazione usa, a vari livelli, una libreria che gestisce
+                il processo di autenticazione</dd>
+        </dl>
+        <aside class="notes">
+            web server/container: Problemi con gli attributi a valori multipli.
+        </aside>
+    </section>
 
+    <section id="shibboleth"><h2>Autenticazione da container</h2>
+        <dl>
+            <dt>Shibboleth Native Service Provider (SP)</dt>
+                <dd><a href="shibboleth.html">esercizio</a></dd>
+            <dt>mod_auth_mellon</dt>
+                <dd>modulo Apache con un semplice SAML 2.0 service provider<br />
+                https://github.com/UNINETT/mod_auth_mellon</dd>
+            <dt>Spring Security SAML</dt>
+                <dd>componenti servlet container Java<br />
+                http://projects.spring.io/spring-security-saml/</dd>
+        </dl>
+        <aside class="notes">
+            mod_auth_mellon: sviluppato da REN norvegese
+        </aside>
+    </section>
 
-				</section>
+    <!--
+    <section><h2>Alternativa: mod_auth_memcookie</h2>
+    <p>Mooolto diverso, non è neanche una vera alternativa ma spiega il concetto
 
-				<section id="shibboleth"><h2>Shibboleth Native Service Provider (SP)</h2>
-				<p>Linux+Apache</p>
-				<p>Microsoft Windows server+IIS (o Apache)</p>
-				<a href="shibboleth.html">Esempio Shibboleth SP</a>
-
-
-				</section>
-				
-				<section><h2>Alternativa: mod_auth_mellon</h2>
-				<p>Un modulo Apache con un semplice SAML 2.0 service provider
-https://github.com/UNINETT/mod_auth_mellon
-Sviluppato da REN norvegese</p>
-				</section>
-
-				<section><h2>Alternativa: mod_auth_memcookie</h2>
-				<p>Mooolto diverso, non è neanche una vera alternativa ma spiega il concetto
-				
-				https://zenprojects.github.io/Apache-Authmemcookie-Module/
+    https://zenprojects.github.io/Apache-Authmemcookie-Module/
 Un modulo di SimpleSAMLphp inizializza una sessione per Auth MemCookie				
 </p>
-				</section>
+    </section>
+    -->
+    
 
-			</section>			
+    <!-- parte 7 -->
 
-    <section>
-        <!-- parte 7 -->
-
-        <section><h2>Autenticazione gestita dalle applicazioni/librerie</h2>
-        </section>
-
-        <section id="ssp"><h2>SimpleSAMLphp</h2>
-        <p><a href="https://simplesamlphp.org/">SimpleSAMLphp</a> (SSP) è una
-            libreria PHP sviluppata dalla REN norvegese UNINETT</p>
-        <ul>
-            <li>opensource</li>
-            <li>funzionalità di IdP e SP</li>
-            <li>non richiede (quasi...) interventi a livello di sistema</li>
-            <li>supporta SAML 2.0, Shibboleth 1.3, A-Select, CAS, OpenID, WS-Federation, OAuth, ecc...</li>
-        </ul>
-        <a href="ssp.html">Esempio SSP</a>
-        <aside class="notes">
-        Ne sappiamo qualcosa:
-        https://github.com/simplesamlphp/simplesamlphp/blob/master/lib/SimpleSAML/Utils/HTTP.php
-        attorno a linea 460
-        https://github.com/simplesamlphp/simplesamlphp/commits?author=biancini
-        </aside>
-        </section>
-
-        <section><h2>Alternative: Onelogin</h2>
-        <p></p>
-        </section>
-
-        <section><h2>Alternative: pysaml2</h2>
-        <p></p>
-        </section>
-
-        <section><h2>Alternative: Java</h2>
-        <p></p>
-        </section>
-
+    <section><h2>Autenticazione dal applicazioni</h2>
+        <dl>
+            <dt>SimpleSAMLphp</dt>
+                <dd><a href="ssp.html">esercizio</a></dd>
+            <dt>Onelogin</dt>
+                <dd>librerie per PHP, Python, Ruby, Java, .NET
+                https://developers.onelogin.com/saml</dd>
+            <dt>PySAML2</dt>
+                <dd>Python
+                http://pysaml2.readthedocs.io/</dd>
+        </dl>
     </section>
 
-    <section>
-        <!-- parte 8 -->
-
-        <section><h2>Servizi cloud</h2>
-        </section>
-
-        <section><h2>Auth0</h2>
-        <p>https://auth0.com/</p>
-        <p>Gestisce il protocollo SAML (chiamato SAMLP)</p>
-        https://auth0.com/docs/connections/enterprise/samlp
-        </section>
+    <section><h2>Altre possibilità</h2>
+         <dl>
+            <dt>Auth0</dt>
+                <dd>Servizio in cloud che gestisce anche il protocollo SAML (chiamato SAMLP)/p>
+    https://auth0.com/docs/connections/enterprise/samlp</dd>
+            <dt>SATOSA</dt>
+                <dd>proxy tra SAML 2.0 e SAML2, OpenID Connect, Google, Facebook
+                https://github.com/SUNET/SATOSA</dd>
+        </dl>    
+    
     </section>
+
 
     <section>
         <!-- parte 9 -->

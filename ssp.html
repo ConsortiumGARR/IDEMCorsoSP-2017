@@ -38,10 +38,16 @@
             AuthZ, debug, ecc...
         </p>
         <p>Scritta in PHP (>= 5.3.0 per ssp 1.14.16)</p>
+    <aside class="notes">
+    Ne sappiamo qualcosa:
+    https://github.com/simplesamlphp/simplesamlphp/blob/master/lib/SimpleSAML/Utils/HTTP.php
+    attorno a linea 460
+    https://github.com/simplesamlphp/simplesamlphp/commits?author=biancini
+    </aside>
     </section>
 
     <section><h2>Installazione</h2>
-<pre><code data-trim data-noescape>
+<pre>sistemi Linux<code data-trim data-noescape>
 $ <i>wget -O ssp.tgz https://simplesamlphp.org/download?latest</i>
 $ cd /var
 $ tar -xzf /home/user/ssp.tgz
@@ -349,10 +355,10 @@ $ modules/metarefresh/bin/metarefresh.php&#8617;
 
     <section><h2>Autenticazione da PHP</h2>
 
-<pre>/var/www/html/app/index.php<code data-trim>
+<pre>/var/www/html/app/index.php<code data-trim data-noescape>
 &lt;?php
 require_once('/var/simplesamlphp/lib/_autoload.php');
-$as = new SimpleSAML_Auth_Simple('sp-idem');
+$as = new SimpleSAML_Auth_Simple('<mark>sp-idem</mark>');
 if (!$as-&gt;isAuthenticated()) {
     $as-&gt;login();
 }
@@ -361,6 +367,11 @@ print_r($attributes);
 </code></pre>
 
         <p>Aprite <a href="https://server.example/app/index.php" target="_blank">https://server.example/app/index.php</a>
+            
+<table class="biblio" style="font-size: small"><tr><td>Riferimenti</td>
+<td><a href="https://simplesamlphp.org/docs/stable/simplesamlphp-sp#section_6">https://simplesamlphp.org/docs/stable/simplesamlphp-sp#section_6</a>
+</td></tr></table>
+        
     </section>
             
 	<section><h2>Attributi</h2>
