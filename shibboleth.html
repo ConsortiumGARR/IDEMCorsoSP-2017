@@ -32,6 +32,8 @@
 	</section>
 	
     <section><h2>Panoramica</h2>
+        <p>Sviluppato dalla Internet2, Jisc e SWITCH</p>
+        <p>Basato sull'implementazione di riferimento</p>
         <p>Disponibile sia come modulo per Apache sia per Microsoft Windows
             server+IIS</p>
         <p>Sviluppata in Java+codice nativo</p>
@@ -100,6 +102,24 @@ $ service shibd restart
 <pre><code data-trim>
 $ shibd -t
 </code></pre>
+ 
+	<aside class="notes">
+	handlerSSL(boolean) (defaults to true)
+        When true, only web requests over SSL/TLS will be processed by handlers.
+        Other requests may be blocked, or possibly ignored (and usually result
+        in a 404 error) depending on the web server, but will never be processed.
+        This is useful for sites that want to protect SAML protocol traffic but
+        leave actual content unencrypted.
+
+        cookieProps (string) (default is "; path=/; HttpOnly")
+        If set to a custom string, the string is appended to the cookie values
+        maintained by the SP. Used to attach custom meta-properties like path
+        or the secure and HttpOnly flags to the cookies. A common value for
+        SSL-only use is "; path=/; secure; HttpOnly". As of V2.5, this property
+        can be set to a pair of built-in values, "http" and "https", which
+        expand to the default and SSL-only properties respectively.
+	</aside>
+            
         </li>
 
         <li>aprire<br><code>
@@ -133,7 +153,7 @@ $ shibd -t
 &lt;?xml version="1.0"?&gt;
 &lt;md:EntityDescriptor xmlns:md="urn:oasis:..."
     xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-    <mark title="Stringa identificativa, in questo caso RfC 6963">entityID="urn:example:idem:corso2017"</mark>&gt;
+    <mark>entityID="https://idp-corso-sp.aai.garr.it/idp/shibboleth"</mark>&gt;
   &lt;md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:..."&gt;
 ...
     &lt;/md:KeyDescriptor&gt;
@@ -150,36 +170,115 @@ $ shibd -t
 	</code></pre>
     </section>
 	
-    <section><h2>Configurazione metadata</h2>	
+    <section><h2>Provider Metadata</h2>	
+<pre><code data-trim data-noescape>
+$ wget -O mio-idp-metadata.xml --no-check-certificate&#8617;
+    https://idp-corso-sp.aai.garr.it/idp/shibboleth
+</code></pre>
+        <p><b>Don't try this at home!</b><br />i metadata devono essere
+            controllati o garantiti</p>
+        <aside class="notes">
+	Inoltre l'url per accedere ai metadata dell'IdP è una feature unsupported
+	</aside>
 <pre>shibboleth.xml<code data-trim data-noescape>
-&lt;Sessions ...
-    &lt;SSO entityID="urn:example:idem:corso2017"
+&lt;ApplicationDefaults entityID=...
+  &lt;Sessions ...
+    &lt;SSO entityID="https://idp-corso-sp.aai.garr.it/idp/shibboleth"
         ...&gt;
-      SAML2 SAML1
-    &lt;/SSO&gt;
+      SAML2 <s>SAML1</s>
+      &lt;/SSO&gt;
 ...
     &lt;MetadataProvider type="XML"
         file="mio-idp-metadata.xml"/&gt;
 </code></pre>
-
-        <p><code><a href="https://server.example/Shibboleth.sso/Login?entityID=urn:example:idem:corso2017"
-                    target="_blank">https://server.example/Shibboleth.sso/Login?entityID=urn:example:idem:corso2017</a></code></p>
     </section>
-	
-    <section><h2>Sessioni <i>lazy</i></h2>
-    <p>Nelle sessioni attive l'accesso alla risorsa richiede una sessione SP
-            valida e se non presente l'utente viene rediretto all'handler di autenticazione</p>
-    <p>Nelle sessioni <i>lazy</i> se esiste una sessione valida, i parametri vengono
-            inoltrati al successivo modulo, altrimenti la richiesta viene
-            esaudita senza parametri</p>
-<pre><code data-trim>
+
+    <section><h2>Autenticazione</h2>	
+        <ol>
+            <li>aprite<br />
+                <code><a href="https://server.example/Shibboleth.sso/Login?entityID=https://idp-corso-sp.aai.garr.it/idp/shibboleth"
+                    target="_blank">https://server.example/Shibboleth.sso/Login?&#8617;<br />
+                    entityID=https%3A%2F%2Fidp-corso-sp....leth</a></code></li>
+            <li>verificate da<br /><code><a href="https://server.example/Shibboleth.sso/Session"
+                    target="_blank">https://server.example/Shibboleth.sso/Session</a></code></li>
+        </ol>
+    </section>
+ 
+    <section><h2>Parametri di autenticazione</h2>
+        <dl>
+            <dt>entityID</dt>
+            <dd>IdP a cui inviare la richiesta di autenticazione</dd>
+            <dt>target </dt>
+            <dd>URL a cui ritornare dopo l'autenticazione, nel namespace
+                dell'SP definito nei metadata</dd>
+            <dt>forceAuthn</dt>
+            <dd>forza l'utente a riautenticarsi</dd>
+            <dt>isPassive</dt>
+            <dd>evita ogni interazione utente con DS e IdP, se la sessione non
+                è disponibile dovrebbe fallire silenziosamente</dd>
+        </dl>
+
+	<table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a
+                        href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPSessionCreationParameters">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPSessionCreationParameters</a>
+		</td></tr>
+                <tr><td>Riferimenti</td><td><a
+                        href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPContentSettings">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPContentSettings</a>
+		</td></tr></table>		
+    </section>
+                
+    <section><h2>Esempio Apache</h2>
+    <ol>
+        <li>create una directory /var/www/html/private
+        <pre><code data-trim>
+$ mkdir /var/www/html/private 
+</code></pre></li>
+        <li><pre>/var/www/html/private/index.php<code data-trim>
 &lt;?php
-if (empty($_SERVER['Shib-Session-ID'])) {
-    header('Location: https://server.example/Shibboleth.sso/Login?entityID=urn:example:idem:corso2017&target=https%3A%2F%2Fserver.example%2Fprivate%2F');
-    exit;
-}
+print_r($_SERVER);
+</code></pre></li>
+        <li><pre>/var/www/html/private/.htaccess<code data-trim data-noescape>
+AuthType shibboleth
+ShibRequestSetting requireSession <mark>true</mark>
+require <mark>shibboleth</mark>
+</code></pre></li>
+        <li>aprite <code><a href="https://server.example/private/"
+                            target="_blank">https://server.example/private/</a></code></li>
+    </ol>
+
+    <aside class="notes">
+    Se Apache 2.2:
+    ShibCompatWith24 on
+    Qualunque utente valido
+    </aside>
+    </section>	
+
+    <section><h2>Configurazione Apache</h2>
+        <pre>/etc/apache/site-available/default-ssl.conf<code data-trim>
+<Directory /var/www/html/private>
+    AllowOverride AuthConfig
+</Directory>
 </code></pre>
 
+<pre><code data-trim data-noescape>
+$ apache2ctl configtest
+$ riavvio...
+</code></pre>
+
+    <aside class="notes">
+    <a href="https://server.example/Shibboleth.sso/Logout?return=https%3A%2F%2Flocalhost%2Fprivate%2Flanding.php">Logout</a>;
+    </aside>
+    </section>	
+                
+    <section><h2>Sessioni <i>lazy</i></h2>
+        <dl>
+            <dt>Active session</dt>
+            <dd>l'accesso alla risorsa richiede una sessione SP
+            valida e se inesistente l'utente viene rediretto all'handler di autenticazione</dd>
+            <dt><i>Lazy</i> session</dt>
+            <dd>se esiste una sessione valida, i parametri vengono
+            inoltrati al modulo, altrimenti la richiesta viene
+            esaudita senza parametri</dd>
+        </dl>
     <aside class="notes">
     Lazy o passive
 
@@ -213,73 +312,51 @@ If supplied, the eventual SAML request is constructed based on the message suppl
     </section>	
 
 
-    <section><h2><i>Apache</i></h2>
-    <ol>
-        <li>create una directory /var/www/html/private</li>
-        <li><pre>/var/www/html/private/index.php<code data-trim>
-&lt;?php
-print_r($_SERVER);
-
-</code></pre></li>
-        <li><pre>/var/www/html/private/.htaccess<code data-trim data-noescape>
-AuthType shibboleth
-ShibRequestSetting requireSession <mark>true</mark>
-require <mark>shibbboleth</mark>
-</code></pre></li>
-    </ol>
-
-    <p>aprite <code>https://localhost/private/</code></p>
-
-    <aside class="notes">
-    Se occorre
-    <Directory /var/www/html>
-                    AllowOverride AuthConfig
-    </Directory>
-    Se Apache 2.2:
-    ShibCompatWith24 on
-    Qualunque utente valido
-
-    <a href="https://localhost/Shibboleth.sso/Logout?return=https%3A%2F%2Flocalhost%2Fprivate%2Flanding.php">Logout</a>;
-    </aside>
-    </section>	
-
-		<section><h2><i>Apache lazy session</i></h2>
+		<section><h2><i>Apache e lazy session</i></h2>
 
 		<pre>/var/www/html/private/.htaccess<code data-trim data-noescape>
 AuthType shibboleth
 ShibRequestSetting requireSession <mark>false</mark>
 require shibolleth
 		</code></pre>
-		
-		<pre>/var/www/html/private/index.php<code data-noescape>
-&lt;a href="https://localhost/Shibboleth.sso/&#8617;
-  Login?target=https%3A%2F%2Flocalhost%2Fprivate%2F"&gt;&#8617;
-  Login&lt;/a&gt;
-&lt;a href="https://localhost/Shibboleth.sso/&#8617;
-  Logout?return=https%3A%2F%2Flocalhost%2Fprivate%2F"&gt;&#8617;
-  Logout&lt;/a&gt;
-		</code></pre>
+
+<pre>/var/www/html/private/lazy.php<code data-trim>
+&lt;?php
+if (empty($_SERVER['Shib-Session-ID'])) { ?&gt;
+    Non sei autenticato
+    <a href="https://server.example/Shibboleth.sso/Login?target=https%3A%2F%2Fserver.example%2Fprivate%2Flazy.php">Login</a>
+&lt;?php
+}
+else { ?&gt;
+    Sei autenticato, sessione &lt;?= $_SERVER['Shib-Session-ID'] ?&gt;
+    <a href="https://server.example/Shibboleth.sso/Logout?return=https%3A%2F%2Flocalhost%2Fprivate%2F">Logout</a>
+&lt;?php
+}
+</code></pre>
 	
 	<aside class="notes">
 	Se il target non è specificato usa la homeUrl dell'applicazione (definita in shibboleth)
 	Meglio fare logout...
-	
-	SecurityPolicyException Security of LogoutResponse not established.
-	
 	</aside>
 	</section>	
 
-	<section><h2>SecurityPolicyException 1</h2>
-	Se ritorna
-	
-<pre><code data-trim>
-SecurityPolicyException ....
-Security of LogoutResponse not established.
-		</code></pre>
-	probabilmente l'IdP non firma le risposte di logout
+    <section><h2>Problemi di Single Logout</h2>
+        <dl>
+            <dt>termine del SLO</dt>
+            <dd>il comportamento è dipendente dall'IdP</dd>
+            <dd>conviene distruggere
+            prima la sessione locale dell'applicazione, anche se in caso di
+            fallimento del SLO l'<a href="index.html#/slo">utente sarà confuso</a></dd>
+            <dt>errore "SecurityPolicyException ..."</dt>
+            <dd>probabilmente l'IdP non firma le risposte di logout</dd>
+        </dl>
+
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td>
+<td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPSingleLogoutService">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPSingleLogoutService</a>
+</td></tr></table>
 	</section>	
 
-	<section><h2><i>NameID e attributi</i></h2>
+    <section><h2><i>NameID e attributi</i></h2>
 <pre>$ tail /var/log/shibboleth/shibd.log<code data-trim>
 2017-08-31 09:30:56 INFO Shibboleth.AttributeExtractor.XML&#8617;
   [10]: skipping unmapped SAML 2.0 Attribute with Name: uid,&#8617;
@@ -297,27 +374,33 @@ Security of LogoutResponse not established.
 	<aside class="notes">
 	Vedete non ci sono attributi, neppure il nome utente (mappato in REMOTE_USER per retrocompatibilità)
 	</aside>
-	</section>	
+    </section>	
 
-	<section>
+    <section><h2>Mappa degli attributi</h2>
 <p>Shibboleth (e la federazione) preferisce gli attributi con nomi in formato URN</p>
 
 <p>de-commentate gli attributi che vi occorrono</p>
-<pre>/etc/shibboleth/attribute-map.xml<code data-trim>
-decommentate quel che serve
+<pre>/etc/shibboleth/attribute-map.xml<code data-trim data-noescape>
+    &lt;Attribute name="urn:oid:2.5.4.3" id="cn"/&gt;
+    &lt;Attribute name="urn:oid:2.5.4.4" id="sn"/&gt;
+    &lt;Attribute name="urn:oid:2.5.4.42" id="givenName"/&gt;
+    &lt;Attribute name="urn:oid:2.16.840.1.113730.3.1.241" id="displayName"/&gt;
+    &lt;Attribute name="urn:oid:0.9.2342.19200300.100.1.3" id="mail"/&gt;
+    &lt;Attribute name="urn:oid:2.5.4.20" id="telephoneNumber"/&gt;
 </code></pre>
 	
 	<aside class="notes">
 	Rivedete la pagina di test ci sono gli attributi, ma manca ancora REMOTE_USER
 	</aside>
-	</section>	
+    </section>	
 
-	<section>
-	<p>stiamo usando eduPersonPersonalName (eppn)</p>
+    <section><h2>Emulazione REMOTE_USER</h2>
+	<p>Shibboleth SP valorizza la variabile REMOTE_USER compatibile 
+            con la HTTP Basic Authentication</p>
 
 	<pre>shibboleth.xml<code data-trim data-noescape>
 &lt;ApplicationDefaults entityID="https://corso-sp.example/"
-	REMOTE_USER="<mark>eppn</mark> persistent-id targeted-id"&gt;
+	REMOTE_USER="<mark title="eduPersonPrincipalName">eppn</mark> persistent-id targeted-id"&gt;
 	</code></pre>
 	
 <pre>$ tail /var/log/shibboleth/shibd.log<code data-trim>
@@ -330,7 +413,7 @@ decommentate quel che serve
 <pre>mio-idp-metadata.xml<code data-trim>
   &lt;md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"&gt;
     &lt;md:Extensions xmlns:shibmd="urn:mace:shibboleth:metadata:1.0"&gt;
-      &lt;shibmd:Scope regexp="false"&gt;idem.garr.it&lt;/shibmd:Scope&gt;
+      &lt;shibmd:Scope regexp="false"&gt;example|garr\.it&lt;/shibmd:Scope&gt;
     &lt;/md:Extensions&gt;
 </code></pre>
 	
@@ -340,6 +423,31 @@ decommentate quel che serve
     </section>	
 
     <section><h2>Virtual host</h2>
+<pre>C:\Windows\System32\drivers\etc\hosts (Windows)
+/etc/hosts (Linux)
+<code data-trim>
+# Simulazione SP locale:
+127.0.0.1	server.example
+127.0.0.1       noopsp.example
+127.0.0.1       altrosp.example
+</code></pre>
+        <p>aprite <a href="https://noopsp.example/private/lazy.php" target="_blank">https://noopsp.example/</a>,
+        autenticatevi e guardate la barra degli indirizzi...</p>
+
+        <p>l'IdP riconosce il SP dall'entityID, ma reindirizza all'endpoint
+        dell'ACS e non al virtual host</p>
+
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td>
+<td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApplicationModel">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApplicationModel</a>
+</td></tr></table>        
+        
+     https://altrosp.example/Shibboleth.sso/Login?target=https://altrosp.example/
+     
+        <code><a href="https://server.example/Shibboleth.sso/Metadata"
+                 target="_blank">/Shibboleth.sso/Metadata</a></code> 
+     
+        
+        
         <p>Virtual host diversi possono avere configurazioni specifiche (es. entityId)</p>
 <pre>shibboleth.xml<code data-trim data-noescape>
 &lt;ApplicationDefaults entityID="https://corso-sp.example/shibboleth"

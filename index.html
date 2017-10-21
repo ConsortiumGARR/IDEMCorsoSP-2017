@@ -36,14 +36,45 @@ dev'essere attivo e disponibile SSL/https
 	-->
 <div class="reveal"><div class="slides">
 
-    <section><h1>Sviluppo di servizi SSO SAML 2.0</h1>
-        <p>Davide Vaghetti <davide.vaghetti@unipi.it<br /><small>Università di Pisa</small></p>
-        <p>Marco Ferrante marco.ferrante@unige.it<br /><small>Università degli Studi di Genova</small></p>
-        <p>Giuliano Latini giuliano.latini@univpm.it<br /><small>Università Politecnica delle Marche</small></p>
-        <p>membri CTS GARR IDEM</p>
+    <section><h1>Service Provider SAML 2.0</h1>
+        <p><small>23 ottobre 2017 - Roma</small></p>
+        <p>Marco Ferrante marco.ferrante@unige.it<br /><small>Università di Genova/CTS IDEM GARR</small><br />
+        Giuliano Latini giuliano.latini@univpm.it<br /><small>Università Politecnica delle Marche/CTS IDEM GARR</small><br />
+        Davide Vaghetti davide.vaghetti@unipi.it<br /><small>Università di Pisa/Coordinatore CTS IDEM GARR</small></p>
     </section>
-			
-				<!-- parte 1 -->
+
+    <section><h2>Organizzazione del corso</h2>
+        <p>Il corso tratterà: generalità del Single SignOn SAML 2.0, gestione di
+        un Service Provider, uso di Shibboleth SP, sviluppo con 
+        SimpleSAMLphp, preparazione di servizi federati IDEM</p>
+
+        <p>Le parti teoriche sono intervallata da esperimenti pratici da
+        svolgere sul proprio portatile con la VM messa a disposizione</p>
+        
+        <p>Le nozioni apprese saranno utili per lo sviluppo di applicazioni
+        che usino il SAML 2.0 sia nel contesto della propria organizzazione
+        sia in quello di federazione</p>
+    </section>
+        
+    <section><h2>Note sugli esempi</h2>
+        <p>Gli esempi sono direttamente applicabili con la VM fornita
+        per emulare il servizio e accessibili sia dal browser della VM
+        sia da quello del sistema host</p>
+
+        <p>Le parti di codice sono in PHP elementare, dovrebbero risultare
+            comprensibili a tutti</p>
+        
+        <p>Consigliamo Mozilla Firefox nella modalità
+            "Finestra anonima"</p>
+        <p>I certificati SP e IdP non sono emessi da una CA riconosciuta, occorre
+            accettare l'eccezione di sicurezza</p>
+        
+        <p>In caso di errore "Web Login Service - Stale Request", verificare 
+        che l'orologio della macchina guest sia sincronizzato</p>
+        
+    </section>
+        
+        <!-- parte 1 -->
     <section><h1>Web Single SignOn</h1>
 <p>Il Single SignOn (SSO) consente ad un utente di effettuare un'unica autenticazione (authN) valida per più risorse</p>
 <p>Non si occupa dell’autorizzazione (authZ), di solito in capo alla risorsa</p>
@@ -546,6 +577,102 @@ authentication assertion issued by a SAML identity provider.
 
 </section>
 			
+    <!-- parte 6 -->
+    <section id="sviluppo"><h2>Sviluppo di applicazioni SAML</h2>
+        <p>Integrare un servizio/applicazione per sfruttare l'autenticazione
+        SAML 2.0 </p>
+        <dl>
+            <dt>applicazione esistente/nuova</dt>
+            <dd>nuova può usare una libreria generica di autenticazione che
+                comprenda SAML, esistente deve far inizializzare la sessione
+                dell'applicazione da un'asserzione dell'IdP</dd>
+            <dt>configurazione integrata/di sistema</dt>
+            <dt>SSO intra-organizzazione/federato</dt>
+        </dl>
+    </section>
+    
+    <section id="container"><h2>Gestione autenticazione</h2>
+        <dl>
+            <dt>dal web server/container</dt>
+            <dd>un modulo del server (o un filter del container, o simile) è
+                incaricato di gestire tutta la negoziazione SAML e passa
+                all'applicazione retrostante le asserzioni variamente preelaborate
+                come variabili CGI.
+            </dd>
+            <dt>da applicazioni/librerie</dt>
+            <dd>l'applicazione usa, a vari livelli, una libreria che gestisce
+                il processo di autenticazione</dd>
+        </dl>
+        <aside class="notes">
+            web server/container: Problemi con gli attributi a valori multipli.
+        </aside>
+    </section>
+
+    <section id="shibboleth"><h2>Autenticazione da container</h2>
+        <dl>
+            <dt>Shibboleth Native Service Provider (SP)</dt>
+                <dd><a href="shibboleth.html">esercizio</a></dd>
+            <dt>mod_auth_mellon</dt>
+                <dd>modulo Apache con un semplice SAML 2.0 service provider<br />
+                https://github.com/UNINETT/mod_auth_mellon</dd>
+            <dt>Spring Security SAML</dt>
+                <dd>componenti servlet container Java<br />
+                http://projects.spring.io/spring-security-saml/</dd>
+        </dl>
+        <aside class="notes">
+            mod_auth_mellon: sviluppato da REN norvegese
+        </aside>
+    </section>
+
+    <!--
+    <section><h2>Alternativa: mod_auth_memcookie</h2>
+    <p>Mooolto diverso, non è neanche una vera alternativa ma spiega il concetto
+
+    https://zenprojects.github.io/Apache-Authmemcookie-Module/
+Un modulo di SimpleSAMLphp inizializza una sessione per Auth MemCookie				
+</p>
+    </section>
+    -->
+    
+    <!-- parte 7 -->
+
+    <section><h2>Autenticazione dal applicazioni</h2>
+        <dl>
+            <dt>SimpleSAMLphp</dt>
+                <dd><a href="ssp.html">esercizio</a></dd>
+            <dt>Onelogin</dt>
+                <dd>librerie per PHP, Python, Ruby, Java, .NET
+                https://developers.onelogin.com/saml</dd>
+            <dt>PySAML2</dt>
+                <dd>Python
+                http://pysaml2.readthedocs.io/</dd>
+        </dl>
+    </section>
+
+    <section><h2>Altre possibilità</h2>
+         <dl>
+            <dt>Auth0</dt>
+                <dd>Servizio in cloud che gestisce anche il protocollo SAML (chiamato SAMLP)/p>
+    https://auth0.com/docs/connections/enterprise/samlp</dd>
+            <dt>SATOSA</dt>
+                <dd>proxy tra SAML 2.0 e SAML2, OpenID Connect, Google, Facebook
+                https://github.com/SUNET/SATOSA</dd>
+        </dl>    
+    
+    </section>
+
+
+    <section>
+        <!-- parte 9 -->
+
+        <section><h2>Linee guida siti con autenticazione federata</h2>
+        </section>
+
+        <section><h2></h2>
+        <p>Slide di Lalla...</p>
+        </section>
+    </section>
+
 <section>
     <!-- parte 5, discovery -->
 
@@ -667,120 +794,10 @@ which limits run-time flexibility.
 
 </section>
 			
-    <!-- parte 6 -->
-    <section id="sviluppo"><h2>Sviluppo di applicazioni SAML</h2>
-        <p>Integrare un servizio/applicazione per sfruttare l'autenticazione
-        SAML 2.0 </p>
-        <dl>
-            <dt>applicazione esistente/nuova</dt>
-            <dd>nuova può usare una libreria generica di autenticazione che
-                comprenda SAML, esistente deve far inizializzare la sessione
-                dell'applicazione da un'asserzione dell'IdP</dd>
-            <dt>configurazione integrata/di sistema</dt>
-            <dt>SSO intra-organizzazione/federato</dt>
-        </dl>
-    </section>
     
-    <section id="container"><h2>Gestione autenticazione</h2>
-        <dl>
-            <dt>dal web server/container</dt>
-            <dd>un modulo del server (o un valve del container, o simile) è
-                incaricato di gestire tutta la negoziazione SAML e passa
-                all'applicazione retrostante le asserzioni variamente preelaborate
-                come variabili CGI.
-            </dd>
-            <dt>da applicazioni/librerie</dt>
-            <dd>l'applicazione usa, a vari livelli, una libreria che gestisce
-                il processo di autenticazione</dd>
-        </dl>
-        <aside class="notes">
-            web server/container: Problemi con gli attributi a valori multipli.
-        </aside>
-    </section>
-
-    <section id="shibboleth"><h2>Autenticazione da container</h2>
-        <dl>
-            <dt>Shibboleth Native Service Provider (SP)</dt>
-                <dd><a href="shibboleth.html">esercizio</a></dd>
-            <dt>mod_auth_mellon</dt>
-                <dd>modulo Apache con un semplice SAML 2.0 service provider<br />
-                https://github.com/UNINETT/mod_auth_mellon</dd>
-            <dt>Spring Security SAML</dt>
-                <dd>componenti servlet container Java<br />
-                http://projects.spring.io/spring-security-saml/</dd>
-        </dl>
-        <aside class="notes">
-            mod_auth_mellon: sviluppato da REN norvegese
-        </aside>
-    </section>
-
-    <!--
-    <section><h2>Alternativa: mod_auth_memcookie</h2>
-    <p>Mooolto diverso, non è neanche una vera alternativa ma spiega il concetto
-
-    https://zenprojects.github.io/Apache-Authmemcookie-Module/
-Un modulo di SimpleSAMLphp inizializza una sessione per Auth MemCookie				
-</p>
-    </section>
-    -->
-    
-
-    <!-- parte 7 -->
-
-    <section><h2>Autenticazione dal applicazioni</h2>
-        <dl>
-            <dt>SimpleSAMLphp</dt>
-                <dd><a href="ssp.html">esercizio</a></dd>
-            <dt>Onelogin</dt>
-                <dd>librerie per PHP, Python, Ruby, Java, .NET
-                https://developers.onelogin.com/saml</dd>
-            <dt>PySAML2</dt>
-                <dd>Python
-                http://pysaml2.readthedocs.io/</dd>
-        </dl>
-    </section>
-
-    <section><h2>Altre possibilità</h2>
-         <dl>
-            <dt>Auth0</dt>
-                <dd>Servizio in cloud che gestisce anche il protocollo SAML (chiamato SAMLP)/p>
-    https://auth0.com/docs/connections/enterprise/samlp</dd>
-            <dt>SATOSA</dt>
-                <dd>proxy tra SAML 2.0 e SAML2, OpenID Connect, Google, Facebook
-                https://github.com/SUNET/SATOSA</dd>
-        </dl>    
-    
-    </section>
-
-
-    <section>
-        <!-- parte 9 -->
-
-        <section><h2>Linee guida siti con autenticazione federata</h2>
-        </section>
-
-        <section><h2></h2>
-        <p>Slide di Lalla...</p>
-        </section>
-    </section>
-
     </div>
 
 </div>
-<!--
-IdP fornito da GARR
-Virtual box
-1 debug lato browser
-1 esercizio su Shibboleth
-	- configurazione
-	- pagina di status
-	- reverse proxy
-	- logout
-1 esercizio su PHP
-	- lazy session
-
--->
-
 		<script src="lib/js/head.min.js"></script>
 		<script src="js/reveal.js"></script>
 
