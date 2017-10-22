@@ -77,13 +77,6 @@ dev'essere attivo e disponibile SSL/https
 <p>Il Single SignOn (SSO) consente all'utente di effettuare un'unica autenticazione
     (authN) valida per più risorse</p>
 <p>Non si occupa dell’autorizzazione (authZ), di solito in capo alla risorsa</p>
-	<aside class="notes">
-	Benefits of using single sign-on include:
-Mitigate risk for access to 3rd-party sites (user passwords not stored or managed externally)
-Reduce password fatigue from different user name and password combinations
-Reduce time spent re-entering passwords for the same identity
-Reduce IT costs due to lower number of IT help desk calls about passwords
-	</aside>
     </section>
 
         <section><h2>Scenario</h2>
@@ -136,13 +129,9 @@ I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, 
 		</td></tr></table>		
 	
 	<aside class="notes">
-	Standard: insieme di protocolli, formati, interazioni, ecc...
-	
 	The Organization for the Advancement of Structured Information Standards (OASIS) is a global nonprofit consortium that works on the development, convergence, and adoption of standards for security, Internet of Things, energy, content technologies, emergency management, and other areas.
-	
-	Compatibilità: Kantara Initiative
-        
         Moreover, other standards such as the Internet2 Shibboleth project, Liberty Alliance, OASIS Web Services Security (WS-Security), and eXtensible Access Control Markup Language (XACML) are based on SAML
+	Per la compatibilità, vedi Kantara Initiative
 	</aside>		
 	</section>
 				
@@ -172,9 +161,6 @@ I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, 
 
                 </td></tr>
                 </table>
-                <aside class="notes">
-    Per così pochi accessi federati, non varrebbe la pena...
-                </aside>
         </section>
 
 	<section><h2>Attori</h2>
@@ -207,13 +193,7 @@ I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, 
 	<dt><i>Location</i></dt>
 	<dd>endpoint (URL) con cui si accede al servizio</dd>
         </dl>
-        
-        <aside class="notes">
-	Esempio: servizio di consumo di asserzioni
-        sull'SP (AssertionConsumerService),
-	servizio di Single Logout su IdP e SP (Single Logout Service), ecc...
-	</aside>
-	</section>
+      	</section>
 
 	<section><h2>Profili</h2>
 	<p>Un <i>profilo</i> specifica come un'applicazione
@@ -241,7 +221,7 @@ I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, 
         <li>Holder-of-Key (HoK) Web Browser SSO Profile</li>
 	<li>...</li>
 	</ul>
-    <aside class="notes">
+        <aside class="notes">
 	https://www.cse.wustl.edu/~jain/cse571-07/ftp/websso/index.html
 	</aside>
 	</section>
@@ -251,10 +231,6 @@ I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, 
 	è una raccomandazione di comportamenti e opzioni per il deploy di un servizio
 	WebSSO orientata alla massima interoperabilità</p>
         <p><a href="https://saml2int.org/partners/">Supportato</a> da Feide (Norvegia), Haka (Finlandia), eduGAIN (Geant), RedIRIS (Spagna), e altre RENs</p>
-		
-        <aside class="notes">
-        Il corso di limita a questo profilo 
-        </aside>
     </section>
 
 	<section><h2>Web Browser SSO Profile</h2>
@@ -294,12 +270,6 @@ SP1->UA: fatto!
         </ul>
 	<p><a href="tracking.html">dimostrazione</a></p>
         
-	<aside class="notes">
-	Le comunicazioni passano dal browser utente. Eccezioni: ECP profile (server-server)
-	5 minuti di tolleranza tipica
-	Simulazione a condizione che si disponga della chiave private (e degli altri metadati) dell'SP
-	Occorre eseguire l'editor (notepad) come amministratore
-	</aside>
 	</section>
 
 	<section><h2>*-first</h2>
@@ -312,12 +282,6 @@ SP1->UA: fatto!
 		<dd>il SP redirige all'IdP con un messaggio di <tt>AuthnRequest</tt></dd>
 		<dd>l'IdP rimanda all'SP con una token contenente un'asserzione</dd>
 	</dl>
-
-	<aside class="notes">
-SAML V1.1 protocol was inherently an IdP-first protocol, Shibboleth
-invented a simple HTTP-based authentication request protocol
-that turned SAML V1.1 into an SP-first protocol
-	</aside>
 	</section>
 				
 	<section><h2>Asserzioni</h2>
@@ -511,7 +475,8 @@ that turned SAML V1.1 into an SP-first protocol
     </td></tr></table>        
 	<aside class="notes">
 Una sessione zombie "risorge" facendo back dal browser o simili...
-La maggior parte dei servizi a cui è abituato (Amazon, Facebook, ecc...) sono sempre connessi, quindi la mancanza di logout non è più insolita
+La maggior parte dei servizi a cui è abituato (Amazon, Facebook, ecc...) sono
+sempre connessi, quindi la mancanza di logout non è più insolita
 	</aside>	
 	</section>
 	
@@ -567,20 +532,6 @@ SP1->UA: fatto!
     <p>Spesso è indicato come SP il componente software (libreria o
     modulo) che gestisce il protocollo SAML per fornire informazioni
     ad una retrostante applicazione</p>
-    
-    <aside class="notes">
-A SAML service provider is a system entity that receives and accepts authentication
-assertions in conjunction with a single sign-on (SSO) profile of the Security
-Assertion Markup Language (SAML).
-
-An important type of SAML authority is the SAML identity provider, a system
-entity that issues authentication assertions in conjunction with an SSO profile
-of SAML.[OS 2]
-A relying party that consumes such assertions is called a
-SAML service provider (or simply service provider if the domain is understood).
-Thus a SAML service provider is a system entity that receives and accepts an
-authentication assertion issued by a SAML identity provider.
-    </aside>
     </section>
 
     <section><h2>Metadata</h2>
@@ -634,8 +585,6 @@ authentication assertion issued by a SAML identity provider.
       <p>Quando si esce dai confini di un'organizzazione la fiducia non si può più
 	basare solo sui rapporti tra gli interlocutori, serve una
 	<span class="emphgreen">terza parte fidata</span>.</p>
-      <aside class="notes">
-      </aside>
     </section>
 </section>
 <section>
@@ -919,9 +868,6 @@ authentication assertion issued by a SAML identity provider.
             <dd>l'applicazione usa, a vari livelli, una libreria che gestisce
                 il processo di autenticazione</dd>
         </dl>
-        <aside class="notes">
-            web server/container: Problemi con gli attributi a valori multipli.
-        </aside>
     </section>
 
     <section id="shibboleth"><h2>Esempi autenticazione da container</h2>
@@ -936,7 +882,7 @@ authentication assertion issued by a SAML identity provider.
                 http://projects.spring.io/spring-security-saml/</dd>
         </dl>
         <aside class="notes">
-            mod_auth_mellon: sviluppato da REN norvegese
+            UNINETT è la REN norvegese
         </aside>
     </section>
 
@@ -987,30 +933,6 @@ Un modulo di SimpleSAMLphp inizializza una sessione per Auth MemCookie
             <span title="Se l'SP conosce un solo IdP, no problem...">IdP dev'essere rediretto</span> per l'autenticazione?</p>
         <p>Solo lui lo sa... (e neppure sempre :-)</p>
         <p>La domanda viene gestita dal Discovery Service (DS)</p>
-        
-    <aside class="notes">
-Although this solution is deceptively simple it is complicated by several factors:
-* Any user interaction associated with this operation will be the first that the
-user ever sees and hence will define the user's opinion of the SP.
-* Even returning users may not be aware of precisely what is being asked of
-them ("What is a Federation?", "What is an IdP?", "Why do I need to do this?")
-* An independent service is not well positioned to provide simple choices
-because it has to make broad assumptions as to which IdPs might be of interest. 
-This has two potential side effects:
-- It will offer a confusing list of IdPs to the user
-- It can allow a user to select an IdP which cannot provide authentication to the SP.
-* SPs are very often members of more than one Federation
-These issues can be minimized by associating a discovery service with each SP.
-Thus deployed the discovery service can:
-* Have a similar look and feel to the rest of the SP.
-* Provide assistance in selecting the IdP in a way which is targeted at its particular users base.
-* Limit those IdPs which the user is asked to chose from to those
-which the SP is willing to accept authentication from (for commercial, technical or other reasons).
-In addition to per-SP discovery services, most federations deploy a discovery service.
-This serves as the 'back stop' service. It is considered best practice that SPs
-have a specific discovery service, however those SPs which are only in one
-Federation can rely on this Federation-deployed discovery service.
-    </aside>        
     </section>
 
     <section id="discovery"><h2>Esempi Discovery</h2>
@@ -1025,9 +947,6 @@ Federation can rely on this Federation-deployed discovery service.
             <a href="https://cloud.garr.it" target="_blank">GARR Federated Cloud</a>,
             <a href="https://bestr.it/?step=1" target="_blank">CINECA Bestr</a></dd>
         </dl>
-
-    <aside class="notes">
-    </aside>        
     </section>
 
 
@@ -1050,28 +969,6 @@ UA->SP1: ecco il mio IdP
         <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf">Identity
             Provider Discovery Service Protocol and Profile</a>
     </td></tr></table>
-        
-    <aside class="notes">
-There are a wide range of "solutions" to this problem, but they all share the trait of functioning well only
-in the presence of certain assumptions about the nature of the deployment and the expectations of
-users. For example, the most straightforward approach is for each service provider to simply ask the user
-(and possibly cache the result locally). This allows for maximum control over the experience by the
-service provider, as well as supplying an unambiguous result. It also leads to increased interference with
-the SSO experience due to per-site prompts, as well as extra work for relying parties and the need for
-users to understand how to make an unambiguous selection.
-At the other extreme, there has been a model promulgated around the idea of discovery as a function of
-large federations of identity providers, as in the older Shibboleth "WAYF" model [ShibProt], in which the
-discovery service acts as a proxy for the service provider and relays a request to the selected identity
-provider. In theory, this seems attractivesince every service provider can share a single point of
-discovery, and the user experience can be seamless across many/all services. In practice, this model
-falls apart quickly because of course there is no single point of discovery that accomodates the entire
-world of federation.
-The cookie-based discovery profile in section 4.3 of [SAML2Prof] falls somewhere between these
-extremes by focusing on deployments in which all the parties can share a presence in a common
-domain. DNS itself does not constrain the size of such deployments but practical limitations on domain
-management tends to inhibit truly large-scale use. It also requires a great deal of static pre-configuration,
-which limits run-time flexibility.  
-    </aside>   
     </section>
 
     <section><h2>Discovery Protocol</h2>

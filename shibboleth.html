@@ -82,7 +82,7 @@ $ service shibd restart
             </td></tr></table>
 
     <aside class="notes">
-    Che ci sia un ApplicationDefault suggerisce che esistano gli ApplicationOverride :-)
+    Che ci sia un ApplicationDefault suggerisce che esistano gli ApplicationOverride
     </aside>
     </section>
 	
@@ -102,24 +102,6 @@ $ service shibd restart
 <pre><code data-trim>
 $ shibd -t
 </code></pre>
- 
-	<aside class="notes">
-	handlerSSL(boolean) (defaults to true)
-        When true, only web requests over SSL/TLS will be processed by handlers.
-        Other requests may be blocked, or possibly ignored (and usually result
-        in a 404 error) depending on the web server, but will never be processed.
-        This is useful for sites that want to protect SAML protocol traffic but
-        leave actual content unencrypted.
-
-        cookieProps (string) (default is "; path=/; HttpOnly")
-        If set to a custom string, the string is appended to the cookie values
-        maintained by the SP. Used to attach custom meta-properties like path
-        or the secure and HttpOnly flags to the cookies. A common value for
-        SSL-only use is "; path=/; secure; HttpOnly". As of V2.5, this property
-        can be set to a pair of built-in values, "http" and "https", which
-        expand to the default and SSL-only properties respectively.
-	</aside>
-            
         </li>
 
         <li>aprire<br><code>
@@ -313,10 +295,6 @@ require <mark>shibboleth</mark>
 $ apache2ctl configtest
 $ riavvio...
 </code></pre>
-
-    <aside class="notes">
-    <a href="https://server.example/Shibboleth.sso/Logout?return=https%3A%2F%2Flocalhost%2Fprivate%2Flanding.php">Logout</a>;
-    </aside>
     </section>	
                 
     <section><h2>Esempio sessione</h2>
@@ -344,36 +322,6 @@ Array
             inoltrati al modulo, altrimenti la richiesta viene
             esaudita senza parametri</dd>
         </dl>
-    <aside class="notes">
-    Lazy o passive
-
-Initiator Protocol
-This protocol supports a small set of query string parameters that correspond to identically named attributes that can be supplied either directly on a <SessionInitiator> element or as content settings on a per-resource basis.
-When a query string parameter is used, it overrides any other source of the same setting/property.
-Not all SessionInitiator handlers support all the possible parameters. In fact, most are specific to the SAML2 handler. Unsupported parameters are ignored.
-entityID (URI)
-The IdP to request authentication from.
-target (absolute URL)
-The URL to return the user to after authenticating. If unspecified, the homeURL attribute for the application is used.
-acsIndex (string)
-The index value of the <md:AssertionConsumerService> element to instruct the IdP to use in returning an assertion to the SP.
-forceAuthn (boolean) (defaults to false) (SAML2 only)
-Establish a value for the ForceAuthn attribute of the <samlp:AuthnRequest>. This asks for forced reauthentication by the IdP (bypassing SSO).
-isPassive (boolean) (defaults to false) (SAML2 and SAMLDS only)
-Establish a value for the IsPassive attribute of the <samlp:AuthnRequest> or the IsPassive parameter of the DS redirect.
-authnContextClassRef (URI) (SAML2 only)
-Requests that a particular authentication context class be used by the IdP. As of V2.5, this can be a whitespace-delimited list of classes to request.
-authnContextComparison ("exact", "minimum", "maximum", "better") (defaults to "exact") (SAML2 only)
-Indicates the required relationship between a requested context class and the resulting form of authentication. The Shibboleth 2.x IdP currently supports only "exact".
-NameIDFormat (URI) (SAML2 only) (Version 2.3 and Above)
-If set, causes the authentication request to carry a saml:NameIDPolicy with a Format containing the provided value. If the receiving IdP can not fulfill this requirement it should return an error response.
-SPNameQualifier (URI) (SAML2 only) (Version 2.3 and Above)
-If set, causes the authentication request to carry a saml:NameIDPolicy with an SPNameQualifier containing the provided value. If the receiving IdP can not fulfill this requirement it should return an error response.
-discoveryPolicy (string) (SAMLDS only) (Version 2.5 and Above)
-Used as input to some discovery protocols that take parameters modifying discovery behavior. In the case of the type="SAMLDS"SessionInitiator, this is passed as a policy parameter value.
-template (base64-encoded SAML <AuthnRequest> message) (SAML2 only) (Version 2.6 and Above)
-If supplied, the eventual SAML request is constructed based on the message supplied, apart from per-request information or settings supplied directly in the configuration or as parameters. Allows a message to be constructed externally with extensions or dynamic content, and then re-issued by the SP.
-    </aside>
     </section>	
 
 
@@ -818,9 +766,6 @@ $ mv shibboleth-embedded-ds-1.2.0 <mark>/etc/shibboleth-ds</mark>
       &lt;MetadataFilter .../&gt;
     &lt;/MetadataProvider&gt;
 </code></pre>
-        
-    <aside class="notes">
-    </aside>
     </section>
                
 </div></div>

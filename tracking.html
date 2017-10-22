@@ -30,10 +30,6 @@
             <p>Le comunicazioni passano dal <i>front-channel</i></p>
             <p>Sincronizzare gli orologi :-) tra SP e IdP</p>
             <p>L'utente vede i messaggi: si possono firmare e cifrare</p>
-            <aside class="notes">
-            Le comunicazioni passano dal browser utente. Eccezioni: ECP profile (server-server)
-            5 minuti di tolleranza tipica
-            </aside>		
             <p>Per lo sviluppo, dirottiamo il traffico il traffico</p>
 <pre>C:\Windows\System32\drivers\etc\hosts (Windows)
 /etc/hosts (Linux)
@@ -42,17 +38,11 @@
 127.0.0.1	server.example
 </code></pre>
     <aside class="notes">
-    Simulazione a condizione che si disponga della chiave private (e degli altri metadati) dell'SP
     Occorre eseguire l'editor (notepad) come amministratore
     </aside>
     </section>
 
     <section id="track"><h2>Tracciamento</h2>
-<aside class="notes">
-Esercizio 1
-SP reindirizza all'IdP (protocollo SAML)
-L'IdP reindirizza su se stesso (specifico dell'implementazione dell'IdP)
-</aside>
     <ol>
         <li>con Firefox aprite 
             <a href="https://server.example/php-saml/demo1/" target="_blank">https://server.example/php-saml/demo1/</a></li>
@@ -71,12 +61,6 @@ Ingranaggio a destra per disattivare javascript
     </section>
 
     <section><h2>Request</h2>
-<aside class="notes">
-http://localhost/simplesaml/saml2/idp/SSOService.php?SAMLRequest=hVNNj9owEL3zK1DuwQkJu8GCVBT6gUQhImkPvVTGnhRLjp3aTpf993U+tktXu9QHR5qZ9+bN82RhSCVqvGrsWR7hVwPGjsbuXCohDe6SS6/REitiuMGSVGCwpThffdnh6STAtVZWUSW8F7DbKGIMaMuV7GHbzdI77D/sDp+2+x/sROJp7A6L5mx2F98HLKKzMknCaRTNTsk8KsuYhnEP/QbaOJ6l52i9Uc9mTANbaSyR1sWD8N4PEj+8K8IExxEO5t976MYNyyWxHfxsbY0REooScVbGIsOrWkA7CmqvKeKsRnl+yEH/5hQm9bnuabLBgfdcMi5/3h781BcZ/LkoMj875EVPsnoyZK2kaSrQQ5uvx90r2lxvv1PGoFIhcpxwaQW9I9R4aUe4aPO4s0Kn/yOowBJGLGk5Fuga+cxV472bZrvJlOD0sYu356PSFbFvDx1Owi7CmV92pbiRpgbKSw7M+0uzEkI9rDUQC0vP6ga8Mfqn+bCcwLpVdS5ZuNjxWlU10dy0LwgXQu0w/bMD1+Vr4fbuCGV6czUppm2dC2fu86A0a18YqOtdaOLEK20Hk14l71WjG7LT0VP6+r9L/wA=&RelayState=http://localhost/php-saml/demo1/
-https://idp-corso-sp.aai.garr.it/idp/profile/SAML2/Redirect/SSO?SAMLRequest=fVNNj9owFLzzK1DuiZNANq0FqSj0A4lCRNIeeqmM/bJYSmzXdnbZf1/nYwutWnyJ9N6b8cz4ZWFIUyu8au1ZHOFnC8ZOpu5cmloY3DeXXqsFlsRwgwVpwGBLcbH6ssNxEGKlpZVU1t5fsPsoYgxoy6UYYNvN0jvsP+wOn7b7HxVj84eUsuSUvA0TklJKTw9JzGbJvKrmc3iT0HiWhjBAv4E2jmfpOVpvMrAZ08JWGEuEdfUwSv0o9KO0jGY4jHESfx+gG2eWC2J7+NlaZTBCnCmfSm2kb1RACA8eidYBt10DObMVrwF1PmJ0BMY1UIuK4jAw5mMY77lgXDzez+A0DBn8uSxzPz8U5UCyes1mLYVpG9AF6CdO4etxd5XpRp5AB3AhjXKC1Fn5XeqIQSMj5JjhErjiO0KNl/W0i66P+2x01ukasZg7DO4td1HhnmGBbqeveIX3zsd2k8ua05e+3p2PUjfE/t9uFER9hTO/6kdxK4wCyisOzPtNs6pr+bzWQCwsPatb8Kboj8vHDQXW76vLx8LFTteyUURz0z2jM0Xt6Pjq+nZ8XbvlO0KV3d1Pimk358q5+zxLzbq3dY8NrNTEiZfajiH9k3xQje7Iziav7dufL/sF&RelayState=https://server.example/php-saml/demo1/
-
-\xampp\php\php -r "echo gzinflate(base64_decode('...'));"
-</aside>
     <ol>
         <li>copiate il contenuto della variabile <var>SAMLRequest</var><br />
 <pre><code data-trim data-noescape>
@@ -90,9 +74,6 @@ https://idp-corso-sp.aai.garr.it/...?&#8617;
     </section>
 
     <section><h2>Request decodificata</h2>
-<aside class="notes">
-</aside>
-
 <pre><code class="XML" data-trim data-noescape>
 &lt;samlp:AuthnRequest
     xmlns:samlp="urn:..." xmlns:saml="urn:..."&#8617;
@@ -114,12 +95,6 @@ https://idp-corso-sp.aai.garr.it/...?&#8617;
     </section>
 
     <section><h2>Response</h2>
-<aside class="notes">
-admin:Cambiami!
-
-L'IdP gestisce l'autenticazione (specifico dell'implementazione dell'IdP)
-L'IdP rimanda ad una pagina con la risposta (che d norma non si vede perché fa l'autosubmit via JavaScript)
-</aside>
     <ol>
         <li>inserite le credenziali ....</li>
         <li>cliccate "Invia"</li>
@@ -152,10 +127,6 @@ php -r "echo base64_decode('PHNhbWxwOl...');
     </section>
 
     <section><h2>Response decodificata</h2>
-<aside class="notes">
-SAMLResponse=PHNhbWxwOlJlc3BvbnNlIHhtbG5zOnNhbWxwPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6cHJvdG9jb2wiIHhtbG5zOnNhbWw9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjIuMDphc3NlcnRpb24iIElEPSJfYjMzM2NjMWVmYTNmOWI4MDgxZGU3Mjg5ZDQyYzExODQ1NTRkYmJhZWE4IiBWZXJzaW9uPSIyLjAiIElzc3VlSW5zdGFudD0iMjAxNy0wOC0yMFQwOTozNDowNFoiIERlc3RpbmF0aW9uPSJodHRwOi8vbG9jYWxob3N0L3BocC1zYW1sL2RlbW8xL2luZGV4LnBocD9hY3MiIEluUmVzcG9uc2VUbz0iT05FTE9HSU5fMWRhMDNiMjRiY2EyZTNhY2IzOTdjMjM3MDg1NDc3ZDY5YjE2YmVmNSI+PHNhbWw6SXNzdWVyPnVybjptaW90ZXNzb3JvPC9zYW1sOklzc3Vlcj48ZHM6U2lnbmF0dXJlIHhtbG5zOmRzPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwLzA5L3htbGRzaWcjIj4KICA8ZHM6U2lnbmVkSW5mbz48ZHM6Q2Fub25pY2FsaXphdGlvbk1ldGhvZCBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvMTAveG1sLWV4Yy1jMTRuIyIvPgogICAgPGRzOlNpZ25hdHVyZU1ldGhvZCBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvMDkveG1sZHNpZyNyc2Etc2hhMSIvPgogIDxkczpSZWZlcmVuY2UgVVJJPSIjX2IzMzNjYzFlZmEzZjliODA4MWRlNzI4OWQ0MmMxMTg0NTU0ZGJiYWVhOCI+PGRzOlRyYW5zZm9ybXM+PGRzOlRyYW5zZm9ybSBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvMDkveG1sZHNpZyNlbnZlbG9wZWQtc2lnbmF0dXJlIi8+PGRzOlRyYW5zZm9ybSBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvMTAveG1sLWV4Yy1jMTRuIyIvPjwvZHM6VHJhbnNmb3Jtcz48ZHM6RGlnZXN0TWV0aG9kIEFsZ29yaXRobT0iaHR0cDovL3d3dy53My5vcmcvMjAwMC8wOS94bWxkc2lnI3NoYTEiLz48ZHM6RGlnZXN0VmFsdWU+VCtIbU8yTkcrR29UMTJUSTRuSmY2aU1VWXhFPTwvZHM6RGlnZXN0VmFsdWU+PC9kczpSZWZlcmVuY2U+PC9kczpTaWduZWRJbmZvPjxkczpTaWduYXR1cmVWYWx1ZT5ocTNsTndIVmxQZUc0eTVZak0wekpFSjNIYzFHOG43cVBrOXZkQkZqeXlScUkxMnpxSmJyUjVSbTZCMHU5VWY0TlhwNC9RYVhZSlliUmJEOFpEM2U5Mm5hZ2RnV055Sk9XcjNTdGtBdithQStUZ1oySE9qL2N1L0VESFpjeUNoSS9VU05ZSWt5REFRMEZzOEk5ckdwdzVtMXpnZkc2Z0M2UDc2K1VNeDlHNTFPN0FrQVFXTGkvRlVxNXZSd3RRdTRjMVY3QTYrY0d5cWpiQUhGR0dRUnptSWZGTEFaOTRPWFpBSXNuSU10VmVKZjU1VHRyN2h3bFNWZS96RjdsYUU3L1BEQlhHNHpNUjZSY2gvWkt6MjFPdUUrMXlVaGlXLzFubzg1RVRqRE9oMUVZNUQ0NHQyb0JiRDBHMlkvbUpJbjMvV2dyS3VGd09MVnJrTDRoSjdDNlE9PTwvZHM6U2lnbmF0dXJlVmFsdWU+CjxkczpLZXlJbmZvPjxkczpYNTA5RGF0YT48ZHM6WDUwOUNlcnRpZmljYXRlPk1JSURYVENDQWtXZ0F3SUJBZ0lKQVBUb0w5ekZ1emFxTUEwR0NTcUdTSWIzRFFFQkN3VUFNRVV4Q3pBSkJnTlZCQVlUQWtGVk1STXdFUVlEVlFRSURBcFRiMjFsTFZOMFlYUmxNU0V3SHdZRFZRUUtEQmhKYm5SbGNtNWxkQ0JYYVdSbmFYUnpJRkIwZVNCTWRHUXdIaGNOTVRZd056STJNVFEwTURJM1doY05Nall3TnpJMk1UUTBNREkzV2pCRk1Rc3dDUVlEVlFRR0V3SkJWVEVUTUJFR0ExVUVDQXdLVTI5dFpTMVRkR0YwWlRFaE1COEdBMVVFQ2d3WVNXNTBaWEp1WlhRZ1YybGtaMmwwY3lCUWRIa2dUSFJrTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUEyUVpMVUYzYUg5UlYrRUZsVkZRR0VSREc5bnhWUk1CeUZGcXdpdHpkZk1uMTNlUnVPYXR2akNDVUpFTjY2Nzh2enQySXNxMWwrOWFGNWE2Ymt6K2NBc1pGY0ZieUFQbi8yMDBndUZDazhObnhPaVQrRGxDRHdZTFZFb2hYQnJsRUpGaWtvcG50TnZhbTZzZlFkckFVWE9abmZsR0JpK28veGEveFpiMHFmK1NYTnk2SnAxWjcydENWdmtXOVpMVFNqYlJPODlJblZBVE45em8zbzB1SUtFU0tWV0ovNGpJQVFFODRrbDlXQkU4VFpSZ1dCcU1pMnFGSHVaa3NPOEpIRXQrYlFwSW4vMEdvMUltV2c2dkVwaHo3QmhtZEMxNG13cFIyLy9qdzR1NlZqaitQQjNLMFlDKzFBcG1Ea3p1WlJPRXN4K0dqUkZacTVsdFBvb2UrOFFJREFRQUJvMUF3VGpBZEJnTlZIUTRFRmdRVU9YNlFNNytBcURFOHB4REdkVGRaU01QY0tNZ3dId1lEVlIwakJCZ3dGb0FVT1g2UU03K0FxREU4cHhER2RUZFpTTVBjS01nd0RBWURWUjBUQkFVd0F3RUIvekFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBMTJmZitEN1o2UERxT3VJaEg3Q1JMMnIwbjlMcEExM0Q5eVpWYUpPTVFBVmhBWUp6dVQzaTlRMlhFaERPUWJ3d2hSTTRwR1ZJd3ZUQjBnQWdibXZra1ovZTd0Vit3Nmk3WGxDS05OaGtMKzk5T2pWdW4xUU1nMktLMjZkZ1hZMzhtN3MzRU5vcEVkMEFtcksxbFlGWlo2NElwUW1jamYxSkNrRExWcXdWTXNzVmhpSEJiYld6clB4WFJMbXppMWpOUnpHcFVXUlFNUTVERDMrMGcydEhpK1FTaWp5V2RCd1NoWm9odmxBNEVlUzBnbmVuT1UyMUpENXFqL29pNGhxc0dERXdFVU5sa0VPVVE2eW5Ybng0REJiSzBXZDkwcE1DdWpyNXg4M1BlQlczVm93Zjl3TjNKeU55eXgvUUFrTUpQeU1qSGgxL0cvY2h4Q0k3WGFQdTFBPT08L2RzOlg1MDlDZXJ0aWZpY2F0ZT48L2RzOlg1MDlEYXRhPjwvZHM6S2V5SW5mbz48L2RzOlNpZ25hdHVyZT48c2FtbHA6U3RhdHVzPjxzYW1scDpTdGF0dXNDb2RlIFZhbHVlPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6c3RhdHVzOlN1Y2Nlc3MiLz48L3NhbWxwOlN0YXR1cz48c2FtbDpBc3NlcnRpb24geG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgeG1sbnM6eHM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZW1hIiBJRD0iX2NjYTQ5YTdlOTI5ODI1NWNhOTFlOGRmMzlmNmViNDgyN2UwMTQ3NTU3MSIgVmVyc2lvbj0iMi4wIiBJc3N1ZUluc3RhbnQ9IjIwMTctMDgtMjBUMDk6MzQ6MDRaIj48c2FtbDpJc3N1ZXI+dXJuOm1pb3Rlc3Nvcm88L3NhbWw6SXNzdWVyPjxzYW1sOlN1YmplY3Q+PHNhbWw6TmFtZUlEIFNQTmFtZVF1YWxpZmllcj0iaHR0cDovL2xvY2FsaG9zdC9waHAtc2FtbC9kZW1vMS9tZXRhZGF0YS5waHAiIEZvcm1hdD0idXJuOm9hc2lzOm5hbWVzOnRjOlNBTUw6MS4xOm5hbWVpZC1mb3JtYXQ6dW5zcGVjaWZpZWQiPmQyM2JlOGYyYzI1ZDAxY2JlOGY2Nzg4NGFjOTg4NmYwMDIxOTNkOTA8L3NhbWw6TmFtZUlEPjxzYW1sOlN1YmplY3RDb25maXJtYXRpb24gTWV0aG9kPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6Y206YmVhcmVyIj48c2FtbDpTdWJqZWN0Q29uZmlybWF0aW9uRGF0YSBOb3RPbk9yQWZ0ZXI9IjIwMTctMDgtMjBUMDk6Mzk6MDRaIiBSZWNpcGllbnQ9Imh0dHA6Ly9sb2NhbGhvc3QvcGhwLXNhbWwvZGVtbzEvaW5kZXgucGhwP2FjcyIgSW5SZXNwb25zZVRvPSJPTkVMT0dJTl8xZGEwM2IyNGJjYTJlM2FjYjM5N2MyMzcwODU0NzdkNjliMTZiZWY1Ii8+PC9zYW1sOlN1YmplY3RDb25maXJtYXRpb24+PC9zYW1sOlN1YmplY3Q+PHNhbWw6Q29uZGl0aW9ucyBOb3RCZWZvcmU9IjIwMTctMDgtMjBUMDk6MzM6MzRaIiBOb3RPbk9yQWZ0ZXI9IjIwMTctMDgtMjBUMDk6Mzk6MDRaIj48c2FtbDpBdWRpZW5jZVJlc3RyaWN0aW9uPjxzYW1sOkF1ZGllbmNlPmh0dHA6Ly9sb2NhbGhvc3QvcGhwLXNhbWwvZGVtbzEvbWV0YWRhdGEucGhwPC9zYW1sOkF1ZGllbmNlPjwvc2FtbDpBdWRpZW5jZVJlc3RyaWN0aW9uPjwvc2FtbDpDb25kaXRpb25zPjxzYW1sOkF1dGhuU3RhdGVtZW50IEF1dGhuSW5zdGFudD0iMjAxNy0wOC0yMFQwOTozNDowNFoiIFNlc3Npb25Ob3RPbk9yQWZ0ZXI9IjIwMTctMDgtMjBUMTc6MzQ6MDRaIiBTZXNzaW9uSW5kZXg9Il85ODIwNmM1NWIxYTBkM2E1YWJkMjNlOTU2YWU3OGY5NWE4MjY1YTYzMmYiPjxzYW1sOkF1dGhuQ29udGV4dD48c2FtbDpBdXRobkNvbnRleHRDbGFzc1JlZj51cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YWM6Y2xhc3NlczpQYXNzd29yZDwvc2FtbDpBdXRobkNvbnRleHRDbGFzc1JlZj48L3NhbWw6QXV0aG5Db250ZXh0Pjwvc2FtbDpBdXRoblN0YXRlbWVudD48c2FtbDpBdHRyaWJ1dGVTdGF0ZW1lbnQ+PHNhbWw6QXR0cmlidXRlIE5hbWU9InVzZXIiIE5hbWVGb3JtYXQ9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjIuMDphdHRybmFtZS1mb3JtYXQ6YmFzaWMiPjxzYW1sOkF0dHJpYnV0ZVZhbHVlIHhzaTp0eXBlPSJ4czpzdHJpbmciPmFkbWluPC9zYW1sOkF0dHJpYnV0ZVZhbHVlPjwvc2FtbDpBdHRyaWJ1dGU+PC9zYW1sOkF0dHJpYnV0ZVN0YXRlbWVudD48L3NhbWw6QXNzZXJ0aW9uPjwvc2FtbHA6UmVzcG9uc2U+
-</aside>
-
 <pre><code class="XML" data-trim data-noescape>
 &lt;samlp:Response xmlns:samlp="urn:..." xmlns:saml="urn:..."&#8617;
     ID="_b333cc1e..." Version="2.0"&#8617;
