@@ -72,7 +72,7 @@ $ service shibd restart
     </ul>
     <p>Sotto la base <code>/Shibboleth.sso</code> di default</p>
     
-<pre>shibboleth.xml<code data-trim data-noescape>
+<pre>/etc/shibboleth/shibboleth2.xml<code data-trim data-noescape>
 &lt;ApplicationDefaults ...
     &lt;Sessions ... <mark>handlerURL="/MySSOhandler"</mark>&gt;
 </code></pre>
@@ -130,8 +130,7 @@ $ shibd -t
     </section>
 	
 	<section id="config"><h2>Metadata del SP</h2>
-	
-	<pre>shibboleth.xml<code data-noescape>
+<pre>/etc/shibboleth/shibboleth2.xml<code data-trim data-noescape>
 &lt;ApplicationDefaults entityID="<mark>https://sp.example/shibboleth</mark>"
 	REMOTE_USER="eppn persistent-id targeted-id"&gt;
 	</code></pre>
@@ -180,7 +179,7 @@ $ wget -O mio-idp-metadata.xml --no-check-certificate&#8617;
         <aside class="notes">
 	Inoltre l'url per accedere ai metadata dell'IdP è una feature unsupported
 	</aside>
-<pre>shibboleth.xml<code data-trim data-noescape>
+<pre>/etc/shibboleth/shibboleth2.xml<code data-trim data-noescape>
 &lt;ApplicationDefaults entityID=...
   &lt;Sessions ...
     &lt;SSO entityID="https://idp-corso-sp.aai.garr.it/idp/shibboleth"
@@ -225,11 +224,40 @@ $ wget -O mio-idp-metadata.xml --no-check-certificate&#8617;
                         href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPContentSettings">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPContentSettings</a>
 		</td></tr></table>		
     </section>
+
+    <section><h2>Logout</h2>
+        <dl>
+            <dt>return</dt>
+            <dd>landing page dopo il logout (dipende dall'IdP e altri fattori)</dd>
+        </dl>
+	
+        <ol>
+            <li>provate<br /><code><a href="https://server.example/Shibboleth.sso/Logout"
+                    target="_blank">https://server.example/Shibboleth.sso/Logout</a></code></li>
+        </ol>
+    </section>				
+
+    <section><h2>Problemi di Single Logout</h2>
+        <dl>
+            <dt>termine del SLO</dt>
+            <dd>il comportamento è dipendente dall'IdP</dd>
+            <dd>conviene distruggere
+            prima la sessione locale dell'applicazione, anche se in caso di
+            fallimento del SLO l'<a href="index.html#/slo">utente sarà confuso</a></dd>
+            <dt>errore "SecurityPolicyException ..."</dt>
+            <dd>probabilmente l'IdP non firma le risposte di logout</dd>
+        </dl>
+
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td>
+<td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPSingleLogoutService">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPSingleLogoutService</a>
+</td></tr></table>
+	</section>	
+
                 
     <section><h2>Esempio Apache</h2>
     <ol>
         <li>create una directory /var/www/html/private
-        <pre><code data-trim>
+<pre><code data-trim>
 $ mkdir /var/www/html/private 
 </code></pre></li>
         <li><pre>/var/www/html/private/index.php<code data-trim>
@@ -253,10 +281,10 @@ require <mark>shibboleth</mark>
     </section>	
 
     <section><h2>Configurazione Apache</h2>
-        <pre>/etc/apache/site-available/default-ssl.conf<code data-trim>
-<Directory /var/www/html/private>
+<pre>/etc/apache/site-available/default-ssl.conf<code data-trim>
+&lt;Directory "/var/www/html"&gt;
     AllowOverride AuthConfig
-</Directory>
+&lt;/Directory&gt;
 </code></pre>
 
 <pre><code data-trim data-noescape>
@@ -267,6 +295,21 @@ $ riavvio...
     <aside class="notes">
     <a href="https://server.example/Shibboleth.sso/Logout?return=https%3A%2F%2Flocalhost%2Fprivate%2Flanding.php">Logout</a>;
     </aside>
+    </section>	
+                
+    <section><h2>Esempio sessione</h2>
+<pre>https://server.example/private/<code data-trim data-noescape>
+Array
+(
+    [Shib-Application-ID] =&gt; default
+    [Shib-Session-ID] =&gt; <mark>_c8ed11b4add98d25817a298bb47e5b7f</mark>
+    [Shib-Identity-Provider] =&gt; https://idp-corso-sp.aai.garr.it/idp/shibboleth
+    [Shib-Authentication-Instant] =&gt; 2017-08-31T08:22:49Z
+    [Shib-Authentication-Method] =&gt; urn:oasis:names:tc:SAML:2.0:ac:classes:Password
+    [Shib-AuthnContext-Class] =&gt; urn:oasis:names:tc:SAML:2.0:ac:classes:Password
+    [Shib-Session-Index] =&gt; _d1c7faad4d6344b47ebedd49a397220d64c9c02b42
+    ...
+</code></pre>
     </section>	
                 
     <section><h2>Sessioni <i>lazy</i></h2>
@@ -313,14 +356,15 @@ If supplied, the eventual SAML request is constructed based on the message suppl
 
 
 		<section><h2><i>Apache e lazy session</i></h2>
+<pre><code data-trim>
+$ cp -r /var/www/html/private /var/www/html/lazy
+</code></pre>
 
-		<pre>/var/www/html/private/.htaccess<code data-trim data-noescape>
-AuthType shibboleth
+		<pre>/var/www/html/lazy/.htaccess<code data-trim data-noescape>
 ShibRequestSetting requireSession <mark>false</mark>
-require shibolleth
 		</code></pre>
 
-<pre>/var/www/html/private/lazy.php<code data-trim>
+<pre>/var/www/html/lazy/index.php<code data-trim>
 &lt;?php
 if (empty($_SERVER['Shib-Session-ID'])) { ?&gt;
     Non sei autenticato
@@ -338,22 +382,6 @@ else { ?&gt;
 	Se il target non è specificato usa la homeUrl dell'applicazione (definita in shibboleth)
 	Meglio fare logout...
 	</aside>
-	</section>	
-
-    <section><h2>Problemi di Single Logout</h2>
-        <dl>
-            <dt>termine del SLO</dt>
-            <dd>il comportamento è dipendente dall'IdP</dd>
-            <dd>conviene distruggere
-            prima la sessione locale dell'applicazione, anche se in caso di
-            fallimento del SLO l'<a href="index.html#/slo">utente sarà confuso</a></dd>
-            <dt>errore "SecurityPolicyException ..."</dt>
-            <dd>probabilmente l'IdP non firma le risposte di logout</dd>
-        </dl>
-
-    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td>
-<td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPSingleLogoutService">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPSingleLogoutService</a>
-</td></tr></table>
 	</section>	
 
     <section><h2><i>NameID e attributi</i></h2>
@@ -398,7 +426,7 @@ else { ?&gt;
 	<p>Shibboleth SP valorizza la variabile REMOTE_USER compatibile 
             con la HTTP Basic Authentication</p>
 
-	<pre>shibboleth.xml<code data-trim data-noescape>
+<pre>/etc/shibboleth/shibboleth2.xml<code data-trim data-noescape>
 &lt;ApplicationDefaults entityID="https://corso-sp.example/"
 	REMOTE_USER="<mark title="eduPersonPrincipalName">eppn</mark> persistent-id targeted-id"&gt;
 	</code></pre>
@@ -418,7 +446,7 @@ else { ?&gt;
 </code></pre>
 	
     <aside class="notes">
-    Riprovate, ora va :-)
+    Riprovate, ora andrà :-)
     </aside>
     </section>	
 
@@ -428,167 +456,262 @@ else { ?&gt;
 <code data-trim>
 # Simulazione SP locale:
 127.0.0.1	server.example
-127.0.0.1       noopsp.example
+127.0.0.1       nonesp.example
 127.0.0.1       altrosp.example
 </code></pre>
-        <p>aprite <a href="https://noopsp.example/private/lazy.php" target="_blank">https://noopsp.example/</a>,
-        autenticatevi e guardate la barra degli indirizzi...</p>
+        <p>Aprite <a href="https://nonesp.example/Shibboleth.sso/Login" target="_blank">https://nonesp.example/Shibboleth.sso/Login</a> ...</p>
 
-        <p>l'IdP riconosce il SP dall'entityID, ma reindirizza all'endpoint
-        dell'ACS e non al virtual host</p>
+        <p>L'IdP riconosce l'entityID, ma non ha un endpoint per il virtual host</p>
 
+        <ul>
+            <li>stesso SP per tutti i VH</li>
+            <li>SP specifici per ogni VH</li>
+        </ul>
+        
+        <p>Configurazione specifica per Apache, molto
+            differente nel caso di IIS.<br />L'approccio "per-vh" è in parte
+            applicabile anche "per-path".</p>
+        
     <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td>
 <td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApplicationModel">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPApplicationModel</a>
 </td></tr></table>        
-        
-     https://altrosp.example/Shibboleth.sso/Login?target=https://altrosp.example/
-     
-        <code><a href="https://server.example/Shibboleth.sso/Metadata"
-                 target="_blank">/Shibboleth.sso/Metadata</a></code> 
-     
-        
-        
-        <p>Virtual host diversi possono avere configurazioni specifiche (es. entityId)</p>
-<pre>shibboleth.xml<code data-trim data-noescape>
-&lt;ApplicationDefaults entityID="https://corso-sp.example/shibboleth"
-    ...
-    &lt;ApplicationOverride id="secondaApp"
-            entityID="<mark>https://altrove.invalid/shibboleth</mark>"/&gt;
 
-&lt;/ApplicationDefaults&gt;
+    </section>	
+
+    <section><h2><i>n</i> VH &#8596; 1 SP</h2>
+
+<pre>su IdP<code data-trim data-noescape>
+&lt;md:EntityDescriptor ... 
+    entityID="https://sp.example/shibboleth"&gt;
+  &lt;md:SPSSODescriptor ...
+    &lt;md:AssertionConsumerService Binding="urn:...:HTTP-POST"
+	    Location="https://server.example/Shibboleth.sso/SAML2/POST" ...
+    &lt;md:AssertionConsumerService Binding="urn:...:HTTP-POST"
+	    Location="https://altrosp.example/Shibboleth.sso/SAML2/POST" ...
+</code></pre>
+        <p>Le sessioni Shibboleth sono comunque separate<br />(non è così per tutte le librerie)</p>
+        
+        <ol>
+            <li>disattivate le sessioni <i>lazy</i></li>
+            <li>aprite <a href="https://server.example/private/" target="_blank">https://server.example/private/</a></li>
+            <li>aprite <a href="https://altrosp.example/private/" target="_blank">https://altrosp.example/private/</a></li>
+        </ol>
+    </section>
+
+    <section><h2><i>n</i> VH &#8596; <i>n</i> SP</h2>
+
+<pre><code data-trim>
+$ cp /etc/apache2/sites-available/default-ssl.conf /etc/apa...able/vh2.conf
+$ a2ensite vh2
+</code></pre>
+<pre>/etc/apache2/sites-available/vh2.conf<code data-trim data-noescape>
+ServerName <mark>altrosp.example</mark>
+&lt;Directory "/var/www/html"&gt;
+    AllowOverride AuthConfig
+    ShibRequestSetting applicationId <mark>corsoidem</mark>
+&lt;/Directory&gt;
+</code></pre>
+
+<pre>/etc/shibboleth/shibboleth2.xml<code data-trim data-noescape>
+&lt;ApplicationDefaults entityID="https://sp.example/shibboleth"
+    ...
+  &lt;ApplicationOverride id="corsoidem"
+      entityID="urn:example:idem:corso2017:esempiovh"&gt;
+</code></pre>
+
+    <aside class="notes">
+    IIS richiede l'uso di RequestMap in shibboleth2.xml; funziona anche con
+    Apache, ma richeide alcuni accorgimenti come UseCanonicalName On.
+    La documentazione Shibboleth suggerisce di usare i comandi Apache 
+    ovunque sia possibile.
+    http://shibboleth.1660669.n2.nabble.com/ApplicationOverride-results-in-quot-Unable-to-locate-an-encrypted-key-quot-td7629239.html
+    </aside>        
+    </section>
+                
+    <section><h2><i>AuthZ in Apache</i></h2>
+        <p>L'autorizzazione è integrata con quella di Apache. Ricordiamo
+            le precedenze: &lt;Location&gt;, .htaccess, &lt;Directory&gt;</p>
+
+<pre><code data-trim data-noescape>
+Require tipo [~/!] [attributo] espressione/valore1 [valore2]...
+</code></pre>
+        
+<pre><code data-trim data-noescape>
+# Utenti specifici (da REMOTE_USER)
+Require shib-user marco@unige.it giuliano@univpm.it
+
+# Utenti di un dominio (via RegExp)
+Require shib-user ~ ^.+@unipi\.it$
+
+# Affiliazione staff o student
+Require shib-attr affiliation staff student
+
+# Affiliazione scoped staff o student 
+Require shib-attr affiliation ~ ^(staff|student)@garr\.it$
+</code></pre>
+
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td>
+<td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPhtaccessl">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPhtaccess</a>
+</td></tr></table>        
+    </section>
+                
+    <section><h2><i>AuthZ</i></h2>
+        <p>I confronti vengono fatti per stringhe (string-matching),
+        quindi le sintassi LDAP non vengono applicate (es. sui DN sui gruppi)</p>
+
+<pre>attribute-map.xml<code data-trim data-noescape>
+&lt;Attribute name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" id="<mark>eppn</mark>"&gt;
+  &lt;AttributeDecoder xsi:type="ScopedAttributeDecoder"
+       caseSensitive="<mark>false</mark>"/&gt;
+&lt;/Attribute&gt;
+</code></pre>
+    
+<pre><code data-trim data-noescape>
+# eduPersonPrincipalName estratto da LDAP nell'IdP
+Require shib-attr eppn marco@unige.it GIULIANO@univpm.it
+</code></pre>
+        
+<pre><code data-trim data-noescape>
+# Utente autenticato via TLS
+Require authnContextClassRef urn:oasis:names:tc:SAML:2.0:ac:classes:TLSClient
+</code></pre>
+        
+        <aside class="notes">
+            Autenticazione a 2 fattori: http://documentation.its.umich.edu/node/345
+        </aside>
+    </section>	
+	
+
+    <section><h2>SP dietro <i>reverse proxy</i></h2>
+    <p>un reverse proxy può servire per tenere il servizio in DMZ,
+        per l'<i>off-load SSL</i>, ecc...</p>
+
+    <p>Shibboleth SP ricalcola i propri URL, sia nelle richieste, sia nei metadata</p>
+    
+<pre>Apache mod_proxy<code data-trim data-noescape>
+# Passa al backend il valore originale di Host:
+ProxyPreserveHost On
+ProxyPass        / http://server.example/
+ProxyPassReverse / http://server.example/
+</code></pre>
+    
+<pre>/etc/shibboleth/shibboleth2.xml<code data-trim data-noescape>
+&lt;Sessions ... handlerSSL="<mark>false</mark>"&gt;
+</code></pre>    
+
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a 
+            href="https://wiki.shibboleth.net/confluence/display/SHIB2/SPReverseProxy">https://wiki.shibboleth.net/confluence/display/SHIB2/SPReverseProxy</a>
+    </td></tr></table>		
+
+    <aside class="notes">
+    Ricordarsi che le comunicazioni sono sul front-channel
+    </aside>
+    </section>	
+	
+    <section><h2>Apache Tomcat</h2>
+        <p>Con <i>mod_proxy_http</i> valgono le considerazioni
+            del reverse proxy</p>
+
+        <p>Con <i>mod_proxy_ajp</i> non passano le variabili d'ambiente,
+            aggiungere il prefisso custom <code>AJP_</code></p>
+
+<pre>/etc/shibboleth/shibboleth2.xml<code data-trim data-noescape>
+&lt;ApplicationOverride id="tomcat" entityID=...
+    attributePrefix="<mark>AJP_</mark>">
 </code></pre>
     </section>
 
-    <section>
-<pre>https://localhost/private/<code data-trim data-noescape>
-Array
-(
-    [Shib-Application-ID] => default
-    [Shib-Session-ID] => _c8ed11b4add98d25817a298bb47e5b7f
-    [Shib-Identity-Provider] => urn:miotessoro
-    [Shib-Authentication-Instant] => 2017-08-31T08:22:49Z
-    [Shib-Authentication-Method] => urn:oasis:names:tc:SAML:2.0:ac:classes:Password
-    [Shib-AuthnContext-Class] => urn:oasis:names:tc:SAML:2.0:ac:classes:Password
-    [Shib-Session-Index] => _d1c7faad4d6344b47ebedd49a397220d64c9c02b42
-    [eppn] => <mark>marco@idem.garr.it</mark>
-    [mail] => marco@csita.unige.it
-    [scoped-affiliation] => member@unige.it;employee@unige.it
-    [unscoped-affiliation] => member;employee
-...
-    [REMOTE_USER] => marco@idem.garr.it
-</code></pre>
-	</section>	
-	
-	<section><h2>AuthZ</i></h2>
-Per affiliazione
-<pre><code data-trim data-noescape>
-Require shib-attr affiliation student@unige.it staff@garr.it
-</code></pre>		
-
-<div>
-<div style="display: inline-block; margin-right: 50px;">
-Per affiliazione
-    </div>
-	<div style="display: inline-block;">Require shib-attr affiliation student@unige.it staff@garr.it
-</div>
-</div>
-
-<div>
-<div style="display: inline-block; margin-right: 50px;">
-Per affiliazione
-    </div>
-	<div style="display: inline-block;"><pre><code data-trim data-noescape>Require shib-attr affiliation student@unige.it staff@garr.it
-</code></pre></div>
-</div>
-
-I confronti vengono fatti per stringhe (string-matching):
-- switch per confronto case-insensitive
-- le sintassi LDAP non vengono applicate (es. sui DN sui gruppi)
-
-<table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPhtaccess">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPhtaccess</a>
-        </td></tr></table>	
-
-	<aside class="notes">
-	</aside>
-	</section>	
-	
-	
-	<section><h2>Dietro <i>reverse proxy</i></h2>
-	<p>un reverse proxy può servire per tenere il servizio in DMZ,
-		per l'<i>off-load SSL</i>, ecc...</p>
-
-	Shibboleth ricalcola i propri URL, sia nelle richieste, sia nei metadati
-	- usare preserve_host_name
-	- switch per lo schema HTTPS
-	
-	<table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/SPReverseProxy">https://wiki.shibboleth.net/confluence/display/SHIB2/SPReverseProxy</a>
-		</td></tr></table>		
-		
-	<aside class="notes">
-	Ricordarsi che le comunicazioni sono sul front-channel
-
-	</aside>
-	</section>	
-	
-	<section><h2>interazione con Tomcat</h2>
-	Valgono le considerazioni generali del reverse proxy
-	<p>Identificatori utente scoped</p>
-	<p>dietro reverse proxy</p>
-	</section>
-
-	<section><h2>Shibboleth sul <i>reverse proxy</i></h2>
-	Il <i>reverse proxy</i> fornisce servizi di autenticazione
-	alle applicazioni retrostanti. Esempi: Alfresco, Adobe Connect
+    <section><h2>Shibboleth sul <i>reverse proxy</i></h2>
+	<p>Il <i>reverse proxy</i> può fornire servizi di autenticazione
+            alle applicazioni retrostanti (es. Alfresco, Adobe Connect)
+        o integrare nel SSO risorse statiche o applicazioni legacy
+        che usano gli Header HTTP
+        </p>
 	<aside class="notes">
 	Non deve esserci modo per raggiungere le applicazioni per altre vie!
 	</aside>
 	<p>Per non interferire con eventuali applicazioni "shibbolettizate" conviene cambiare il nome dell'endpoint:</p>
 				
-<pre>/etc/shibboleth2.xml<code data-trim data-noescape>
-&lt;Sessions lifetime="28800" timeout="3600" checkAddress="false"
-	<mark>handlerURL="/ShibbolethRPx.sso"</mark>
-	relayState="ss:mem" handlerSSL="false"&gt;
+<pre>/etc/shibboleth/shibboleth2.xml<code data-trim data-noescape>
+&lt;Sessions ...
+    <mark>handlerURL="/ShibbolethRPx.sso"</mark>
+    handlerSSL="false"&gt;
 </code></pre>
+    </section>
+
+    <section><h2>Configurazione <i>reverse proxy</i> Apache</h2>
 
 <pre>/etc/apache/site-enabled/sito...<code data-trim data-noescape>
-&lt;VirtualHost *:443&gt;
-  ServerName     sito
+ServerName     connect.unige.it
 
-  ProxyPass /ShibbolethRPx.sso/ !
+ProxyPass /ShibbolethRPx.sso/ !
 
-  RequestHeader set X-UNIGE-EMPLOYEENUMBER "%{employeeNumber}e"
-  RequestHeader set X-UNIGE-STUDENTID "%{studentId}e"
-  RequestHeader set X-UNIGE-CN "%{cn}e"
-  RequestHeader set X-UNIGE-MAIL "%{mail}e"
-  RequestHeader set X-UNIGE-UID "%{uid}e"
-  RequestHeader set X-UNIGE-eduPersonPrincipalName "%{eppn}e"
-  RequestHeader set X-UNIGE-DEPARTMENTNUMBER "%{departmentNumber}e"
-  RequestHeader set X-UNIGE-EMPLOYEETYPE "%{employeeType}e"
-  RequestHeader set X-UNIGE-eduPersonAffiliation "%{unscoped-affiliation}e"
-  RequestHeader set X-Proxy-Shib-Session-ID "%{Shib-Session-ID}e"
-  &lt;Location /prove/&gt;
-    AuthType shibboleth
-    ShibRequestSetting requireSession true
-    #Require valid-user
-    Require affiliation employee@unige.it
-    ProxyPass http://backend..
-    ProxyPassReverse ...
-  &lt;/Location&gt;
-  ...
+# No! Rischio spoofing
+#ShibRequestSetting ShibUseHeaders On
+AuthType shibboleth
+ShibRequestSetting requireSession true
+Require affiliation employee@unige.it
+ProxyPass http://backend..
+ProxyPassReverse ...
 </code></pre>
-				
-	<p>criteri di sicurezza e anti spoofing</p>
-	</section>
+    </section>
 
-	<section><h2>Logout</h2>
-	
-https://erasmus.servizionline.unige.it/ShibbolethRPx.sso/Logout?return=https://unige.it/
+    <section><h2>Header HTTP e <i>reverse proxy</i></h2>
+<pre>/etc/apache/site-enabled/sito...<code data-trim data-noescape>
+RequestHeader set X-UNIGE-CN "%{cn}e"
+RequestHeader set X-UNIGE-MAIL "%{mail}e"
+RequestHeader set X-UNIGE-UID "%{uid}e"
+RequestHeader set X-UNIGE-eduPersonPrincipalName "%{eppn}e"
+RequestHeader set X-UNIGE-DEPARTMENTNUMBER "%{departmentNumber}e"
+RequestHeader set X-UNIGE-EMPLOYEETYPE "%{employeeType}e"
+RequestHeader set X-UNIGE-eduPersonAffiliation "%{unscoped-affiliation}e"
+RequestHeader set X-Proxy-Shib-Session-ID "%{Shib-Session-ID}e"
 
-Anche da Reverse Proxy
-	</section>				
+...
+</code></pre>
+    </section>
 
-    <section><h2>Logging, audit e statistiche</h2>
-https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLogging
+    <section><h2>Logging</h2>
+        <p>Il logging è gestito da un file in stile Log4j</p>
+        
+<pre>/etc/shibboleth/shibd.logger<code data-trim data-noescape>
+# Trascrve nel log tutti i messagi XML
+log4j.category.XMLTooling.XMLObject=INFO
+log4j.category.XMLTooling.KeyInfoResolver=INFO
+log4j.category.Shibboleth.IPRange=INFO
+log4j.category.Shibboleth.PropertySet=INFO
+</code></pre>
+
+<pre><code data-trim data-noescape>
+$ tail -f /var/log/shibboleth/shibd.log
+</code></pre>
+        
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a 
+            href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLogging">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLogging</a>
+    </td></tr></table>		
+
+    </section>	
+
+    <section><h2>Theming</h2>
+        <p>L'esperienza utente è decisamente migliore se l'aspetto delle
+            pagine d'errore è coerente con quello del sito</p>
+        <p>I modelli di errore sono i file <code>/etc/shibboleth/*.html</code>
+        e sono configurabili per applicazione</p>
+
+<pre>/etc/shibboleth/shibboleth2.xml<code data-trim data-noescape>
+&lt;ApplicationDefaults ...
+    &lt;Errors supportContact="<mark>supporto@example</mark>"
+        helpLocation="/about.html"
+        styleSheet="/shibboleth-sp/main.css"
+</code></pre>
+        
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a 
+            href="https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPErrors">https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPErrors</a>
+    </td></tr></table>        
+    </section>	
+                
+<section id="pranzo"><h2>pausa</h2>
+    <p><a href="index.html#/shibboleth">ritorniamo...</a></p>
     </section>	
                 
 <section id="discovery"><h2>Embedded Discovery</h2>
@@ -678,20 +801,7 @@ $ mv shibboleth-embedded-ds-1.2.0 <mark>/etc/shibboleth-ds</mark>
     </aside>
     </section>
                
-	<section><h2>Theming</h2>
-	Se tutto va bene, non c'è interazione con l'utente.
-	Per personalizzare i messaggi d'errore:
-	
-	</section>	
-	
-	<section><h2>Riferimenti</h2>
-	<ul>
-	<li>Installazione <a href="https://wiki.shibboleth.net/confluence/display/SHIB2/Installation">https://wiki.shibboleth.net/confluence/display/SHIB2/Installation</a></li>
-	</ul>
-	<p><a href="index.html#/shibboleth">torniamo...</a></p>
-	</section>				
-				
-	</div></div>
+</div></div>
 
 		<script src="lib/js/head.min.js"></script>
 		<script src="js/reveal.js"></script>

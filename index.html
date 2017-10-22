@@ -36,7 +36,7 @@ dev'essere attivo e disponibile SSL/https
 	-->
 <div class="reveal"><div class="slides">
 
-    <section><h1>Service Provider SAML 2.0</h1>
+    <section><h1>Service Provider<br />SAML 2.0</h1>
         <p><small>23 ottobre 2017 - Roma</small></p>
         <p>Marco Ferrante marco.ferrante@unige.it<br /><small>Università di Genova/CTS IDEM GARR</small><br />
         Giuliano Latini giuliano.latini@univpm.it<br /><small>Università Politecnica delle Marche/CTS IDEM GARR</small><br />
@@ -44,39 +44,38 @@ dev'essere attivo e disponibile SSL/https
     </section>
 
     <section><h2>Organizzazione del corso</h2>
-        <p>Il corso tratterà: generalità del Single SignOn SAML 2.0, gestione di
+        <p>Tratteremo: generalità del Single SignOn (SSO) SAML 2.0, gestione di
         un Service Provider, uso di Shibboleth SP, sviluppo con 
         SimpleSAMLphp, preparazione di servizi federati IDEM</p>
 
-        <p>Le parti teoriche sono intervallata da esperimenti pratici da
+        <p>Le parti teoriche sono intervallate da esperimenti pratici da
         svolgere sul proprio portatile con la VM messa a disposizione</p>
         
         <p>Le nozioni apprese saranno utili per lo sviluppo di applicazioni
-        che usino il SAML 2.0 sia nel contesto della propria organizzazione
-        sia in quello di federazione</p>
+        che usino il SSO sia nella propria organizzazione
+        sia nella federazione IDEM</p>
     </section>
         
     <section><h2>Note sugli esempi</h2>
-        <p>Gli esempi sono direttamente applicabili con la VM fornita
-        per emulare il servizio e accessibili sia dal browser della VM
-        sia da quello del sistema host</p>
-
-        <p>Le parti di codice sono in PHP elementare, dovrebbero risultare
-            comprensibili a tutti</p>
-        
-        <p>Consigliamo Mozilla Firefox nella modalità
-            "Finestra anonima"</p>
-        <p>I certificati SP e IdP non sono emessi da una CA riconosciuta, occorre
-            accettare l'eccezione di sicurezza</p>
-        
-        <p>In caso di errore "Web Login Service - Stale Request", verificare 
-        che l'orologio della macchina guest sia sincronizzato</p>
-        
+        <ul>
+        <li>Gli esempi sono direttamente applicabili con la VM fornita
+        e accessibili sia dal browser sia della VM sia dal sistema host</li>
+        <li>Consigliamo Mozilla Firefox nella modalità "Finestra anonima"</li>
+        <li>Le parti di codice sono in PHP elementare</li>
+        <li>I certificati SP e IdP sono autofirmati e occorre
+            accettare l'eccezione di sicurezza</li>
+        <li>Gli esempi didattici omettono dettagli importanti, anche sulla
+            sicurezza, e non possono essere applicati direttamente
+            in produzione</li>
+        <li>In caso di errore "Web Login Service - Stale Request" verificare 
+        che l'orologio della macchina guest sia sincronizzato</li>
+        </ul>
     </section>
         
         <!-- parte 1 -->
     <section><h1>Web Single SignOn</h1>
-<p>Il Single SignOn (SSO) consente ad un utente di effettuare un'unica autenticazione (authN) valida per più risorse</p>
+<p>Il Single SignOn (SSO) consente all'utente di effettuare un'unica autenticazione
+    (authN) valida per più risorse</p>
 <p>Non si occupa dell’autorizzazione (authZ), di solito in capo alla risorsa</p>
 	<aside class="notes">
 	Benefits of using single sign-on include:
@@ -87,8 +86,8 @@ Reduce IT costs due to lower number of IT help desk calls about passwords
 	</aside>
     </section>
 
-    <section>
-<p>L'utente si autentica presso un <i>autorità</i> (IdP, 
+        <section><h2>Scenario</h2>
+<p>L'utente si autentica presso un'<i>autorità</i> (IdP, 
     <i title="terminologia OpenID Connect, derivato da OAuth">Authorization Server</i>, ....)
     e ottiene un <i>token</i> (o <i>ticket</i>)<p>
 <p>L'utente poi presenta il <i>token</i> alle risorse (SP,
@@ -96,31 +95,28 @@ Reduce IT costs due to lower number of IT help desk calls about passwords
     che lo valideranno e lo valuteranno per l'autorizzazione</p>
     </section>
 
-    <section>
-				<!-- parte 2 -->
-
 		<section><h2>Singole applicazioni web</h2>
-		<p>il <i>token</i> è un cookie che identifica la sessione nell’applicazione</p>
+		<p>Il <i>token</i> è un cookie che identifica la sessione nell’applicazione</p>
+		<p>Esempio: sessioni PHP</p>
 			<aside class="notes">
 I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, a cui deve appartenere il server host
 			</aside>
 		</section>
 
 		<section><h2>Domain o intra-organizational SSO</h2>
-		<p>il <i>token</i> è un cookie di dominio che identifica la sessione sull'authN server</p>
-		<p>tipicamente un <i>back-channel</i> trasferisce i dati di sessione tra authN server e risorsa</p>
+		<p>Il <i>token</i> è un cookie di dominio che identifica la sessione sull'authN server</p>
+		<p>Tipicamente un <i>back-channel</i> trasferisce i dati di sessione tra authN server e risorsa</p>
 		<p>Esempi: <a href="https://apereo.github.io/cas/5.1.x/protocol/CAS-Protocol.html">CAS</a>,
 			<a href="http://weblogin.org/">CoSign</a>,
 			<a href="http://www.pubcookie.org/" title="Il dominio sembra scaduto a luglio">Pubcookie</a></p>
 		</section>
 				
-	</section>
-
 	<section>
 			
 	<section><h2>Autenticazione federata</h2>
-	<p>il <i>token</i> è un pacchetto XML (asserzione) legato alla sessione sull'authN server</p>
-	<p>l'asserzione viene scambiata, di solito via <i>front-channel</i>, con l'applicazione che genera una sessione locale</p> 
+	<p>Il <i>token</i> è un pacchetto XML (asserzione) legato alla sessione sull'authN server</p>
+	<p>L'asserzione viene scambiata, di solito via <i>front-channel</i>, con l'applicazione che genera una sessione locale</p> 
+		<p>Esempi: SAML 1.x e 2.0, Microsoft ADFS</p>
 	</section>
 
 	<section><h2>Shibboleth vs. SAML</h2>
@@ -157,15 +153,18 @@ I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, 
 	<li><b>SAML 1.0</b> OASIS Security Services Technical Committee</li>
 	<li><b>Liberty Identity Federation </b> consorzio Liberty Alliance</li>
 	</ul>
-	Nel 2005 sono confluite nello standard OASIS SAML 2.0
+        <p>Nel 2005 sono confluite nello standard OASIS SAML 2.0</p>
 	</section>
 
         <section><h2>SAML 2.0 per SSO</h2>
 
         <table>
                 <tr><td>
-        <p>Adottare SAML 2.0 per il SSO intra-organizzativo è un driver per l'autenticazione federata</p>
-        <p>SAML 2.0 permette di integrare servizi di terzi</p>
+        <p>Adottare SAML 2.0 per il SSO intra-organizzazione ha come
+            beneficio collaterale l'autenticazione federata</p>
+        <p>SAML 2.0 permette di integrare servizi di terzi
+        in modo standard, senza passaggio di credenziali
+        e con un controllo fine sulle informazioni trasmesse</p>
                 </td><td>
                 IdP UniGe maggio 2017
 
@@ -182,20 +181,20 @@ I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, 
 
 	<dl style="columns: 2;">
 	<dt>Subject</dt>
-	<dd></dd>
+	<dd>ciò di cui parla l'asserzione</dd>
 	<dt>Relying party</dt>
 	<dd style="break-before: avoid;">un sistema che riceve e trasmette informazioni SAML<br>
 	<dt>Service Provider (SP)</dt>
-	<dd style="break-before: avoid;">permette l'acceso ad una risorsa<br>
+	<dd style="break-before: avoid;">controlla l'acceso ad una risorsa<br>
 	<small>gestito dal fornitore del servizio</small></dd>
 	<dt>Identity Provider (IdP)</dt>
-	<dd style="break-before: avoid;">fornisce un <i>token</i> all'utente<br>
+	<dd style="break-before: avoid;">fornisce le asserzioni<br>
 	<small>gestito dalla <i>home organization</i></small></dd>
 	<dt>Attribute Autority (AA)</dt>
-	<dd style="break-before: avoid;">rilascia attributi sull'utente<br >
+	<dd style="break-before: avoid;">rilascia gli attributi<br >
 	<small>spesso coincide con l'IdP</small></dd>
-	<dt>WAYF o Discovery</dt>
-	<dd style="break-before: avoid;">media tra il SP e l'utente per identificare l'IdP di riferimento<br>
+	<dt>WAYF o Discovery Service</dt>
+	<dd style="break-before: avoid;">media tra il SP e l'utente per determinare l'IdP<br>
 	<small>integrato nel servizio o gestito dalla federazione</small></dd>
 	</section>
 
@@ -463,7 +462,7 @@ that turned SAML V1.1 into an SP-first protocol
 	Passando dal <i>front-channel</i> e adattando la maggior parte delle applicazioni le sessioni locali al SSO, il Single Logout è controintuitivo per gli utenti:
 	<ul>
 		<li>si disconnette da un servizio e, se va tutto bene, si trova disconnesso da tutti</li>
-		<li>oppure ritrova con una sessione <i>zombie</i> locale</li>
+		<li>oppure si ritrova con una sessione <i>zombie</i> locale</li>
 		<li>oppure riceve un errore da un servizio che non ricorda di aver aperto</li>
 		<li>o altro ancora...</li>
 	</ul>
@@ -522,7 +521,7 @@ SP1->UA: fatto!
         fornite da un IdP</p>
 	
     <p>Spesso è indicato come SP il componente software (libreria o
-    o modulo) che gestisce il protocollo SAML e per fornire informazioni
+    modulo) che gestisce il protocollo SAML per fornire informazioni
     ad una retrostante applicazione</p>
     
     <aside class="notes">
