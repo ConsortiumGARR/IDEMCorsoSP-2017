@@ -607,25 +607,26 @@ authentication assertion issued by a SAML identity provider.
 </section>
 			
     <!-- parte 6 -->
-    <section id="sviluppo"><h2>Sviluppo di applicazioni SAML</h2>
-        <p>Integrare un servizio/applicazione per sfruttare l'autenticazione
-        SAML 2.0 </p>
-        <dl>
-            <dt>applicazione esistente/nuova</dt>
-            <dd>nuova può usare una libreria generica di autenticazione che
-                comprenda SAML, esistente deve far inizializzare la sessione
-                dell'applicazione da un'asserzione dell'IdP</dd>
-            <dt>configurazione integrata/di sistema</dt>
-            <dt>SSO intra-organizzazione/federato</dt>
-        </dl>
+    <section id="sviluppo"><h2>Integrare il SSO SAML nelle applicazioni</h2>
+        <table><tr><td style="text-align: center;"><b>applicazione</b><br />
+                <small>nuova può usare una libreria generica di autenticazione che
+                    comprenda SAML<br /><br />
+                esistente deve far inizializzare la sessione
+                    dell'applicazione da un'asserzione dell'IdP</small>
+                </td><td style="text-align: center;"><b>configurazione</b><br />
+                    <small>gestita da sistema<br /><br />
+                    integrata nell'applicazione/plugin</small>
+                </td><td style="text-align: center;"><b>contesto SSO</b><br />
+                    <small>intra-organizzazione presumendo il controllo sull'IdP<br /><br />
+                        federato con IdP multipli</small></td></tr></table>
     </section>
     
     <section id="container"><h2>Gestione autenticazione</h2>
         <dl>
             <dt>dal web server/container</dt>
-            <dd>un modulo del server (o un filter del container, o simile) è
+            <dd>un modulo del server è
                 incaricato di gestire tutta la negoziazione SAML e passa
-                all'applicazione retrostante le asserzioni variamente preelaborate
+                all'applicazione le asserzioni pre-elaborate
                 come variabili CGI.
             </dd>
             <dt>da applicazioni/librerie</dt>
@@ -637,7 +638,7 @@ authentication assertion issued by a SAML identity provider.
         </aside>
     </section>
 
-    <section id="shibboleth"><h2>Autenticazione da container</h2>
+    <section id="shibboleth"><h2>Esempi autenticazione da container</h2>
         <dl>
             <dt>Shibboleth Native Service Provider (SP)</dt>
                 <dd><a href="shibboleth.html">esercizio</a></dd>
@@ -645,7 +646,7 @@ authentication assertion issued by a SAML identity provider.
                 <dd>modulo Apache con un semplice SAML 2.0 service provider<br />
                 https://github.com/UNINETT/mod_auth_mellon</dd>
             <dt>Spring Security SAML</dt>
-                <dd>componenti servlet container Java<br />
+                <dd>componenti e filter per servlet container Java<br />
                 http://projects.spring.io/spring-security-saml/</dd>
         </dl>
         <aside class="notes">
@@ -665,42 +666,32 @@ Un modulo di SimpleSAMLphp inizializza una sessione per Auth MemCookie
     
     <!-- parte 7 -->
 
-    <section><h2>Autenticazione dal applicazioni</h2>
+    <section><h2>Esempi autenticazione da applicazioni</h2>
         <dl>
             <dt>SimpleSAMLphp</dt>
                 <dd><a href="ssp.html">esercizio</a></dd>
             <dt>Onelogin</dt>
-                <dd>librerie per PHP, Python, Ruby, Java, .NET
+                <dd>librerie per PHP, Python, Ruby, Java, .NET<br />
                 https://developers.onelogin.com/saml</dd>
             <dt>PySAML2</dt>
-                <dd>Python
+                <dd>Python<br />
                 http://pysaml2.readthedocs.io/</dd>
         </dl>
     </section>
 
-    <section><h2>Altre possibilità</h2>
+    <section><h2>Esempi altre possibilità</h2>
          <dl>
             <dt>Auth0</dt>
-                <dd>Servizio in cloud che gestisce anche il protocollo SAML (chiamato SAMLP)/p>
-    https://auth0.com/docs/connections/enterprise/samlp</dd>
+            <dd>Servizio <i>cloud</i> che gestisce anche il protocollo SAML (chiamato SAMLP)<br />
+                https://auth0.com/docs/connections/enterprise/samlp</dd>
             <dt>SATOSA</dt>
-                <dd>proxy tra SAML 2.0 e SAML2, OpenID Connect, Google, Facebook
+                <dd>proxy tra SAML 2.0 e SAML2, OpenID Connect, Google, Facebook<br />
                 https://github.com/SUNET/SATOSA</dd>
         </dl>    
     
     </section>
 
 
-    <section>
-        <!-- parte 9 -->
-
-        <section><h2>Linee guida siti con autenticazione federata</h2>
-        </section>
-
-        <section><h2></h2>
-        <p>Slide di Lalla...</p>
-        </section>
-    </section>
 
 <section>
     <!-- parte 5, discovery -->
@@ -745,7 +736,7 @@ Federation can rely on this Federation-deployed discovery service.
             <dd>Il SP fornisce un servizio integrato con <i>look&amp;feel</i> coerente ed
             eventuali personalizzazioni o suggerimenti specifici del servizio.
             Esempi: <a href="https://registry.idem.garr.it/rr3/" target="_blank">IDEM Entity Registry</a>,
-            cloud.garr.it
+            <a href="https://cloud.garr.it" target="_blank">GARR Federated Cloud</a>,
             <a href="https://bestr.it/?step=1" target="_blank">CINECA Bestr</a></dd>
         </dl>
 
@@ -817,10 +808,6 @@ which limits run-time flexibility.
         <p><a href="ssp.html#/discovery">SimpleSAMLphp DiscoPower</a></p>
     </section>
                                 
-    <section><h2>Metadata</h2>
-    <p>Identificatori utente scoped</p>
-    </section>
-
 </section>
 			
     

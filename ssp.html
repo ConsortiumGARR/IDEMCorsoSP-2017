@@ -29,7 +29,6 @@
     <section><h1>SimpleSAMLphp</h1>
     </section>
 
-
     <section><h2>Panoramica</h2>
         <p>Sviluppato dalla REN Norvegese UNINETT</p>
         <p>SimpleSAMLphp (SSP) è una libreria di autenticazione multistandard
@@ -120,36 +119,6 @@ per le librerie si può usare Composer
     <img src="ssp-autodiag-2.png" />
     </section>
 
-    <section><h2>Session store</h2>
-<p>Nella sessione PHP vengono salvati i dati SP</p>
-<pre>/var/simplesamlphp/config/config.php<code data-trim>
-'store.type'                    => ...,
-</code></pre>
-    <p>Lo store <code>phpsession</code> è problematico nell'interazione
-        con altre applicazioni (ma per i nostri esempi va benissimo).</p>
-<pre>/var/simplesamlphp/config/config.php<code data-trim>
-'store.type'                    => 'memcache',
-</code></pre>
-    <p>Ridondanza gestita da SSP, adatto per IdP</p>
-    </section>
-
-    <section><h2>SQL Session store</h2>
-<p>I dati SP salvati in un DB via PDO</p>
-<pre>/var/simplesamlphp/config/config.php<code data-trim>
-'store.type'        => 'sql',
-// DSN PDO
-'store.sql.dsn'     => 'mysql:host=localhost;port=3307;dbname=testdb',
-</code></pre>
-    <h2>Esempio SQLite</h2>
-<pre>/var/simplesamlphp/config/config.php<code data-trim>
-'store.sql.dsn'     => 'sqlite:/tmp/simplesamlphp.sq3',
-</code></pre>
-    <p>Semplice e poco intrusivo. In caso di riavvio le sessioni
-        vanno perse<br />(ma è probabile che
-    neppure l'applicazione sopravviva al riavvio)</p>
-    </section>
-
-                
     <section><h2>Chiave e certificato</h2>
 <pre><code data-trim>
 $ cd /var/simplesamlphp/cert
@@ -226,7 +195,7 @@ $metadata['https://sp.example/simplesaml'] = array (
     </code></pre>
 </section>
                
-<section><h2>Configrazioni SP avanzate</h2>
+<section><h2>Configurazioni SP avanzate</h2>
 <pre>config/authsources.php<code data-trim>
 $config = array(
     ...
@@ -387,6 +356,49 @@ Possono essere manipolati da filtri post-auth</p>
        ),
     ...
 </code></pre>
+    </section>
+
+    <section><h2>Partecipazione al SLO</h2>
+<p>Se la sessione non è quella di SSP</p>
+<pre><code data-trim>
+class LogoutHandler {
+    public static function doLogout() {
+        // Termina sessione applicazione 
+    }
+}
+
+$session = SimpleSAML_Session::getInstance();
+$session->registerLogoutHandler('LogoutHandler', 'doLogout');
+</code></pre>
+    </section>
+            
+    <section><h2>Session store</h2>
+<p>Nella sessione PHP vengono salvati i dati SP</p>
+<pre>/var/simplesamlphp/config/config.php<code data-trim>
+'store.type'                    => ...,
+</code></pre>
+    <p>Lo store <code>phpsession</code> è problematico nell'interazione
+        con altre applicazioni (ma per i nostri esempi va benissimo).</p>
+<pre>/var/simplesamlphp/config/config.php<code data-trim>
+'store.type'                    => 'memcache',
+</code></pre>
+    <p>Ridondanza gestita da SSP, adatto per IdP</p>
+    </section>
+
+    <section><h2>SQL Session store</h2>
+<p>I dati SP salvati in un DB via PDO</p>
+<pre>/var/simplesamlphp/config/config.php<code data-trim>
+'store.type'        => 'sql',
+// DSN PDO
+'store.sql.dsn'     => 'mysql:host=localhost;port=3307;dbname=testdb',
+</code></pre>
+    <h2>Esempio SQLite</h2>
+<pre>/var/simplesamlphp/config/config.php<code data-trim>
+'store.sql.dsn'     => 'sqlite:/tmp/simplesamlphp.sq3',
+</code></pre>
+    <p>Semplice e poco intrusivo. In caso di riavvio le sessioni
+        vanno perse<br />(ma è probabile che
+    neppure l'applicazione sopravviva al riavvio)</p>
     </section>
             
     <section><h2>Logging</h2>
