@@ -253,6 +253,28 @@ $ wget -O mio-idp-metadata.xml --no-check-certificate&#8617;
 </td></tr></table>
 	</section>	
 
+    <section><h2>Notifica di Logout</h2>
+        <p>Se l'applicazione ha sessioni proprie, dovrebbe terminarle
+            se l'SP viene coinvolto in un SLO</p>
+        <p>Shibboleth SP prevede
+        un meccanismo di notifica a questo scopo basato su SOAP</p>
+
+<pre>/etc/shibboleth/shibboleth2.xml<code data-trim data-noescape>
+...
+&lt;Notify Channel="back"
+    Location="https://server.example/logout.php"/&gt;
+...
+</code></pre>
+        
+        <p>L'applicazione deve mantenere una mappa tra le proprie sessioni
+        e le sessioni locali di Shibboleth SP</p>
+
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td>
+<td><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/SLOWebappAdaptation">https://wiki.shibboleth.net/confluence/display/SHIB2/SLOWebappAdaptation</a>
+</td></tr></table>        
+    </section>				
+                
+
                 
     <section><h2>Esempio Apache</h2>
     <ol>

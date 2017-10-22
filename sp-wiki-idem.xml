@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="chrome://global/content/xml/XMLPrettyPrint.css"  type="text/css"?>
-<?xml-stylesheet href="chrome://global/content/xml/XMLMonoPrint.css"  type="text/css"?>
-<?xml-stylesheet href="resource://gre-resources/viewsource.css"  type="text/css"?>
-<?xml-stylesheet href="metadata.css" type="text/css"?>
 <EntityDescriptor xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:idpdisc="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" xmlns:init="urn:oasis:names:tc:SAML:profiles:SSO:request-init" xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" entityID="https://wiki.idem.garr.it/shibboleth">
 <Extensions>
 <mdrpi:RegistrationInfo registrationAuthority="http://www.idem.garr.it/" registrationInstant="2013-09-10T13:00:00Z">

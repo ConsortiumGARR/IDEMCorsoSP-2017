@@ -182,43 +182,46 @@ I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, 
 	<dl style="columns: 2;">
 	<dt>Subject</dt>
 	<dd>ciò di cui parla l'asserzione</dd>
-	<dt>Relying party</dt>
-	<dd style="break-before: avoid;">un sistema che riceve e trasmette informazioni SAML<br>
 	<dt>Service Provider (SP)</dt>
 	<dd style="break-before: avoid;">controlla l'acceso ad una risorsa<br>
 	<small>gestito dal fornitore del servizio</small></dd>
 	<dt>Identity Provider (IdP)</dt>
 	<dd style="break-before: avoid;">fornisce le asserzioni<br>
 	<small>gestito dalla <i>home organization</i></small></dd>
+        <dt style="break-before: avoid; break-after: avoid;">Relying party (RP)</dt>
+	<dd style="break-before: avoid;">un sistema che riceve e trasmette informazioni SAML</dd>
 	<dt>Attribute Autority (AA)</dt>
 	<dd style="break-before: avoid;">rilascia gli attributi<br >
 	<small>spesso coincide con l'IdP</small></dd>
 	<dt>WAYF o Discovery Service</dt>
 	<dd style="break-before: avoid;">media tra il SP e l'utente per determinare l'IdP<br>
 	<small>integrato nel servizio o gestito dalla federazione</small></dd>
+        </dl>
 	</section>
 
 	<section><h2>Servizi</h2>
-	<p>Ogni componente fornisce dei <i>servizi</i></p>
-	<aside class="notes">
+	<p>Ogni componente fornisce dei <i>servizi</i>, caratterizzati da:</p>
+	<dl>
+	<dt><i>Binding</i></dt>
+	<dd>il protocollo (SOAP, POST, ecc...) con cui utilizzarli</dd>
+	<dt><i>Location</i></dt>
+	<dd>endpoint (URL) con cui si accede al servizio</dd>
+        </dl>
+        
+        <aside class="notes">
 	Esempio: servizio di consumo di asserzioni
         sull'SP (AssertionConsumerService),
 	servizio di Single Logout su IdP e SP (Single Logout Service), ecc...
 	</aside>
-        
-	<p>I servizi sono caratterizzati da</p>
-	<ul>
-	<li><i>Binding</i> il protocollo (SOAP, POST, ecc...)</li>
-	<li><i>Location</i> endpoint del servizio (tipicamente un URL)</li>
-	</ul>
 	</section>
 
 	<section><h2>Profili</h2>
 	<p>Un <i>profilo</i> specifica come un'applicazione
-            usa i protocolli, i messaggi e i binding SAML</p>
+            usa i formati, i protocolli, i messaggi e i <i>binding</i> SAML</p>
                     <div style="background-color: lightblue; padding: 1%">
                 <b>Profilo</b><br />
-                                <small>combinazione di binding e core associato ad uno specifico use-case</small>
+                    <small>combinazione di <i>binding</i> e elementi
+                        <i>core</i> associato ad uno specifico <i>use-case</i></small>
                 <div style="background-color: lightgreen; padding: 1%">
                     <b>Binding</b><br />
                                 <small>protocollo di accesso ad un servizio</small>
@@ -228,7 +231,7 @@ I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, 
                 </div></div></div>
 	</section>
 
-	<section><h2>Profili standard</h2>
+	<section><h2>Esempi di Profili</h2>
             	<ul>
 	<li>Web Browser SSO Profile</li>
 	<li>Enhanced Client or Proxy (ECP) Profile</li>
@@ -244,16 +247,15 @@ I cookie vengono trasmessi solo al dominio specificato nell’attributo domain, 
 	</section>
 
 	<section id="SAML2Int"><h2>SAML2Int</h2>
-	<p>Il <a href="http://saml2int.org/">Interoperable SAML 2.0 Profile</a> (SAML2Int)
+	<p>Il profilo <a href="http://saml2int.org/">Interoperable SAML 2.0 Profile</a> (SAML2Int)
 	è una raccomandazione di comportamenti e opzioni per il deploy di un servizio
-	SAML 2.0 WebSSO Deployment Profile con il massimo dell'interoperabilità</p>
+	WebSSO orientata alla massima interoperabilità</p>
+        <p><a href="https://saml2int.org/partners/">Supportato</a> da Feide (Norvegia), Haka (Finlandia), eduGAIN (Geant), RedIRIS (Spagna), e altre RENs</p>
 		
-			<aside class="notes">
-Ci limitiamo a questo... 
-Supportato da Feide (Norvegia), Haka (Finlandia), eduGAIN (Geant), RedIRIS (Spagna), e altre RENs
-https://saml2int.org/partners/
-			</aside>
-		</section>
+        <aside class="notes">
+        Il corso di limita a questo profilo 
+        </aside>
+    </section>
 
 	<section><h2>Web Browser SSO Profile</h2>
 <script type="https://www.websequencediagrams.com">
@@ -284,9 +286,13 @@ SP1->UA: fatto!
 				
 	<section id="es1"><h2>Comunicazioni</h2>
 	<p>Le comunicazioni passano dal <i>front-channel</i></p>
-	<p>C'è una tolleranza di circa 5 minuti nelle comunicazioni: sincronizzare gli orologi :-)</p>
-	<p>L'utente "vede" i tutti i messaggi: si possono firmare e cifrare</p>
-	<p><a href="tracking.html">Esercizio 1</a></p>
+        <p>C'è una tolleranza di circa 5 minuti tra i sistemi<br />Sincronizzate gli orologi! :-)</p>
+	<p>L'utente "vede" il traffico</p>
+        <ul>
+            <li>usare sempre HTTPS</li>
+            <li>i messaggi possono essere firmati e/o cifrati</li>
+        </ul>
+	<p><a href="tracking.html">dimostrazione</a></p>
         
 	<aside class="notes">
 	Le comunicazioni passano dal browser utente. Eccezioni: ECP profile (server-server)
@@ -297,6 +303,7 @@ SP1->UA: fatto!
 	</section>
 
 	<section><h2>*-first</h2>
+            <p>Il "minuetto" di autenticazione può essere iniziato da diversi attori</p>
 	<dl>
 		<dt>IdP-first/-initiated</dt>
 		<dd>l'UA accede all'IdP con un eventuale parametro tipo spentityId</dd>
@@ -314,17 +321,18 @@ that turned SAML V1.1 into an SP-first protocol
 	</section>
 				
 	<section><h2>Asserzioni</h2>
-	<p>Un pacchetto XML che dice "in un certo istante questo
+	<p>"in un certo istante questo
             IdP asserisce che per un determinato soggetto
             valgono questi attributi"</p>
-	<ol>
+	<p>Ha forma di un pacchetto XML comprendente:</p>
+	<ul>
 		<li>Issuer: entityId che ha rilasciato l'asserzione</li>
 		<li>firme e chiavi</li>
 		<li>Subject: l'oggetto dell'asserzione</li>
 		<li>Conditions: condizioni di validità dell'asserzione</li>
 		<li>AuthnStatement: le circostanze di autenticazione</li>
 		<li>AttributeStatement: elenco degli attributi del soggetto</li>
-	</ol>
+	</ul>
 	</section>
 
 	<section><h2>Issuer</h2>
@@ -336,11 +344,14 @@ that turned SAML V1.1 into an SP-first protocol
 	<mark>Version="2.0"</mark>
 	<mark>IssueInstant</mark>="2017-09-20T07:10:21Z"&gt;
   &lt;saml:Issuer&gt;<mark>https://unigepass.unige.it/idp</mark>&lt;/saml:Issuer&gt;
+  ...
+&lt;/saml:Assertion&gt;
 </code></pre>
 	</section>
 
 	<section><h2>Firme e chiavi</h2>
 <pre><code data-trim data-noescape>
+...
 &lt;ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
   &lt;ds:SignedInfo&gt;
     &lt;ds:CanonicalizationMethod
@@ -351,14 +362,16 @@ that turned SAML V1.1 into an SP-first protocol
   &lt;ds:KeyInfo&gt;
     &lt;ds:X509Data&gt;
 	 &lt;ds:X509Certificate>MIIDXjCCAkYCCQD...
+...
 </code></pre>
 	</section>
 
 	<section><h2>Subject</h2>
 <pre><code data-trim data-noescape>
+...
 &lt;saml:Subject&gt;
   &lt;saml:NameID
-      <mark>SPNameQualifier</mark>="https://vm-fad2.ker.csita.unige.it/"
+      <mark>SPNameQualifier</mark>="https://vm.csita.unige.it/"
 	  <mark>Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient</mark>"&gt;&#8617;
 		 _ca04214ebdb2c...d
 	  &lt;/saml:NameID&gt;
@@ -366,14 +379,15 @@ that turned SAML V1.1 into an SP-first protocol
 	    <mark>Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"</mark>&gt;
 	  &lt;saml:SubjectConfirmationData
 	    <mark>NotOnOrAfter="2017-09-20T07:15:21Z"</mark>
-		<mark>Recipient</mark>="https://valutazione2.aulaweb.unige.it/simplesaml/&#8617;
+		<mark>Recipient</mark>="https://valido.aulaweb.unige.it/simplesaml/&#8617;
 		    module.php/saml/sp/saml2-acs.php/UniGePASS"
 		<mark>InResponseTo</mark>="_1596ffb37ce5..."/&gt;
+...
 </code></pre>
 	</section>	
 
 	<section><h2>NameID</h2>
-	Identificativo del soggetto
+	Identificativo del soggetto, può avere diverse forme:
 	<dl>
 	<dt>urn:oasis:names:tc:SAML:1.1:nameid-format:<mark>unspecified</mark></dt>
 	<dd>l'interpretazione è un accordo tra IdP e SP</dd>
@@ -390,24 +404,42 @@ that turned SAML V1.1 into an SP-first protocol
 	</section>
 					
 	<section><h2>NameID e attributi</h2>
-	Le installazioni tipiche Shibboleth e di federazioni RENs usano un attributo per
-	identificare il soggetto. Esempi:
-	eppn
+            <p>Il NameID serve ai relying party per correlare i messaggi, ma non
+            è necessario per le retrostanti applicazioni. Tipicamente,
+            Shibboleth e le federazioni RENs identificano
+            il soggetto con un attributo</p>
+	<dl>
+	<dt>entryDN (o altro nome custom)</dt>
+	<dd>DN LDAP o del certificato X.509, uso interno</dd>
+	<dt title="identificativo unico persistente">eduPersonPrincipalName (eppn)</dt>
+	<dd><code>&lt;identificativo&gt;@&lt;organizzazione&gt;</code></dd>
+        <dt title="identificativo anonimo, persistente, non riassegnabile">eduPersonTargetedID (ePTID)</dt>
+	<dd><code>&lt;organizzazione&gt;!&lt;servizio&gt;!&lt;stringa opaca&gt;</code></dd>
+        <dt>mail</dt>
+	</dl>
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a 
+            href="https://www.idem.garr.it/documenti/specificheattributi">Specifiche
+                    tecniche per la compilazione e l'uso degli Attributi IDEM GARR</a>
+    </td></tr></table>        
 	</section>
 
 	
 	<section><h2>Conditions</h2>
 <pre><code data-trim data-noescape>
+...
 &lt;saml:Conditions
     NotBefore="2017-09-20T07:09:51Z"
 	NotOnOrAfter="2017-09-20T07:15:21Z"&gt;
   &lt;saml:AudienceRestriction&gt;
-    &lt;saml:Audience&gt;https://vm-fad2.ker.csita.unige.it/&lt;/saml:Audience&gt;
+    &lt;saml:Audience&gt;https://vm.csita.unige.it/&lt;/saml:Audience&gt;
+...
 </code></pre>
+            <p><code>Audience</code> è un entityId, non l'URL del servizio</p>
 	</section>	
 
 	<section><h2>AuthnStatement</h2>
 <pre><code data-trim data-noescape>
+...
 &lt;saml:AuthnStatement
     AuthnInstant="2017-09-20T07:09:12Z"
 	SessionNotOnOrAfter="2017-09-20T15:09:12Z"
@@ -416,11 +448,13 @@ that turned SAML V1.1 into an SP-first protocol
     &lt;saml:AuthnContextClassRef&gt;&#8617;
 	urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport&#8617;
 	&lt;/saml:AuthnContextClassRef&gt;
+...
 </code></pre>
-	</section>	
+        </section>	
 
 	<section><h2>AttributeStatement</h2>
 <pre><code data-trim data-noescape>
+...
 &lt;saml:AttributeStatement&gt;
   &lt;saml:Attribute FriendlyName="mail"
       Name="urn:oid:0.9.2342.19200300.100.1.3"
@@ -436,6 +470,7 @@ that turned SAML V1.1 into an SP-first protocol
 
 	<section><h2>Attribute</h2>
 <pre><code data-trim data-noescape>
+...
   &lt;saml:Attribute FriendlyName="mail"
       Name="urn:oid:0.9.2342.19200300.100.1.3"
       NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"&gt;
@@ -443,7 +478,9 @@ that turned SAML V1.1 into an SP-first protocol
 	    marco@csita.unige.it&lt;/saml:AttributeValue&gt;
     &lt;saml:AttributeValue xsi:type="xs:string"&gt;&#8617;
 	    ferrante@csita.unige.it&lt;/saml:AttributeValue&gt;
+...
 </code></pre>
+            <p>Gli attributi ammettono valori multipli</p>
 	</section>	
 
 	<section><h2>NameFormat</h2>
@@ -459,22 +496,26 @@ that turned SAML V1.1 into an SP-first protocol
 					
 	
 	<section id="slo"><h2>Single Logout (SLO)</h2>
-	Passando dal <i>front-channel</i> e adattando la maggior parte delle applicazioni le sessioni locali al SSO, il Single Logout è controintuitivo per gli utenti:
+	<p>Il Single Logout è controintuitivo per gli utenti, sia per l'uso del
+            <i>front-channel</i> sia per le applicazioni con sessioni proprie</p>
 	<ul>
 		<li>si disconnette da un servizio e, se va tutto bene, si trova disconnesso da tutti</li>
 		<li>oppure si ritrova con una sessione <i>zombie</i> locale</li>
 		<li>oppure riceve un errore da un servizio che non ricorda di aver aperto</li>
 		<li>o altro ancora...</li>
 	</ul>
-	L'unico meccanismo di SLO affidabile è la chiusura del browser
+        <p>L'unico meccanismo di SLO affidabile è la chiusura del browser</p>
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td><a 
+            href="https://www.switch.ch/aai/support/presentations/sp-training-2014/T6-1-Logout-Support-SP.pdf">SWITCH
+                    Shibboleth SP Logout Support - Shibboleth Training 2015</a>
+    </td></tr></table>        
 	<aside class="notes">
 Una sessione zombie "risorge" facendo back dal browser o simili...
 La maggior parte dei servizi a cui è abituato (Amazon, Facebook, ecc...) sono sempre connessi, quindi la mancanza di logout non è più insolita
-https://www.switch.ch/aai/support/presentations/sp-training-2014/T6-1-Logout-Support-SP.pdf
 	</aside>	
 	</section>
 	
-	<section><h2>Single Logout (SLO)</h2>
+	<section><h2>Flusso Single Logout (SLO)</h2>
 <script type="https://www.websequencediagrams.com">
 title Single Logout
 
@@ -505,7 +546,10 @@ SP1->UA: fatto!
 	
 	</section>
 
-	<section><h2>Errore Partial Logout</h2>
+	<section><h2>Partial Logout</h2>
+            <p>Se l'IdP non riesce ad avere conferma del logout da 
+            tutti i servizi, presenta un errore di "Partial Logout"
+            </p>
 	</section>
 	
 </section>
@@ -540,7 +584,7 @@ authentication assertion issued by a SAML identity provider.
     </section>
 
     <section><h2>Metadata</h2>
-    <p>Come fanno IdP e SP a "conoscersi"? Si scambiano i <i>metadati</i></p>
+    <p>Come fanno IdP e SP a "conoscersi"? Si scambiano i <i>metadata</i></p>
     <ul>
         <li>ogni attore è identificato da un <i>EntityID</i> (un URI nel namespace dell'organizzazione) 
         <li>informazioni di contorno per l'utente (nome del servizio, contatti, loghi, ecc...)</li>
@@ -549,31 +593,17 @@ authentication assertion issued by a SAML identity provider.
         <li>per IdP: binding e location dei servizi supportati SSO, SLO, Artifact Resolution, AA, ecc...</li>
         <li>per SP: binding e location dei servizi supportati ACS, SLO, Artifact Resolution, ecc...</li>
     </ul>
-    Lo standard di interscambio è XML
-            <aside class="notes">
-            </aside>
     </section>
 
 	<section><h2>Esempi metadata</h2>
-	<!-- per formattare:
-	https://support.mozilla.org/it/questions/1016939
-	-->
-	<a href="idp-univpm.xml" target="_blank">IdP Università Politecnica delle Marche</a>
-	<a href="sp-wiki-idem.xml" target="_blank">SP Wiki IDEM</a>
+            <p>I metadata si scambiano in un formato standard XML, le librerie
+            possono usare formati interni differenti</p>
+            <ul>
+                <li><a href="idp-univpm.xml" target="_blank">IdP Università Politecnica delle Marche</a></li>
+                <li><a href="sp-wiki-idem.xml" target="_blank">SP Wiki IDEM</a></li>
+            </ul>
 	</section>
 	
-	<section><h2>Metadata: gestione</h2>
-	<p>Come gestirli</p>
-		<aside class="notes">
-		</aside>
-	</section>
-
-	<section><h2>Metadata: scambio</h2>
-	<p>Come scambiarli</p>
-		<aside class="notes">
-		</aside>
-	</section>
-
 </section>
 			
     <!-- parte 6 -->
