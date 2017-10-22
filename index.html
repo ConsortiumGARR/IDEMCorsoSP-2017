@@ -583,7 +583,7 @@ authentication assertion issued by a SAML identity provider.
     </aside>
     </section>
 
-        <section><h2>Metadata</h2>
+    <section><h2>Metadata</h2>
     <p>Come fanno IdP e SP a "conoscersi"? Si scambiano i <i>metadata</i></p>
     <ul>
         <li>ogni attore è identificato da un <i>EntityID</i> (un URI nel namespace dell'organizzazione) 
@@ -595,15 +595,301 @@ authentication assertion issued by a SAML identity provider.
     </ul>
     </section>
 
-	<section><h2>Esempi metadata</h2>
-            <p>I metadata si scambiano in un formato standard XML, le librerie
-            possono usare formati interni differenti</p>
-            <ul>
-                <li><a href="idp-univpm.xml" target="_blank">IdP Università Politecnica delle Marche</a></li>
-                <li><a href="sp-wiki-idem.xml" target="_blank">SP Wiki IDEM</a></li>
-            </ul>
-	</section>
+    <section><h2>Esempi metadata</h2>
+      <!-- per formattare:
+	   https://support.mozilla.org/it/questions/1016939
+	-->
+      <a href="idp-univpm.xml" target="_blank">IdP Università Politecnica delle Marche</a>
+      <a href="sp-wiki-idem.xml" target="_blank">SP Wiki IDEM</a>
+    </section>
 	
+    <section><h2>Metadata: gestione e scambio</h2>
+      <p>La gestione e lo scambio dei metadata all'interno di un'Organizzazione
+	è spesso completamente manuale:
+      </p>
+      <ul>
+	<li>un IdP e molti SP.</li>
+	<li>I metadata degli SP sono conservati in file XML.</li>
+	<li>I metadata sono scambiati via mail, sharing, ecc.</li>
+	<li>la <span class="emphgreen">fiducia</span> è basata sulla conoscenza
+	  degli interlocutori.
+	</li>
+      </ul>
+      <p>Funziona, ma <span class="emphred">non scala</span> ed è una modalità di gestione
+	utilizzabile solo all'interno di un'unica Organizzazione.</p>
+    </section>
+
+    <section><h2>Metadata: fiducia</h2>
+      <p>Lo scambio di metadata stabilisce relazioni di fiducia</p>
+      <p>Per gli IdP:</p>
+      <ul>
+	<li>Utilizzare i servizi di autenticazione di un'organizzazione (l'IdP).</li>
+	<li>Ricevere gli attributi di un utente di un'organizzazione.</li>
+      </ul>
+      <p>Per gli SP:</p>
+      <ul>
+	<li>Permettere l'uso del servizio agli utenti di una organizzazione.</li>
+	<li>Ricevere dati autoritativi sugli utenti (ad. es. affiliazione).</li>
+      </ul>
+      <p>Quando si esce dai confini di un'organizzazione la fiducia non si può più
+	basare solo sui rapporti tra gli interlocutori, serve una
+	<span class="emphgreen">terza parte fidata</span>.</p>
+      <aside class="notes">
+      </aside>
+    </section>
+</section>
+<section>
+    <section><h1>Le federazioni di identità</h1>
+      <p>Cosa sono e a cosa servono</p>
+    </section>
+
+    <section><h2>Federazioni di Identità</h2>
+      <p>Sono la <span class="emphgreen">terza parte fidata</span> da tutti gli interlocutori.<p>
+      <p>Tramite l'adesione alla federazione stabiliscono un cerchio della fiducia tra tutti i
+	partecipanti</p>
+      <p>Nelle federazioni di identità di solito si distinguono due ruoli:</p>
+      <ul>
+	<li>Membri: partecipanti che hanno una relazione diretta con l'organizzazione
+	  che gestisce la federazione</li>
+	<li>Partner: partecipanti al di fuori della suddetta organizzione</li>
+      </ul>
+    </section>
+
+    <section><h2>Federazioni: fiducia si, ma come?</h2>
+      <p>Le federazioni di identità:</p>
+      <ul>
+	<li>Stabiliscono regole rigorose per l'adesione</li>
+	<li>Effettuano controlli periodici sui partecipanti</li>
+	<li>Garantiscono l'autenticità dei metadata tramite firma digitale</li>
+      </ul>
+    </section>
+
+    <section data-markdown>
+      <textarea data-template>
+	## Federazioni: i metadata al centro
+	Le federazioni aggregano i metadata creando file XML unici per
+	tutti i partecipanti alla federazione
+	~~~ XML
+	<mdrpi:RegistrationInfo registrationAuthority="http://www.idem.garr.it/" registrationInstant="2010-10-29T13:00:00Z">
+	  <mdrpi:RegistrationPolicy xml:lang="en">https://www.idem.garr.it/idem-metadata-registration-practice-statement</mdrpi:RegistrationPolicy>
+	</mdrpi:RegistrationInfo>
+	<EntityDescriptor xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:idpdisc="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" xmlns:init="urn:oasis:names:tc:SAML:profiles:SSO:request-init" xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" entityID="https://shib.unibo.it/idp/shibboleth">
+	</EntityDescriptor>
+	<EntityDescriptor xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:idpdisc="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" xmlns:init="urn:oasis:names:tc:SAML:profiles:SSO:request-init" xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" entityID="https://wifi.dir.garr.it:12081/shibboleth">
+	</EntityDescriptor>
+	<EntityDescriptor xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:idpdisc="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" xmlns:init="urn:oasis:names:tc:SAML:profiles:SSO:request-init" xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" entityID="https://ricerca2012.cbim.it/shibboleth">
+	</EntityDescriptor>
+	<EntityDescriptor xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:idpdisc="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" xmlns:init="urn:oasis:names:tc:SAML:profiles:SSO:request-init" xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" entityID="https://www.idem.garr.it/components/com_joomsso/simplesaml/www/module.php/saml/sp/metadata.php/default-sp">
+	</EntityDescriptor>
+	<EntityDescriptor xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:idpdisc="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" xmlns:init="urn:oasis:names:tc:SAML:profiles:SSO:request-init" xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" entityID="https://wiki.idem.garr.it/shibboleth"
+	~~~
+      </textarea>
+    </section>
+
+    <section><h2>Federazioni: operazioni</h2>
+      <p>Tecnicamente una federazione implementa e gestisce le seguenti operazioni:</p>
+      <ul>
+	<li>Fornisce un servizio di raccolta e aggiornamento dei metadata dei partecipanti</li>
+	<li>Aggrega i metadata ricevuti in file XML e appone le informazioni di federazione</li>
+	<li>Firma i file XML aggregati con la propria chiave privata</li>
+	<li>Fornisce un servizio di distribuzione dei metadata altamente affidabile (in breve una URL)</li>
+	<li>Aggiorna periodicamente gli aggregati di metadata (almeno una volta al giorno)</li>
+      </ul>
+    </section>
+    
+    <section><h2>Federazione IDEM GARR AAI</h2>
+      <p>La Federazione IDEM GARR AAI:</p>
+      <ul>
+	<li>Organi: Assemblea dei membri, Comitato di Indirizzo, Comitato Tecnico Scientifico</li>
+	<li>Gestione operativa: Consortium GARR - Servizio IDEM</li>
+	<li>Membri: membri del Consortium GARR</li>
+	<li>Partecipanti: organizzazioni esterne al Consortium GARR</li>
+      </ul>
+      <p>Il ruolo di Identity Provider è riservato ai Membri</p>
+      <p>Il ruolo di Service Provider è disponibile sia per Membri, sia per Partecipanti</p>
+    </section>
+
+    <section><h2>IDEM regole condivise</h2>
+      <ul>
+	<li>Regolamento di federazione: governance, organi e funzioni.</li>
+	<li>Norme di partecipazione: requisiti per IdP e SP.</li>
+	<li>Specifiche tecniche: SAML2.0 deployment profile, semantica attributi</li>
+      </ul>
+    </section>
+
+    <section><h2>IDEM, chi può aderire</h2>
+      <p>Possono entrare a far parte della Federazione IDEM, in qualità di <span class="emphred">membri</span>,
+	tutti gli <span class="emphgreen">enti con finalità accademiche, scientifiche e culturali connesse
+	alla Rete Italiana dell’Università e della Ricerca GARR</span>.</p>
+      Possono inoltre partecipare alla Federazione IDEM, in qualità di <span class="emphred">partner</span>,
+      organizzazioni terze (ad esempio editori, fornitori di software o servizi online, ecc),
+      purché <span class="emphgreen">forniscano contenuti o servizi che siano ritenuti utili alla Comunità GARR</span>.
+      Per tutti la partecipazione è soggetta all’approvazione del Comitato d’Indirizzo della Federazione IDEM.
+    </section>
+
+    <section><h2>IDEM, come partecipare</h2>
+      <a href="https://idem.garr.it/come-partecipare" target="_blank">https://idem.garr.it/come-partecipare</a>
+      <ol>
+	<li>Registrazione servizio nella Federazione di test tramite
+	  <a href="https://registry.idem.garr.it/" target="_blank">https://registry.idem.garr.it/</a></li>
+	<li>Richiesta di adesione firmata dal rappresentante legale dell’organizzazione a
+	  <a href="mailto:idem@garr.it">idem@garr.it</a></li>
+	<li>Approvazione della richiesta: controlli tecnici e di sicurezza; legittimità della richiesta (regolamento)</li>
+	<li>Passaggio in Federazione di produzione</li>
+      </ol>
+    </section>
+
+    <section><h2>IDEM, una federazione full-mesh</h2>
+      <img src="Full-Mesh.png" />
+    </section>
+
+    <section><h2>IDEM: numeri</h2>
+      <table><tbody><tr><th><span class="emphgreen">Federations in eduGAIN</span></th></tr><tr><th>Members</th><td>46</td></tr>
+	  <tr><th><span class="emphred">Entità in IDEM</span></th></tr><tr><th>All</th><td>191</td></tr>
+	  <tr><th>IdPs</th><td>72</td></tr>
+	  <tr><th>SPs</th><td>119</td></tr>
+	  </tbody></table>
+    </section>
+
+    <section><h2>Servizio IDEM GARR AAI</h2>
+      <p>Compiti tecnici all'interno della Federazione IDEM GARR AAI</p>
+      <ul>
+	<li>Gestisce la raccolta, l'aggregazione, la firma e la distribuzione dei metadata</li>
+	<li>Effettua i controlli tecnici e di sicurezza per tutti i partecipanti</li>
+	<li>Gestisce il supporto tecnico della federazione: &lt;idem-help@garr.it&gt;</li>
+      </ul>
+      <p>A livello internazionale, il Servizio IDEM ed il CTS:</p>
+      <ul>
+	<li>Contribuiscono alla definizione delle regole di funzionamento delle federazioni di identità</li>
+	<li>Contribuiscono all'evoluzione degli standard</li>
+	<li>Gestiscono la partecipazione di IDEM al servizio di interfederazione eduGAIN</li>
+      </ul>
+    </section>
+        
+    <section><h2>eduGAIN: servizio di interfederazione</h2>
+      <img src="edugain.png" />
+    </section>
+
+    <section><h2>eduGAIN, una (inter)federazione mondiale</h2>
+      <p>eduGAIN è un servizio di interfederazione che permette di
+	scambiare aggregati di metadata tra federazioni</p>
+      <p>Come una normale federazione eduGAIN aggrega metadata, ma su
+	scala mondiale, permettendo agli utenti degli IdP e degli SP aderenti
+	ad una federazione di identità nazionale di interoperare.</p>
+    </section>
+    
+    <section><h2>IDEM, pubblicazione in eduGAIN</h2>
+      <p>Il Servizio IDEM GARR AAI gestisce la pubblicazione dei metadata di federazione
+	tramite eduGAIN.</p>
+      <p>Le policy:</p>
+      <ul>
+	<li>Opt-Out per gli IdP: gli IdP di IDEM sono pubblicati in eduGAIN a meno che
+	  non richiedano il contrario.</li>
+	<li>Opt-In per gli SP: gli SP di IDEM sono pubblicati in eduGAIN solo se lo
+	  richiedono</li>
+      </ul>
+    </section>
+
+    <section><h2>eduGAIN: numeri</h2>
+      <table><tbody><tr><th><span class="emphgreen">Federations in eduGAIN</span></th></tr><tr><th>Members</th><td>46</td></tr>
+	  <tr><th>Voting-only Members</th><td>6</td></tr>
+	  <tr><th>Candidates</th><td>11</td></tr>
+	  <tr><th><span class="emphred">Entities in eduGAIN</span></th></tr><tr><th>All</th><td>4290</td></tr>
+	  <tr><th>IdPs</th><td>2545</td></tr>
+	  <tr><th>SPs</th><td>1750</td></tr>
+	  <tr><th>Standalone AAs</th><td>5</td></tr>
+	  </tbody></table>
+    </section>
+    
+    <section><h2>Entity Categories</h2>
+      <p>entità con caratteristiche comuni all’interno di
+	una federazione</p>
+      <ul>
+	<li>SP: dichiarano di appartenere ad una
+	  o più Entity Category</li>
+	<li>IdP: rilasciano attributi in base alla
+	Entity Category</li>
+      </ul>
+    </section>
+
+    <section data-markdown>
+      <textarea data-template>
+	## Entity Categories: lato SP
+	### Entity Category attribute
+	* lo dichiara il SP
+	* valore => URI, raccomandato URL in http/https
+
+	~~~ XML
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                     entityID="https://service.example.com/entity">
+  <md:Extensions>
+    <mdattr:EntityAttributes
+            xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute">
+      <Attribute xmlns="urn:oasis:names:tc:SAML:2.0:assertion"
+                 NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+                 Name="http://macedir.org/entity-category">
+        <AttributeValue>http://example.org/category/dog</AttributeValue>
+        <AttributeValue>urn:oid:1.3.6.1.4.1.21829</AttributeValue>
+        </Attribute>
+    </mdattr:EntityAttributes>
+  </md:Extensions>
+  ...
+</md:EntityDescriptor>
+	~~~
+      </textarea>
+    </section>
+
+    <section data-markdown>
+      <textarea data-template>
+	## Entity Categories: lato IdP
+	### Entity Category support attribute
+	* valore => URI
+	* raccomandato URL in http/https => pagina web specifiche
+	 * può essere uguale a Entity Category attribute
+	 *  può contenere declinazioni del supporto alla Entity Category
+
+	~~~ XML
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                     entityID="https://idp.example.edu/entity">
+  <md:Extensions>
+    <mdattr:EntityAttributes
+       xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute">
+      <Attribute xmlns="urn:oasis:names:tc:SAML:2.0:assertion"
+                 NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+                 Name="http://macedir.org/entity-category-support">
+        <AttributeValue>http://example.org/category/dog/basic</AttributeValue>
+        <AttributeValue>http://example.org/category/dog/advanced</AttributeValue>
+        <AttributeValue>urn:oid:1.3.6.1.4.1.21829</AttributeValue>
+      </Attribute>
+    </mdattr:EntityAttributes>
+  </md:Extensions>
+</md:EntityDescriptor>
+~~~
+      </textarea>
+    </section>
+
+    <section><h2>Entity Categories: Research and Scolarship</h2>
+      <p>Candidates for the Research and Scholarship (R&S) Category are Service Providers that are operated for the purpose of supporting research and scholarship interaction, collaboration or management, at least in part.</p>
+      <a href="https://refeds.org/category/research-and-scholarship"
+	 target="_blank">
+	https://refeds.org/category/research-and-scholarship
+      </a>
+    </section>
+
+    <section><h2>Entity Categories: GEANT Code of Conductp</h2>
+      <p>The Data protection Code of Conduct describes an approach to meet the requirements of the EU Data Protection Directive in federated identity management</p>
+      <a href="https://geant3plus.archive.geant.net/uri/dataprotection-code-of-conduct/V1/Pages/default.aspx"
+	 target="_blank">
+	https://geant3plus.archive.geant.net/uri/dataprotection-code-of-conduct/V1/Pages/default.aspx
+      </a>
+    </section>
+
+    <section><h2>Entity Categories: SIRTFI</h2>
+      <p>The Security Incident Response Trust Framework for Federated Identity (Sirtfi) aims to enable the coordination of incident response across federated organisations. This assurance framework comprises a list of assertions which an organisation can attest in order to be declared Sirtfi compliant.</p>
+      <a href="https://refeds.org/sirtfi" target="_blank">https://refeds.org/sirtfi</a>
+    </section>
+</section>
+ 	
 </section>
 			
     <!-- parte 6 -->
