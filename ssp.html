@@ -352,6 +352,18 @@ Possono essere manipolati da filtri post-auth</p>
 </code></pre>
     </section>
 
+    <section><h2>Sessioni</h2>
+<p>La gestione della sessione dovrebbe essere delegata a SSP</p>
+<pre><code data-trim>
+$session = SimpleSAML_Session::getInstance();
+$session->setData('mia:app', $id, $data, $timeout);
+// SimpleSAML_Session::DATA_TIMEOUT_SESSION_END non scade
+...
+$data = $session->getData('mia:app', $id)
+</code></pre>
+
+    </section>
+            
     <section><h2>Partecipazione al SLO</h2>
 <p>Se la sessione non è quella di SSP</p>
 <pre><code data-trim>

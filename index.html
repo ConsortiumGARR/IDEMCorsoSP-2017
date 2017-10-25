@@ -6,6 +6,7 @@
 
         <title>Corso SP 2017</title>
         <meta name="author" value="Marco Ferrante, marco@csita.unige.it">
+        <meta name="author" value="Davide Vaghetti, davide.vaghetti@garr.it">
 
         <link rel="stylesheet" href="css/reveal.css">
         <link rel="stylesheet" href="css/theme/white.css">
@@ -547,27 +548,26 @@ SP1->UA: fatto!
     </section>
 
     <section><h2>Esempi metadata</h2>
-      <!-- per formattare:
-	   https://support.mozilla.org/it/questions/1016939
-	-->
-      <a href="idp-univpm.xml" target="_blank">IdP Università Politecnica delle Marche</a>
-      <a href="sp-wiki-idem.xml" target="_blank">SP Wiki IDEM</a>
+        <ul>
+            <li><a href="idp-univpm.xml" target="_blank">IdP Università Politecnica delle Marche</a></li>
+            <li><a href="sp-wiki-idem.xml" target="_blank">SP Wiki IDEM</a></li>
+        </ul>
     </section>
 	
     <section><h2>Metadata: gestione e scambio</h2>
-      <p>La gestione e lo scambio dei metadata all'interno di un'Organizzazione
-	è spesso completamente manuale:
+      <p>Gestione e scambio dei metadata all'interno di un'organizzazione
+	può essere manuale dove:
       </p>
       <ul>
-	<li>un IdP e molti SP.</li>
-	<li>I metadata degli SP sono conservati in file XML.</li>
-	<li>I metadata sono scambiati via mail, sharing, ecc.</li>
+	<li>un solo IdP e molti SP.</li>
+	<li>i metadata degli SP sono conservati in file XML</li>
+	<li>i metadata sono scambiati via mail, sharing, ecc.</li>
 	<li>la <span class="emphgreen">fiducia</span> è basata sulla conoscenza
 	  degli interlocutori.
 	</li>
       </ul>
       <p>Funziona, ma <span class="emphred">non scala</span> ed è una modalità di gestione
-	utilizzabile solo all'interno di un'unica Organizzazione.</p>
+	utilizzabile solo all'interno di un'unica organizzazione.</p>
     </section>
 
     <section><h2>Metadata: fiducia</h2>
@@ -582,13 +582,174 @@ SP1->UA: fatto!
 	<li>Permettere l'uso del servizio agli utenti di una organizzazione.</li>
 	<li>Ricevere dati autoritativi sugli utenti (ad. es. affiliazione).</li>
       </ul>
-      <p>Quando si esce dai confini di un'organizzazione la fiducia non si può più
-	basare solo sui rapporti tra gli interlocutori, serve una
-	<span class="emphgreen">terza parte fidata</span>.</p>
     </section>
+
+    <section><h2>Metadata: federazione</h2>
+      <p>Quando si esce dai confini di un'organizzazione la fiducia
+          non si può più
+	basare solo sui rapporti tra gli interlocutori, serve una
+	<span class="emphgreen">terza parte fidata</span></p>
+      <p>Le <i>federazioni</i> hanno esattamente questo scopo</p>
+      <p>Per gli enti GARR è attiva la <a href="#/federazione">federazione IDEM</a></p>
+    </section>
+    
 </section>
+ 	
+		
+    <!-- parte 6 -->
+    <section id="sviluppo"><h2>Integrare il SSO SAML nelle applicazioni</h2>
+        <table><tr><td style="text-align: center;"><b>applicazione</b><br />
+                <small>nuova può usare una libreria generica di autenticazione che
+                    comprenda SAML<br /><br />
+                esistente deve far inizializzare la sessione
+                    dell'applicazione da un'asserzione dell'IdP</small>
+                </td><td style="text-align: center;"><b>configurazione</b><br />
+                    <small>gestita da sistema<br /><br />
+                    integrata nell'applicazione/plugin</small>
+                </td><td style="text-align: center;"><b>contesto SSO</b><br />
+                    <small>intra-organizzazione presumendo il controllo sull'IdP<br /><br />
+                        federato con IdP multipli</small></td></tr></table>
+    </section>
+    
+    <section id="container"><h2>Gestione autenticazione</h2>
+        <dl>
+            <dt>dal web server/container</dt>
+            <dd>un modulo del server è
+                incaricato di gestire tutta la negoziazione SAML e passa
+                all'applicazione le asserzioni pre-elaborate
+                come variabili CGI.
+            </dd>
+            <dt>da applicazioni/librerie</dt>
+            <dd>l'applicazione usa, a vari livelli, una libreria che gestisce
+                il processo di autenticazione</dd>
+        </dl>
+    </section>
+
+    <section id="shibboleth"><h2>Esempi autenticazione da container</h2>
+        <dl>
+            <dt>Shibboleth Native Service Provider (SP)</dt>
+                <dd><a href="shibboleth.html">esercizio</a></dd>
+            <dt>mod_auth_mellon</dt>
+                <dd>modulo Apache con un semplice SAML 2.0 service provider<br />
+                https://github.com/UNINETT/mod_auth_mellon</dd>
+            <dt>Spring Security SAML</dt>
+                <dd>componenti e filter per servlet container Java<br />
+                http://projects.spring.io/spring-security-saml/</dd>
+        </dl>
+        <aside class="notes">
+            UNINETT è la REN norvegese
+        </aside>
+    </section>
+
+    <!--
+    <section><h2>Alternativa: mod_auth_memcookie</h2>
+    <p>Mooolto diverso, non è neanche una vera alternativa ma spiega il concetto
+
+    https://zenprojects.github.io/Apache-Authmemcookie-Module/
+Un modulo di SimpleSAMLphp inizializza una sessione per Auth MemCookie				
+</p>
+    </section>
+    -->
+    
+    <!-- parte 7 -->
+
+    <section><h2>Esempi autenticazione da applicazioni</h2>
+        <dl>
+            <dt>SimpleSAMLphp</dt>
+                <dd><a href="ssp.html">esercizio</a></dd>
+            <dt>Onelogin</dt>
+                <dd>librerie per PHP, Python, Ruby, Java, .NET<br />
+                https://developers.onelogin.com/saml</dd>
+            <dt>PySAML2</dt>
+                <dd>Python<br />
+                http://pysaml2.readthedocs.io/</dd>
+        </dl>
+    </section>
+
+    <section><h2>Esempi altre possibilità</h2>
+         <dl>
+            <dt>Auth0</dt>
+            <dd>Servizio <i>cloud</i> che gestisce anche il protocollo SAML (chiamato SAMLP)<br />
+                https://auth0.com/docs/connections/enterprise/samlp</dd>
+            <dt>SATOSA</dt>
+                <dd>proxy tra SAML 2.0 e SAML2, OpenID Connect, Google, Facebook<br />
+                https://github.com/SUNET/SATOSA</dd>
+        </dl>    
+    
+    </section>
+
+
+
 <section>
-    <section><h1>Le federazioni di identità</h1>
+    <!-- parte 5, discovery -->
+
+    <section id="discovery"><h2>Discovery</h2>
+        <p>L'utente che si presenta al SP a quale
+            <span title="Se l'SP conosce un solo IdP, no problem...">IdP dev'essere rediretto</span> per l'autenticazione?</p>
+        <p>Solo lui lo sa... (e neppure sempre :-)</p>
+        <p>La domanda viene gestita dal Discovery Service (DS)</p>
+    </section>
+
+    <section id="discovery"><h2>Esempi Discovery</h2>
+        <dl>
+            <dt>Where Are You From (WAYF)</dt>
+            <dd>La federazione gestisce un servizio di Discovery centralizzato detto WAYF.
+                Esempio: <a href="https://filesender.garr.it" target="_blank">Filesender GARR</a></dd>
+            <dt>Embedded DS</dt>
+            <dd>Il SP fornisce un servizio integrato con <i>look&amp;feel</i> coerente ed
+            eventuali personalizzazioni o suggerimenti specifici del servizio.
+            Esempi: <a href="https://registry.idem.garr.it/rr3/" target="_blank">IDEM Entity Registry</a>,
+            <a href="https://cloud.garr.it" target="_blank">GARR Federated Cloud</a>,
+            <a href="https://bestr.it/?step=1" target="_blank">CINECA Bestr</a></dd>
+        </dl>
+    </section>
+
+
+    <section><h2>Discovery Protocol</h2>
+<script type="https://www.websequencediagrams.com">
+title Discovery Protocol
+
+participant utente (UA) as UA
+participant Service Provider as SP1
+participant DS as DS
+
+UA->SP1: voglio collegarmi!
+SP1-->UA: redirect to DS
+UA<->DS: in qualche modo si identifica
+DS-->UA: redirect to SP
+UA->SP1: ecco il mio IdP
+</script>
+<iframe width="900" height="400" srcdoc="<img src='diagramma-ds.png'>"></iframe>
+    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td>OASIS 
+        <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf">Identity
+            Provider Discovery Service Protocol and Profile</a>
+    </td></tr></table>
+    </section>
+
+    <section><h2>Discovery Protocol</h2>
+    <p>I meccanismi di redirezione sono a rischio phishing.</p>
+    <p>Un estensione dei metadata è stata prevista perché il Discovery Service possa
+    dal entityId del SP, validare l'endpoint di ritorno</p>
+    
+    <pre><code data-trim data-noescape>
+&lt;Extensions&gt;
+  ...
+  &lt;idpdisc:DiscoveryResponse
+      Binding="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol"
+      Location="https://www.serviziweb.unito.it/youblog/Shibboleth.sso/DS"
+      index="1"/&gt;
+    </code></pre>
+    </section>
+                                
+    <section><h2>DS in pratica</h2>
+        <p><a href="shibboleth.html#/discovery">Shibboleth SP EDS</a></p>
+        <p><a href="ssp.html#/discovery">SimpleSAMLphp DiscoPower</a></p>
+    </section>
+                                
+</section>
+			
+<section>
+    <section id="federazione"><h1>Le federazioni di identità</h1>
       <p>Cosa sono e a cosa servono</p>
     </section>
 
@@ -838,161 +999,6 @@ SP1->UA: fatto!
       <a href="https://refeds.org/sirtfi" target="_blank">https://refeds.org/sirtfi</a>
     </section>
 </section>
- 	
-</section>
-			
-    <!-- parte 6 -->
-    <section id="sviluppo"><h2>Integrare il SSO SAML nelle applicazioni</h2>
-        <table><tr><td style="text-align: center;"><b>applicazione</b><br />
-                <small>nuova può usare una libreria generica di autenticazione che
-                    comprenda SAML<br /><br />
-                esistente deve far inizializzare la sessione
-                    dell'applicazione da un'asserzione dell'IdP</small>
-                </td><td style="text-align: center;"><b>configurazione</b><br />
-                    <small>gestita da sistema<br /><br />
-                    integrata nell'applicazione/plugin</small>
-                </td><td style="text-align: center;"><b>contesto SSO</b><br />
-                    <small>intra-organizzazione presumendo il controllo sull'IdP<br /><br />
-                        federato con IdP multipli</small></td></tr></table>
-    </section>
-    
-    <section id="container"><h2>Gestione autenticazione</h2>
-        <dl>
-            <dt>dal web server/container</dt>
-            <dd>un modulo del server è
-                incaricato di gestire tutta la negoziazione SAML e passa
-                all'applicazione le asserzioni pre-elaborate
-                come variabili CGI.
-            </dd>
-            <dt>da applicazioni/librerie</dt>
-            <dd>l'applicazione usa, a vari livelli, una libreria che gestisce
-                il processo di autenticazione</dd>
-        </dl>
-    </section>
-
-    <section id="shibboleth"><h2>Esempi autenticazione da container</h2>
-        <dl>
-            <dt>Shibboleth Native Service Provider (SP)</dt>
-                <dd><a href="shibboleth.html">esercizio</a></dd>
-            <dt>mod_auth_mellon</dt>
-                <dd>modulo Apache con un semplice SAML 2.0 service provider<br />
-                https://github.com/UNINETT/mod_auth_mellon</dd>
-            <dt>Spring Security SAML</dt>
-                <dd>componenti e filter per servlet container Java<br />
-                http://projects.spring.io/spring-security-saml/</dd>
-        </dl>
-        <aside class="notes">
-            UNINETT è la REN norvegese
-        </aside>
-    </section>
-
-    <!--
-    <section><h2>Alternativa: mod_auth_memcookie</h2>
-    <p>Mooolto diverso, non è neanche una vera alternativa ma spiega il concetto
-
-    https://zenprojects.github.io/Apache-Authmemcookie-Module/
-Un modulo di SimpleSAMLphp inizializza una sessione per Auth MemCookie				
-</p>
-    </section>
-    -->
-    
-    <!-- parte 7 -->
-
-    <section><h2>Esempi autenticazione da applicazioni</h2>
-        <dl>
-            <dt>SimpleSAMLphp</dt>
-                <dd><a href="ssp.html">esercizio</a></dd>
-            <dt>Onelogin</dt>
-                <dd>librerie per PHP, Python, Ruby, Java, .NET<br />
-                https://developers.onelogin.com/saml</dd>
-            <dt>PySAML2</dt>
-                <dd>Python<br />
-                http://pysaml2.readthedocs.io/</dd>
-        </dl>
-    </section>
-
-    <section><h2>Esempi altre possibilità</h2>
-         <dl>
-            <dt>Auth0</dt>
-            <dd>Servizio <i>cloud</i> che gestisce anche il protocollo SAML (chiamato SAMLP)<br />
-                https://auth0.com/docs/connections/enterprise/samlp</dd>
-            <dt>SATOSA</dt>
-                <dd>proxy tra SAML 2.0 e SAML2, OpenID Connect, Google, Facebook<br />
-                https://github.com/SUNET/SATOSA</dd>
-        </dl>    
-    
-    </section>
-
-
-
-<section>
-    <!-- parte 5, discovery -->
-
-    <section id="discovery"><h2>Discovery</h2>
-        <p>L'utente che si presenta al SP a quale
-            <span title="Se l'SP conosce un solo IdP, no problem...">IdP dev'essere rediretto</span> per l'autenticazione?</p>
-        <p>Solo lui lo sa... (e neppure sempre :-)</p>
-        <p>La domanda viene gestita dal Discovery Service (DS)</p>
-    </section>
-
-    <section id="discovery"><h2>Esempi Discovery</h2>
-        <dl>
-            <dt>Where Are You From (WAYF)</dt>
-            <dd>La federazione gestisce un servizio di Discovery centralizzato detto WAYF.
-                Esempio: <a href="https://filesender.garr.it" target="_blank">Filesender GARR</a></dd>
-            <dt>Embedded DS</dt>
-            <dd>Il SP fornisce un servizio integrato con <i>look&amp;feel</i> coerente ed
-            eventuali personalizzazioni o suggerimenti specifici del servizio.
-            Esempi: <a href="https://registry.idem.garr.it/rr3/" target="_blank">IDEM Entity Registry</a>,
-            <a href="https://cloud.garr.it" target="_blank">GARR Federated Cloud</a>,
-            <a href="https://bestr.it/?step=1" target="_blank">CINECA Bestr</a></dd>
-        </dl>
-    </section>
-
-
-    <section><h2>Discovery Protocol</h2>
-<script type="https://www.websequencediagrams.com">
-title Discovery Protocol
-
-participant utente (UA) as UA
-participant Service Provider as SP1
-participant DS as DS
-
-UA->SP1: voglio collegarmi!
-SP1-->UA: redirect to DS
-UA<->DS: in qualche modo si identifica
-DS-->UA: redirect to SP
-UA->SP1: ecco il mio IdP
-</script>
-<iframe width="900" height="400" srcdoc="<img src='diagramma-ds.png'>"></iframe>
-    <table class="biblio" style="font-size: small"><tr><td>Riferimenti</td><td>OASIS 
-        <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf">Identity
-            Provider Discovery Service Protocol and Profile</a>
-    </td></tr></table>
-    </section>
-
-    <section><h2>Discovery Protocol</h2>
-    <p>I meccanismi di redirezione sono a rischio phishing.</p>
-    <p>Un estensione dei metadata è stata prevista perché il Discovery Service possa
-    dal entityId del SP, validare l'endpoint di ritorno</p>
-    
-    <pre><code data-trim data-noescape>
-&lt;Extensions&gt;
-  ...
-  &lt;idpdisc:DiscoveryResponse
-      Binding="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol"
-      Location="https://www.serviziweb.unito.it/youblog/Shibboleth.sso/DS"
-      index="1"/&gt;
-    </code></pre>
-    </section>
-                                
-    <section><h2>DS in pratica</h2>
-        <p><a href="shibboleth.html#/discovery">Shibboleth SP EDS</a></p>
-        <p><a href="ssp.html#/discovery">SimpleSAMLphp DiscoPower</a></p>
-    </section>
-                                
-</section>
-			
     
     </div>
 
